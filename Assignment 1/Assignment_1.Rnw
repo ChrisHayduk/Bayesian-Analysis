@@ -1,0 +1,297 @@
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb, mathtools}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{fixltx2e}
+\usepackage[shortlabels]{enumitem}
+ 
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{question}[2][Question]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newcommand{\textfrac}[2]{\dfrac{\text{#1}}{\text{#2}}}
+
+\begin{document}
+
+\title{Bayesian Analysis - Assignment #1}
+
+\author{Chris Hayduk}
+\date{\today}
+
+\maketitle
+
+<<echo=F, results = 'hide', warning=FALSE, message=FALSE>>=
+# set the global chunk options
+opts_chunk$set(message=FALSE, # don't print R messages in pdf -- CHANGE TO FALSE WHEN SUBMITTING FINAL VERSION!!!
+               warning=FALSE) # don't print warnings in pdf -- CHANGE TO FALSE WHEN SUBMITTING FINAL VERSION!!!
+
+# load .RData files, .R files, etc.
+# R packages required
+suppressMessages(library(tidyverse, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(rethinking, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+@
+
+\section{Ch. 2}
+
+\begin{problem}{1}
+\text{ }\\
+Write function to take in the p\_grid, a character vector of the data, and a prior. Compute the grid approximate posterior distribution and return a list of data frames containing p\_grid, the computed posterior, and the data.
+\end{problem}
+
+<<warning=FALSE, message=FALSE>>=
+
+compute_grid_approximate_posterior <- function(p_grid, data, prior){
+  num_successes <- sum(data == "W")
+  num_trials <- length(data)
+  
+  likelihood <- dbinom(num_successes, size = num_trials, prob = p_grid)
+  
+  unstd.posterior <- likelihood*prior
+  
+  posterior <- unstd.posterior/sum(unstd.posterior)
+  
+  grid_approximation <- data.frame(p_grid = p_grid, posterior = posterior)
+  
+  data1 <- data.frame(data)
+  
+  answer <- list(grid_approximation, data1)
+  
+  return(answer)
+}
+
+#Example run of function
+
+data <- c("W", "W", "W")
+
+p_grid <- seq(from = 0, to = 1, length.out = 100)
+
+prior <- rep(1, length(p_grid))
+
+grid_approximation <- compute_grid_approximate_posterior(p_grid, data, prior)
+
+plot(grid_approximation[[1]]$p_grid, grid_approximation[[1]]$posterior, 
+     type = "l",
+     xlab = "Probability of Water", ylab = "Posterior Probability",
+     main = paste(grid_approximation[[2]]$data, collapse = ", "),
+     las = 1)
+@
+
+\begin{problem}{2}
+\text{ }\\
+Use simulation to approximate the result of 2M4. The target probability is \textfrac{2}{3}.
+\end{problem}
+
+<<warning=FALSE, message=FALSE>>=
+
+data <- c("card1_black", "card1_black", 
+          "card2_black", "card2_white", 
+          "card3_white", "card3_white")
+
+sampled_data <- sample(data, size = 100000, replace = TRUE)
+
+ans <- sum((sampled_data == "card1_black"))
+
+ans <- ans/sum((sampled_data == "card1_black" | sampled_data == "card2_black"))
+
+print(ans)
+
+@
+
+\begin{problem}{3}
+\text{ }\\
+Use simulation to approximate the result of 2H1 The target probability is 0.1666667.
+\end{problem}
+
+<<warning=FALSE, message=FALSE>>=
+
+#Not sure how to go about this one.
+
+num_sims <- 100000
+
+speciesA_twins <- rbinom(num_sims, 1, 0.1)
+
+speciesB_twins <- rbinom(num_sims, 1, 0.2)
+
+@
+
+\section{Ch. 3}
+
+\begin{problem}{1}
+\text{ }\\
+Run the code form 3M2 10,000 times. How much variation do you see in the endpoints? What does it mean? Also, see how your answers change if you increase the length of p\_grid and/or the number of samples.
+\end{problem}
+
+<<warning=FALSE, message=FALSE>>=
+
+p_grid <- seq(from = 0, to = 1, length.out = 1000)
+prior <- rep(1, length(p_grid))
+data <- rep("W", 8)
+data <- c(data, rep("L", 7))
+
+grid_approx <- compute_grid_approximate_posterior(p_grid, data, prior)
+
+HPDI_df <- data.frame(lower = rep(0, 10000), upper = rep(0, 10000))
+for(i in 1:10000){
+  samples <- sample(grid_approx[[1]]$p_grid,
+                    prob = grid_approx[[1]]$posterior, 
+                    size = 1e4, replace = TRUE)
+  HPDI <- HPDI(samples, prob = 0.9)
+  HPDI_df[i, 1] <- HPDI[1]
+  HPDI_df[i, 2] <- HPDI[2]
+}
+
+print(paste0("Mean HPDI interval: ",
+      mean(HPDI_df[,1]), ", ", mean(HPDI_df[,2])))
+print(paste0("Standard deviation of lower bound of HPDI: ", 
+             sd(HPDI_df[,1])))
+print(paste0("Standard deviation of upper bound of HPDI: ", 
+             sd(HPDI_df[,2])))
+
+@
+
+If we vary the length of p\_grid:
+<<warning=FALSE, message=FALSE>>=
+
+sequence <- seq(from = 100, to = 10000, by = 100)
+
+HPDI_df <- data.frame(lower = rep(0, length(sequence)), 
+                      upper = rep(0, length(sequence)), 
+                      length_p_grid = sequence)
+
+count <- 1
+for(i in sequence){
+  p_grid <- seq(from = 0, to = 1, length.out = i)
+  prior <- rep(1, length(p_grid))
+  data <- rep("W", 8)
+  data <- c(data, rep("L", 7))
+
+  grid_approx <- compute_grid_approximate_posterior(p_grid, data, prior)
+
+  samples <- sample(grid_approx[[1]]$p_grid,
+                    prob = grid_approx[[1]]$posterior, 
+                    size = 1e4, replace = TRUE)
+  HPDI <- HPDI(samples, prob = 0.9)
+  HPDI_df[count, 1] <- HPDI[1]
+  HPDI_df[count, 2] <- HPDI[2]
+  count <- count + 1
+}
+
+print("After varying length of of p_grid")
+print(paste0("Mean HPDI interval: ",
+      mean(HPDI_df[,1]), ", ", mean(HPDI_df[,2])))
+print(paste0("SD of lower bound of HPDI: ", sd(HPDI_df[,1])))
+print(paste0("SD of upper bound of HPDI: ", sd(HPDI_df[,2])))
+
+@
+
+Now if we vary the number of samples:
+<<warning=FALSE, message=FALSE>>=
+
+p_grid <- seq(from = 0, to = 1, length.out = 1000)
+prior <- rep(1, length(p_grid))
+data <- rep("W", 8)
+data <- c(data, rep("L", 7))
+
+grid_approx <- compute_grid_approximate_posterior(p_grid, data, prior)
+
+sequence <- seq(from = 100, to = 10000, by = 100)
+
+HPDI_df <- data.frame(lower = rep(0, length(sequence)), 
+                      upper = rep(0, length(sequence), 
+                                  num_samples = sequence))
+
+count <- 1
+for(i in sequence){
+  samples <- sample(grid_approx[[1]]$p_grid,
+                    prob = grid_approx[[1]]$posterior, 
+                    size = i, replace = TRUE)
+  HPDI <- HPDI(samples, prob = 0.9)
+  HPDI_df[count, 1] <- HPDI[1]
+  HPDI_df[count, 2] <- HPDI[2]
+  
+  count <- count + 1
+}
+
+print("After varying number of samples")
+print(paste0("Mean HPDI interval: ",
+      mean(HPDI_df[,1]), ", ", mean(HPDI_df[,2])))
+print(paste0("SD of lower bound of HPDI: ", sd(HPDI_df[,1])))
+print(paste0("SD of upper bound of HPDI: ", sd(HPDI_df[,2])))
+
+@
+
+\begin{problem}{2}
+\text{ }\\
+From 3H5: Make a 2x2 contingency table of birth1 and birth2. Run the appropriate hypothesis test to check if the rows and columns are independent (eg. Fisher's exact test, $\chi^2$ test). What do you conclude? How does it compare with the analysis in 3H5? Which do you trust more? Justify your answer.
+\end{problem}
+
+<<warning=FALSE, message=FALSE>>=
+
+data(homeworkch3)
+
+boy_girl <- length(birth2[birth1 == 1 & birth2 == 0])
+
+boy_boy <- length(birth2[birth1 == 1 & birth2 == 1])
+
+girl_boy <- length(birth2[birth1 == 0 & birth2 == 1])
+
+girl_girl <- length(birth2[birth1 == 0 & birth2 == 0])
+
+contingency_table <- data.frame(boy = c(boy_boy, boy_girl), 
+                                girl = c(girl_boy, girl_girl))
+
+rownames(contingency_table) <- c("boy", "girl")
+
+print(contingency_table)
+
+@
+
+The assumptions for the $\chi^2$ test (taken from "McHugh ML. The chi-square test of independence. \texit{Biochem Med (Zagreb)}. 2013;23(2):143-9.") are:
+\begin{enumerate}
+\item The data in the cells should be frequencies, or counts of cases rather than percentages or some other transformation of the data.
+\item The levels (or categories) of the variables are mutually exclusive. That is, a particular subject fits into one and only one level of each of the variables.
+\item Each subject may contribute data to one and only one cell in the $\chi^2$. If, for example, the same subjects are tested over time such that the comparisons are of the same subjects at Time 1, Time 2, Time 3, etc., then $\chi^2$ may not be used.
+\item The study groups must be independent. This means that a different test must be used if the two groups are related. For example, a different test must be used if the researcher's data consists of paired samples, such as in studies in which a parent is paired with his or her child.
+\item There are 2 variables, and both are measured as categories, usually at the nominal level. However, data may be ordinal data. Interval or ratio data that have been collapsed into ordinal categories may also be used. While Chi-square has no rule about limiting the number of cells (by limiting the number of categories for each variable), a very large number of cells (over 20) can make it difficult to meet assumption #6 below, and to interpret the meaning of the results.
+\item The value of the cell expecteds should be 5 or more in at least 80\% of the cells, and no cell should have an expected of less than one. This assumption is most likely to be met if the sample size equals at least the number of cells multiplied by 5. Essentially, this assumption specifies the number of cases (sample size) needed to use the $\chi^2$ for any number of cells in that $\chi^2$. This requirement will be fully explained in the example of the calculation of the statistic in the case study example.
+\end{enumerate}
+
+The assumptions for Fisher's exact test (from statisticssolutions.com) are:
+\begin{enumerate}
+\item The row and column totals are fixed, not random.
+\item Sampling or allocation are random and observations are mutually independent within the constraints of fixed marginal totals.
+\item Each observation is mutually exclusive - in other words each observation can only be classified in one cell.
+\end{enumerate}
+
+It seems that the data satisfies the assumptions for both tests. We will inspect the results of both:
+
+<<warning=FALSE, message=FALSE>>=
+
+chisq <- chisq.test(contingency_table)
+
+print(chisq)
+
+fisher <- fisher.test(contingency_table)
+
+print(fisher)
+
+@
+
+Both tests demonstrate that the rows and columns (ie. first and second births) are not independent, which agrees with the original graphical analysis in 3H5.
+
+\end{document}

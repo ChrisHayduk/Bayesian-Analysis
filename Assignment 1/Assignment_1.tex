@@ -1,0 +1,435 @@
+\documentclass[12pt]{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+ 
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb, mathtools}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{fixltx2e}
+\usepackage[shortlabels]{enumitem}
+ 
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{question}[2][Question]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newcommand{\textfrac}[2]{\dfrac{\text{#1}}{\text{#2}}}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+\title{Bayesian Analysis - Assignment #1}
+
+\author{Chris Hayduk}
+\date{\today}
+
+\maketitle
+
+
+
+\section{Ch. 2}
+
+\begin{problem}{1}
+\text{ }\\
+Write function to take in the p\_grid, a character vector of the data, and a prior. Compute the grid approximate posterior distribution and return a list of data frames containing p\_grid, the computed posterior, and the data.
+\end{problem}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{compute_grid_approximate_posterior} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{p_grid}\hlstd{,} \hlkwc{data}\hlstd{,} \hlkwc{prior}\hlstd{)\{}
+  \hlstd{num_successes} \hlkwb{<-} \hlkwd{sum}\hlstd{(data} \hlopt{==} \hlstr{"W"}\hlstd{)}
+  \hlstd{num_trials} \hlkwb{<-} \hlkwd{length}\hlstd{(data)}
+
+  \hlstd{likelihood} \hlkwb{<-} \hlkwd{dbinom}\hlstd{(num_successes,} \hlkwc{size} \hlstd{= num_trials,} \hlkwc{prob} \hlstd{= p_grid)}
+
+  \hlstd{unstd.posterior} \hlkwb{<-} \hlstd{likelihood}\hlopt{*}\hlstd{prior}
+
+  \hlstd{posterior} \hlkwb{<-} \hlstd{unstd.posterior}\hlopt{/}\hlkwd{sum}\hlstd{(unstd.posterior)}
+
+  \hlstd{grid_approximation} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{p_grid} \hlstd{= p_grid,} \hlkwc{posterior} \hlstd{= posterior)}
+
+  \hlstd{data1} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(data)}
+
+  \hlstd{answer} \hlkwb{<-} \hlkwd{list}\hlstd{(grid_approximation, data1)}
+
+  \hlkwd{return}\hlstd{(answer)}
+\hlstd{\}}
+
+\hlcom{#Example run of function}
+
+\hlstd{data} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"W"}\hlstd{,} \hlstr{"W"}\hlstd{,} \hlstr{"W"}\hlstd{)}
+
+\hlstd{p_grid} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{length.out} \hlstd{=} \hlnum{100}\hlstd{)}
+
+\hlstd{prior} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{length}\hlstd{(p_grid))}
+
+\hlstd{grid_approximation} \hlkwb{<-} \hlkwd{compute_grid_approximate_posterior}\hlstd{(p_grid, data, prior)}
+
+\hlkwd{plot}\hlstd{(grid_approximation[[}\hlnum{1}\hlstd{]]}\hlopt{$}\hlstd{p_grid, grid_approximation[[}\hlnum{1}\hlstd{]]}\hlopt{$}\hlstd{posterior,}
+     \hlkwc{type} \hlstd{=} \hlstr{"l"}\hlstd{,}
+     \hlkwc{xlab} \hlstd{=} \hlstr{"Probability of Water"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"Posterior Probability"}\hlstd{,}
+     \hlkwc{main} \hlstd{=} \hlkwd{paste}\hlstd{(grid_approximation[[}\hlnum{2}\hlstd{]]}\hlopt{$}\hlstd{data,} \hlkwc{collapse} \hlstd{=} \hlstr{", "}\hlstd{),}
+     \hlkwc{las} \hlstd{=} \hlnum{1}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-2-1} 
+
+\end{knitrout}
+
+\begin{problem}{2}
+\text{ }\\
+Use simulation to approximate the result of 2M4. The target probability is \textfrac{2}{3}.
+\end{problem}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{data} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"card1_black"}\hlstd{,} \hlstr{"card1_black"}\hlstd{,}
+          \hlstr{"card2_black"}\hlstd{,} \hlstr{"card2_white"}\hlstd{,}
+          \hlstr{"card3_white"}\hlstd{,} \hlstr{"card3_white"}\hlstd{)}
+
+\hlstd{sampled_data} \hlkwb{<-} \hlkwd{sample}\hlstd{(data,} \hlkwc{size} \hlstd{=} \hlnum{100000}\hlstd{,} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+
+\hlstd{ans} \hlkwb{<-} \hlkwd{sum}\hlstd{((sampled_data} \hlopt{==} \hlstr{"card1_black"}\hlstd{))}
+
+\hlstd{ans} \hlkwb{<-} \hlstd{ans}\hlopt{/}\hlkwd{sum}\hlstd{((sampled_data} \hlopt{==} \hlstr{"card1_black"} \hlopt{|} \hlstd{sampled_data} \hlopt{==} \hlstr{"card2_black"}\hlstd{))}
+
+\hlkwd{print}\hlstd{(ans)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.6696323
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\begin{problem}{3}
+\text{ }\\
+Use simulation to approximate the result of 2H1 The target probability is 0.1666667.
+\end{problem}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Not sure how to go about this one.}
+
+\hlstd{num_sims} \hlkwb{<-} \hlnum{100000}
+
+\hlstd{speciesA_twins} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(num_sims,} \hlnum{1}\hlstd{,} \hlnum{0.1}\hlstd{)}
+
+\hlstd{speciesB_twins} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(num_sims,} \hlnum{1}\hlstd{,} \hlnum{0.2}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\section{Ch. 3}
+
+\begin{problem}{1}
+\text{ }\\
+Run the code form 3M2 10,000 times. How much variation do you see in the endpoints? What does it mean? Also, see how your answers change if you increase the length of p\_grid and/or the number of samples.
+\end{problem}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{p_grid} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{length.out} \hlstd{=} \hlnum{1000}\hlstd{)}
+\hlstd{prior} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{length}\hlstd{(p_grid))}
+\hlstd{data} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlstr{"W"}\hlstd{,} \hlnum{8}\hlstd{)}
+\hlstd{data} \hlkwb{<-} \hlkwd{c}\hlstd{(data,} \hlkwd{rep}\hlstd{(}\hlstr{"L"}\hlstd{,} \hlnum{7}\hlstd{))}
+
+\hlstd{grid_approx} \hlkwb{<-} \hlkwd{compute_grid_approximate_posterior}\hlstd{(p_grid, data, prior)}
+
+\hlstd{HPDI_df} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{lower} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{10000}\hlstd{),} \hlkwc{upper} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{10000}\hlstd{))}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{10000}\hlstd{)\{}
+  \hlstd{samples} \hlkwb{<-} \hlkwd{sample}\hlstd{(grid_approx[[}\hlnum{1}\hlstd{]]}\hlopt{$}\hlstd{p_grid,}
+                    \hlkwc{prob} \hlstd{= grid_approx[[}\hlnum{1}\hlstd{]]}\hlopt{$}\hlstd{posterior,}
+                    \hlkwc{size} \hlstd{=} \hlnum{1e4}\hlstd{,} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+  \hlstd{HPDI} \hlkwb{<-} \hlkwd{HPDI}\hlstd{(samples,} \hlkwc{prob} \hlstd{=} \hlnum{0.9}\hlstd{)}
+  \hlstd{HPDI_df[i,} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlstd{HPDI[}\hlnum{1}\hlstd{]}
+  \hlstd{HPDI_df[i,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{HPDI[}\hlnum{2}\hlstd{]}
+\hlstd{\}}
+
+\hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"Mean HPDI interval: "}\hlstd{,}
+      \hlkwd{mean}\hlstd{(HPDI_df[,}\hlnum{1}\hlstd{]),} \hlstr{", "}\hlstd{,} \hlkwd{mean}\hlstd{(HPDI_df[,}\hlnum{2}\hlstd{])))}
+\end{alltt}
+\begin{verbatim}
+## [1] "Mean HPDI interval: 0.335387187187187, 0.721979479479479"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"Standard deviation of lower bound of HPDI: "}\hlstd{,}
+             \hlkwd{sd}\hlstd{(HPDI_df[,}\hlnum{1}\hlstd{])))}
+\end{alltt}
+\begin{verbatim}
+## [1] "Standard deviation of lower bound of HPDI: 0.00580605441531374"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"Standard deviation of upper bound of HPDI: "}\hlstd{,}
+             \hlkwd{sd}\hlstd{(HPDI_df[,}\hlnum{2}\hlstd{])))}
+\end{alltt}
+\begin{verbatim}
+## [1] "Standard deviation of upper bound of HPDI: 0.0056140308470188"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+If we vary the length of p\_grid:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{sequence} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{100}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{10000}\hlstd{,} \hlkwc{by} \hlstd{=} \hlnum{100}\hlstd{)}
+
+\hlstd{HPDI_df} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{lower} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(sequence)),}
+                      \hlkwc{upper} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(sequence)),}
+                      \hlkwc{length_p_grid} \hlstd{= sequence)}
+
+\hlstd{count} \hlkwb{<-} \hlnum{1}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlstd{sequence)\{}
+  \hlstd{p_grid} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{length.out} \hlstd{= i)}
+  \hlstd{prior} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{length}\hlstd{(p_grid))}
+  \hlstd{data} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlstr{"W"}\hlstd{,} \hlnum{8}\hlstd{)}
+  \hlstd{data} \hlkwb{<-} \hlkwd{c}\hlstd{(data,} \hlkwd{rep}\hlstd{(}\hlstr{"L"}\hlstd{,} \hlnum{7}\hlstd{))}
+
+  \hlstd{grid_approx} \hlkwb{<-} \hlkwd{compute_grid_approximate_posterior}\hlstd{(p_grid, data, prior)}
+
+  \hlstd{samples} \hlkwb{<-} \hlkwd{sample}\hlstd{(grid_approx[[}\hlnum{1}\hlstd{]]}\hlopt{$}\hlstd{p_grid,}
+                    \hlkwc{prob} \hlstd{= grid_approx[[}\hlnum{1}\hlstd{]]}\hlopt{$}\hlstd{posterior,}
+                    \hlkwc{size} \hlstd{=} \hlnum{1e4}\hlstd{,} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+  \hlstd{HPDI} \hlkwb{<-} \hlkwd{HPDI}\hlstd{(samples,} \hlkwc{prob} \hlstd{=} \hlnum{0.9}\hlstd{)}
+  \hlstd{HPDI_df[count,} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlstd{HPDI[}\hlnum{1}\hlstd{]}
+  \hlstd{HPDI_df[count,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{HPDI[}\hlnum{2}\hlstd{]}
+  \hlstd{count} \hlkwb{<-} \hlstd{count} \hlopt{+} \hlnum{1}
+\hlstd{\}}
+
+\hlkwd{print}\hlstd{(}\hlstr{"After varying length of of p_grid"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] "After varying length of of p_grid"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"Mean HPDI interval: "}\hlstd{,}
+      \hlkwd{mean}\hlstd{(HPDI_df[,}\hlnum{1}\hlstd{]),} \hlstr{", "}\hlstd{,} \hlkwd{mean}\hlstd{(HPDI_df[,}\hlnum{2}\hlstd{])))}
+\end{alltt}
+\begin{verbatim}
+## [1] "Mean HPDI interval: 0.335859388507128, 0.722418289796521"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"SD of lower bound of HPDI: "}\hlstd{,} \hlkwd{sd}\hlstd{(HPDI_df[,}\hlnum{1}\hlstd{])))}
+\end{alltt}
+\begin{verbatim}
+## [1] "SD of lower bound of HPDI: 0.00554321079395621"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"SD of upper bound of HPDI: "}\hlstd{,} \hlkwd{sd}\hlstd{(HPDI_df[,}\hlnum{2}\hlstd{])))}
+\end{alltt}
+\begin{verbatim}
+## [1] "SD of upper bound of HPDI: 0.00536087562219747"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Now if we vary the number of samples:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{p_grid} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{length.out} \hlstd{=} \hlnum{1000}\hlstd{)}
+\hlstd{prior} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{length}\hlstd{(p_grid))}
+\hlstd{data} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlstr{"W"}\hlstd{,} \hlnum{8}\hlstd{)}
+\hlstd{data} \hlkwb{<-} \hlkwd{c}\hlstd{(data,} \hlkwd{rep}\hlstd{(}\hlstr{"L"}\hlstd{,} \hlnum{7}\hlstd{))}
+
+\hlstd{grid_approx} \hlkwb{<-} \hlkwd{compute_grid_approximate_posterior}\hlstd{(p_grid, data, prior)}
+
+\hlstd{sequence} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{100}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{10000}\hlstd{,} \hlkwc{by} \hlstd{=} \hlnum{100}\hlstd{)}
+
+\hlstd{HPDI_df} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{lower} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(sequence)),}
+                      \hlkwc{upper} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(sequence),}
+                                  \hlkwc{num_samples} \hlstd{= sequence))}
+
+\hlstd{count} \hlkwb{<-} \hlnum{1}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlstd{sequence)\{}
+  \hlstd{samples} \hlkwb{<-} \hlkwd{sample}\hlstd{(grid_approx[[}\hlnum{1}\hlstd{]]}\hlopt{$}\hlstd{p_grid,}
+                    \hlkwc{prob} \hlstd{= grid_approx[[}\hlnum{1}\hlstd{]]}\hlopt{$}\hlstd{posterior,}
+                    \hlkwc{size} \hlstd{= i,} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+  \hlstd{HPDI} \hlkwb{<-} \hlkwd{HPDI}\hlstd{(samples,} \hlkwc{prob} \hlstd{=} \hlnum{0.9}\hlstd{)}
+  \hlstd{HPDI_df[count,} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlstd{HPDI[}\hlnum{1}\hlstd{]}
+  \hlstd{HPDI_df[count,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{HPDI[}\hlnum{2}\hlstd{]}
+
+  \hlstd{count} \hlkwb{<-} \hlstd{count} \hlopt{+} \hlnum{1}
+\hlstd{\}}
+
+\hlkwd{print}\hlstd{(}\hlstr{"After varying number of samples"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] "After varying number of samples"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"Mean HPDI interval: "}\hlstd{,}
+      \hlkwd{mean}\hlstd{(HPDI_df[,}\hlnum{1}\hlstd{]),} \hlstr{", "}\hlstd{,} \hlkwd{mean}\hlstd{(HPDI_df[,}\hlnum{2}\hlstd{])))}
+\end{alltt}
+\begin{verbatim}
+## [1] "Mean HPDI interval: 0.335785785785786, 0.721581581581582"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"SD of lower bound of HPDI: "}\hlstd{,} \hlkwd{sd}\hlstd{(HPDI_df[,}\hlnum{1}\hlstd{])))}
+\end{alltt}
+\begin{verbatim}
+## [1] "SD of lower bound of HPDI: 0.00866760938810869"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"SD of upper bound of HPDI: "}\hlstd{,} \hlkwd{sd}\hlstd{(HPDI_df[,}\hlnum{2}\hlstd{])))}
+\end{alltt}
+\begin{verbatim}
+## [1] "SD of upper bound of HPDI: 0.00877512492908868"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\begin{problem}{2}
+\text{ }\\
+From 3H5: Make a 2x2 contingency table of birth1 and birth2. Run the appropriate hypothesis test to check if the rows and columns are independent (eg. Fisher's exact test, $\chi^2$ test). What do you conclude? How does it compare with the analysis in 3H5? Which do you trust more? Justify your answer.
+\end{problem}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{data}\hlstd{(homeworkch3)}
+
+\hlstd{boy_girl} \hlkwb{<-} \hlkwd{length}\hlstd{(birth2[birth1} \hlopt{==} \hlnum{1} \hlopt{&} \hlstd{birth2} \hlopt{==} \hlnum{0}\hlstd{])}
+
+\hlstd{boy_boy} \hlkwb{<-} \hlkwd{length}\hlstd{(birth2[birth1} \hlopt{==} \hlnum{1} \hlopt{&} \hlstd{birth2} \hlopt{==} \hlnum{1}\hlstd{])}
+
+\hlstd{girl_boy} \hlkwb{<-} \hlkwd{length}\hlstd{(birth2[birth1} \hlopt{==} \hlnum{0} \hlopt{&} \hlstd{birth2} \hlopt{==} \hlnum{1}\hlstd{])}
+
+\hlstd{girl_girl} \hlkwb{<-} \hlkwd{length}\hlstd{(birth2[birth1} \hlopt{==} \hlnum{0} \hlopt{&} \hlstd{birth2} \hlopt{==} \hlnum{0}\hlstd{])}
+
+\hlstd{contingency_table} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{boy} \hlstd{=} \hlkwd{c}\hlstd{(boy_boy, boy_girl),}
+                                \hlkwc{girl} \hlstd{=} \hlkwd{c}\hlstd{(girl_boy, girl_girl))}
+
+\hlkwd{rownames}\hlstd{(contingency_table)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"boy"}\hlstd{,} \hlstr{"girl"}\hlstd{)}
+
+\hlkwd{print}\hlstd{(contingency_table)}
+\end{alltt}
+\begin{verbatim}
+##      boy girl
+## boy   21   39
+## girl  30   10
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+The assumptions for the $\chi^2$ test (taken from "McHugh ML. The chi-square test of independence. \texit{Biochem Med (Zagreb)}. 2013;23(2):143-9.") are:
+\begin{enumerate}
+\item The data in the cells should be frequencies, or counts of cases rather than percentages or some other transformation of the data.
+\item The levels (or categories) of the variables are mutually exclusive. That is, a particular subject fits into one and only one level of each of the variables.
+\item Each subject may contribute data to one and only one cell in the $\chi^2$. If, for example, the same subjects are tested over time such that the comparisons are of the same subjects at Time 1, Time 2, Time 3, etc., then $\chi^2$ may not be used.
+\item The study groups must be independent. This means that a different test must be used if the two groups are related. For example, a different test must be used if the researcher's data consists of paired samples, such as in studies in which a parent is paired with his or her child.
+\item There are 2 variables, and both are measured as categories, usually at the nominal level. However, data may be ordinal data. Interval or ratio data that have been collapsed into ordinal categories may also be used. While Chi-square has no rule about limiting the number of cells (by limiting the number of categories for each variable), a very large number of cells (over 20) can make it difficult to meet assumption #6 below, and to interpret the meaning of the results.
+\item The value of the cell expecteds should be 5 or more in at least 80\% of the cells, and no cell should have an expected of less than one. This assumption is most likely to be met if the sample size equals at least the number of cells multiplied by 5. Essentially, this assumption specifies the number of cases (sample size) needed to use the $\chi^2$ for any number of cells in that $\chi^2$. This requirement will be fully explained in the example of the calculation of the statistic in the case study example.
+\end{enumerate}
+
+The assumptions for Fisher's exact test (from statisticssolutions.com) are:
+\begin{enumerate}
+\item The row and column totals are fixed, not random.
+\item Sampling or allocation are random and observations are mutually independent within the constraints of fixed marginal totals.
+\item Each observation is mutually exclusive - in other words each observation can only be classified in one cell.
+\end{enumerate}
+
+It seems that the data satisfies the assumptions for both tests. We will inspect the results of both:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{chisq} \hlkwb{<-} \hlkwd{chisq.test}\hlstd{(contingency_table)}
+
+\hlkwd{print}\hlstd{(chisq)}
+\end{alltt}
+\begin{verbatim}
+## 
+## 	Pearson's Chi-squared test with Yates' continuity correction
+## 
+## data:  contingency_table
+## X-squared = 13.807, df = 1, p-value = 0.0002026
+\end{verbatim}
+\begin{alltt}
+\hlstd{fisher} \hlkwb{<-} \hlkwd{fisher.test}\hlstd{(contingency_table)}
+
+\hlkwd{print}\hlstd{(fisher)}
+\end{alltt}
+\begin{verbatim}
+## 
+## 	Fisher's Exact Test for Count Data
+## 
+## data:  contingency_table
+## p-value = 0.0001022
+## alternative hypothesis: true odds ratio is not equal to 1
+## 95 percent confidence interval:
+##  0.06590571 0.47305403
+## sample estimates:
+## odds ratio 
+##  0.1828989
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Both tests demonstrate that the rows and columns (ie. first and second births) are not independent, which agrees with the original graphical analysis in 3H5.
+
+\end{document}

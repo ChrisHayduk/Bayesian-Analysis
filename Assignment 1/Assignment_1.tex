@@ -158,7 +158,7 @@ Use simulation to approximate the result of 2M4. The target probability is \text
 \hlkwd{print}\hlstd{(ans)}
 \end{alltt}
 \begin{verbatim}
-## [1] 0.6696323
+## [1] 0.6637323
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -171,24 +171,100 @@ Use simulation to approximate the result of 2H1 The target probability is 0.1666
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcom{#Not sure how to go about this one.}
+\hlcom{#Target probability is about 0.167}
+\hlstd{probability_of_consecutive_twins} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{total_number_of_moms}\hlstd{)\{}
+  \hlstd{simulated_moms} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(total_number_of_moms,} \hlnum{1}\hlstd{,} \hlnum{0.5}\hlstd{)}
 
-\hlstd{num_sims} \hlkwb{<-} \hlnum{100000}
+  \hlstd{speciesA} \hlkwb{<-} \hlkwd{sum}\hlstd{(simulated_moms)}
 
-\hlstd{speciesA_twins} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(num_sims,} \hlnum{1}\hlstd{,} \hlnum{0.1}\hlstd{)}
+  \hlstd{speciesB} \hlkwb{<-} \hlstd{total_number_of_moms} \hlopt{-} \hlstd{speciesA}
 
-\hlstd{speciesB_twins} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(num_sims,} \hlnum{1}\hlstd{,} \hlnum{0.2}\hlstd{)}
+  \hlstd{speciesA_twins1} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(speciesA,} \hlnum{1}\hlstd{,} \hlnum{0.1}\hlstd{)}
+
+  \hlstd{speciesA_twins1} \hlkwb{<-} \hlkwd{sum}\hlstd{(speciesA_twins1)}
+
+  \hlstd{speciesB_twins1} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(speciesB,} \hlnum{1}\hlstd{,} \hlnum{0.2}\hlstd{)}
+
+  \hlstd{speciesB_twins1} \hlkwb{<-} \hlkwd{sum}\hlstd{(speciesB_twins1)}
+
+  \hlstd{speciesA_twins2} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(speciesA_twins1,} \hlnum{1}\hlstd{,} \hlnum{0.1}\hlstd{)}
+
+  \hlstd{speciesB_twins2} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(speciesB_twins1,} \hlnum{1}\hlstd{,} \hlnum{0.2}\hlstd{)}
+
+  \hlstd{prob} \hlkwb{<-} \hlstd{(}\hlkwd{sum}\hlstd{(speciesA_twins2)} \hlopt{+} \hlkwd{sum}\hlstd{(speciesB_twins2))}
+
+  \hlstd{prob} \hlkwb{<-} \hlstd{prob}\hlopt{/}\hlstd{(}\hlkwd{length}\hlstd{(speciesA_twins2)} \hlopt{+} \hlkwd{length}\hlstd{(speciesB_twins2))}
+
+  \hlkwd{return}\hlstd{(prob)}
+\hlstd{\}}
+
+\hlcom{#Now let's simulate 10000 runs and plot the results}
+\hlcom{#Set total_number_of_moms at 1000}
+\hlstd{df} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{results} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{10000}\hlstd{))}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{10000}\hlstd{)\{}
+  \hlstd{df}\hlopt{$}\hlstd{results[i]} \hlkwb{<-} \hlkwd{probability_of_consecutive_twins}\hlstd{(}\hlnum{1000}\hlstd{)}
+\hlstd{\}}
+\hlstd{mean_prob} \hlkwb{<-} \hlkwd{mean}\hlstd{(df}\hlopt{$}\hlstd{results)}
+\hlstd{mean_prob_text} \hlkwb{<-} \hlkwd{paste0}\hlstd{(}\hlstr{"Mean Probability: "}\hlstd{,} \hlkwd{round}\hlstd{(}\hlkwd{mean}\hlstd{(df}\hlopt{$}\hlstd{results),} \hlnum{4}\hlstd{))}
+
+\hlkwd{ggplot}\hlstd{(df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= results))} \hlopt{+}
+  \hlkwd{geom_histogram}\hlstd{(}\hlkwc{bins} \hlstd{=} \hlnum{20}\hlstd{,} \hlkwc{colour}\hlstd{=}\hlstr{"black"}\hlstd{,} \hlkwc{fill}\hlstd{=}\hlstr{"#DD8888"}\hlstd{)} \hlopt{+}
+  \hlkwd{scale_x_continuous}\hlstd{(}\hlkwc{breaks} \hlstd{=} \hlkwd{pretty}\hlstd{(df}\hlopt{$}\hlstd{results,} \hlkwc{n} \hlstd{=} \hlnum{10}\hlstd{))} \hlopt{+}
+  \hlkwd{geom_vline}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{xintercept}\hlstd{=mean_prob),}
+            \hlkwc{color}\hlstd{=}\hlstr{"black"}\hlstd{,} \hlkwc{linetype}\hlstd{=}\hlstr{"dashed"}\hlstd{,} \hlkwc{size}\hlstd{=}\hlnum{1}\hlstd{)} \hlopt{+}
+  \hlkwd{annotate}\hlstd{(}\hlstr{"text"}\hlstd{,} \hlkwc{x} \hlstd{=} \hlnum{0.1}\hlstd{,} \hlkwc{y} \hlstd{=} \hlnum{1550}\hlstd{,} \hlkwc{label} \hlstd{= mean_prob_text)} \hlopt{+}
+  \hlkwd{xlab}\hlstd{(}\hlstr{"Probability"}\hlstd{)} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Histogram of Simulations for P(Twins | Twins)"}\hlstd{)} \hlopt{+}
+  \hlkwd{theme}\hlstd{(}\hlkwc{plot.title} \hlstd{=} \hlkwd{element_text}\hlstd{(}\hlkwc{hjust} \hlstd{=} \hlnum{0.5}\hlstd{))}
 \end{alltt}
 \end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-4-1} 
+
 \end{knitrout}
+
+As can be seen by the simulation, our function approximates the true probability reasonably well after 10,000 iterations.
 
 \section{Ch. 3}
 
 \begin{problem}{1}
 \text{ }\\
-Run the code form 3M2 10,000 times. How much variation do you see in the endpoints? What does it mean? Also, see how your answers change if you increase the length of p\_grid and/or the number of samples.
+Run the code from 3M2 10,000 times. How much variation do you see in the endpoints? What does it mean? Also, see how your answers change if you increase the length of p\_grid and/or the number of samples.
 \end{problem}
 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Histogram function to assist with plotting the endpoints}
+\hlstd{histogram_func} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{df}\hlstd{,} \hlkwc{title}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{TRUE}\hlstd{)\{}
+  \hlkwa{if}\hlstd{(lower)\{}
+    \hlstd{df}\hlopt{$}\hlstd{results} \hlkwb{<-} \hlstd{df}\hlopt{$}\hlstd{lower}
+    \hlstd{x_label} \hlkwb{<-} \hlstr{"HPDI Lower Endpoint"}
+    \hlstd{text_annotation} \hlkwb{<-} \hlstr{"Mean Lower Endpoint: "}
+  \hlstd{\}} \hlkwa{else}\hlstd{\{}
+    \hlstd{df}\hlopt{$}\hlstd{results} \hlkwb{<-} \hlstd{df}\hlopt{$}\hlstd{upper}
+    \hlstd{x_label} \hlkwb{<-} \hlstr{"HPDI Upper Endpoint"}
+    \hlstd{text_annotation} \hlkwb{<-} \hlstr{"Mean Upper Endpoint: "}
+  \hlstd{\}}
+
+  \hlstd{mean_prob} \hlkwb{<-} \hlkwd{mean}\hlstd{(df}\hlopt{$}\hlstd{results)}
+  \hlstd{mean_prob_text} \hlkwb{<-} \hlkwd{paste0}\hlstd{(text_annotation,} \hlkwd{round}\hlstd{(}\hlkwd{mean}\hlstd{(df}\hlopt{$}\hlstd{results),} \hlnum{4}\hlstd{))}
+
+  \hlstd{plot} \hlkwb{<-} \hlkwd{ggplot}\hlstd{(df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= results))} \hlopt{+}
+          \hlkwd{geom_histogram}\hlstd{(}\hlkwc{bins} \hlstd{=} \hlnum{20}\hlstd{,} \hlkwc{colour}\hlstd{=}\hlstr{"black"}\hlstd{,} \hlkwc{fill}\hlstd{=}\hlstr{"#DD8888"}\hlstd{)} \hlopt{+}
+          \hlkwd{scale_x_continuous}\hlstd{(}\hlkwc{breaks} \hlstd{=} \hlkwd{pretty}\hlstd{(df}\hlopt{$}\hlstd{results,} \hlkwc{n} \hlstd{=} \hlnum{10}\hlstd{))} \hlopt{+}
+          \hlkwd{geom_vline}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{xintercept}\hlstd{=mean_prob),}
+                     \hlkwc{color}\hlstd{=}\hlstr{"black"}\hlstd{,} \hlkwc{linetype}\hlstd{=}\hlstr{"dashed"}\hlstd{,} \hlkwc{size}\hlstd{=}\hlnum{1}\hlstd{)} \hlopt{+}
+          \hlkwd{xlab}\hlstd{(x_label)} \hlopt{+}
+          \hlkwd{ggtitle}\hlstd{(title)} \hlopt{+}
+          \hlkwd{theme}\hlstd{(}\hlkwc{plot.title} \hlstd{=} \hlkwd{element_text}\hlstd{(}\hlkwc{hjust} \hlstd{=} \hlnum{0.5}\hlstd{))}
+
+  \hlkwd{return}\hlstd{(plot)}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Running 10,000 simulations:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -213,30 +289,43 @@ Run the code form 3M2 10,000 times. How much variation do you see in the endpoin
       \hlkwd{mean}\hlstd{(HPDI_df[,}\hlnum{1}\hlstd{]),} \hlstr{", "}\hlstd{,} \hlkwd{mean}\hlstd{(HPDI_df[,}\hlnum{2}\hlstd{])))}
 \end{alltt}
 \begin{verbatim}
-## [1] "Mean HPDI interval: 0.335387187187187, 0.721979479479479"
+## [1] "Mean HPDI interval: 0.335438838838839, 0.722031531531532"
 \end{verbatim}
 \begin{alltt}
 \hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"Standard deviation of lower bound of HPDI: "}\hlstd{,}
              \hlkwd{sd}\hlstd{(HPDI_df[,}\hlnum{1}\hlstd{])))}
 \end{alltt}
 \begin{verbatim}
-## [1] "Standard deviation of lower bound of HPDI: 0.00580605441531374"
+## [1] "Standard deviation of lower bound of HPDI: 0.00585061961183533"
 \end{verbatim}
 \begin{alltt}
 \hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"Standard deviation of upper bound of HPDI: "}\hlstd{,}
              \hlkwd{sd}\hlstd{(HPDI_df[,}\hlnum{2}\hlstd{])))}
 \end{alltt}
 \begin{verbatim}
-## [1] "Standard deviation of upper bound of HPDI: 0.0056140308470188"
+## [1] "Standard deviation of upper bound of HPDI: 0.00565161454745305"
 \end{verbatim}
+\begin{alltt}
+\hlstd{lower_plot} \hlkwb{<-} \hlkwd{histogram_func}\hlstd{(HPDI_df,}
+               \hlstr{"Histogram of Lower HPDI after 10,000 Simulations"}\hlstd{)}
+\hlstd{upper_plot} \hlkwb{<-} \hlkwd{histogram_func}\hlstd{(HPDI_df,}
+               \hlstr{"Histogram of Upper HPDI after 10,000 Simulations"}\hlstd{,}
+               \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+
+\hlkwd{grid.arrange}\hlstd{(lower_plot, upper_plot,} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{)}
+\end{alltt}
 \end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-6-1} 
+
 \end{knitrout}
+
+We can see that the lower endpoint appears to vary more than upper endpoint.
 
 If we vary the length of p\_grid:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{sequence} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{100}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{10000}\hlstd{,} \hlkwc{by} \hlstd{=} \hlnum{100}\hlstd{)}
+\hlstd{sequence} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{100}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{10000}\hlstd{,} \hlkwc{by} \hlstd{=} \hlnum{10}\hlstd{)}
 
 \hlstd{HPDI_df} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{lower} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(sequence)),}
                       \hlkwc{upper} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(sequence)),}
@@ -270,21 +359,32 @@ If we vary the length of p\_grid:
       \hlkwd{mean}\hlstd{(HPDI_df[,}\hlnum{1}\hlstd{]),} \hlstr{", "}\hlstd{,} \hlkwd{mean}\hlstd{(HPDI_df[,}\hlnum{2}\hlstd{])))}
 \end{alltt}
 \begin{verbatim}
-## [1] "Mean HPDI interval: 0.335859388507128, 0.722418289796521"
+## [1] "Mean HPDI interval: 0.336166437982061, 0.722897197411659"
 \end{verbatim}
 \begin{alltt}
 \hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"SD of lower bound of HPDI: "}\hlstd{,} \hlkwd{sd}\hlstd{(HPDI_df[,}\hlnum{1}\hlstd{])))}
 \end{alltt}
 \begin{verbatim}
-## [1] "SD of lower bound of HPDI: 0.00554321079395621"
+## [1] "SD of lower bound of HPDI: 0.00584574453796885"
 \end{verbatim}
 \begin{alltt}
 \hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"SD of upper bound of HPDI: "}\hlstd{,} \hlkwd{sd}\hlstd{(HPDI_df[,}\hlnum{2}\hlstd{])))}
 \end{alltt}
 \begin{verbatim}
-## [1] "SD of upper bound of HPDI: 0.00536087562219747"
+## [1] "SD of upper bound of HPDI: 0.00588149272981486"
 \end{verbatim}
+\begin{alltt}
+\hlstd{lower_plot} \hlkwb{<-} \hlkwd{histogram_func}\hlstd{(HPDI_df,}
+               \hlstr{"Histogram of Lower HPDI after Varying P_Grid"}\hlstd{)}
+\hlstd{upper_plot} \hlkwb{<-} \hlkwd{histogram_func}\hlstd{(HPDI_df,}
+               \hlstr{"Histogram of Upper HPDI after Varying P_Grid"}\hlstd{,}
+               \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+
+\hlkwd{grid.arrange}\hlstd{(lower_plot, upper_plot,} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{)}
+\end{alltt}
 \end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-7-1} 
+
 \end{knitrout}
 
 Now if we vary the number of samples:
@@ -298,7 +398,7 @@ Now if we vary the number of samples:
 
 \hlstd{grid_approx} \hlkwb{<-} \hlkwd{compute_grid_approximate_posterior}\hlstd{(p_grid, data, prior)}
 
-\hlstd{sequence} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{100}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{10000}\hlstd{,} \hlkwc{by} \hlstd{=} \hlnum{100}\hlstd{)}
+\hlstd{sequence} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{100}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{10000}\hlstd{,} \hlkwc{by} \hlstd{=} \hlnum{10}\hlstd{)}
 
 \hlstd{HPDI_df} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{lower} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(sequence)),}
                       \hlkwc{upper} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(sequence),}
@@ -326,21 +426,32 @@ Now if we vary the number of samples:
       \hlkwd{mean}\hlstd{(HPDI_df[,}\hlnum{1}\hlstd{]),} \hlstr{", "}\hlstd{,} \hlkwd{mean}\hlstd{(HPDI_df[,}\hlnum{2}\hlstd{])))}
 \end{alltt}
 \begin{verbatim}
-## [1] "Mean HPDI interval: 0.335785785785786, 0.721581581581582"
+## [1] "Mean HPDI interval: 0.336086843654957, 0.721608591437047"
 \end{verbatim}
 \begin{alltt}
 \hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"SD of lower bound of HPDI: "}\hlstd{,} \hlkwd{sd}\hlstd{(HPDI_df[,}\hlnum{1}\hlstd{])))}
 \end{alltt}
 \begin{verbatim}
-## [1] "SD of lower bound of HPDI: 0.00866760938810869"
+## [1] "SD of lower bound of HPDI: 0.00864784890462752"
 \end{verbatim}
 \begin{alltt}
 \hlkwd{print}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"SD of upper bound of HPDI: "}\hlstd{,} \hlkwd{sd}\hlstd{(HPDI_df[,}\hlnum{2}\hlstd{])))}
 \end{alltt}
 \begin{verbatim}
-## [1] "SD of upper bound of HPDI: 0.00877512492908868"
+## [1] "SD of upper bound of HPDI: 0.00840545532680845"
 \end{verbatim}
+\begin{alltt}
+\hlstd{lower_plot} \hlkwb{<-} \hlkwd{histogram_func}\hlstd{(HPDI_df,}
+               \hlstr{"Histogram of Lower HPDI after Varying the Number of Samples"}\hlstd{)}
+\hlstd{upper_plot} \hlkwb{<-} \hlkwd{histogram_func}\hlstd{(HPDI_df,}
+               \hlstr{"Histogram of Upper HPDI after Varying the Number of Samples"}\hlstd{,}
+               \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+
+\hlkwd{grid.arrange}\hlstd{(lower_plot, upper_plot,} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{)}
+\end{alltt}
 \end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-8-1} 
+
 \end{knitrout}
 
 \begin{problem}{2}

@@ -44,6 +44,7 @@ opts_chunk$set(message=FALSE, # don't print R messages in pdf -- CHANGE TO FALSE
 # R packages required
 suppressMessages(library(tidyverse, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
 suppressMessages(library(rethinking, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(gridExtra, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
 @
 
 \section{Ch. 2}
@@ -119,23 +120,94 @@ Use simulation to approximate the result of 2H1 The target probability is 0.1666
 
 <<warning=FALSE, message=FALSE>>=
 
-#Not sure how to go about this one.
+#Target probability is about 0.167
+probability_of_consecutive_twins <- function(total_number_of_moms){
+  simulated_moms <- rbinom(total_number_of_moms, 1, 0.5)
 
-num_sims <- 100000
+  speciesA <- sum(simulated_moms)
 
-speciesA_twins <- rbinom(num_sims, 1, 0.1)
+  speciesB <- total_number_of_moms - speciesA
 
-speciesB_twins <- rbinom(num_sims, 1, 0.2)
+  speciesA_twins1 <- rbinom(speciesA, 1, 0.1)
+
+  speciesA_twins1 <- sum(speciesA_twins1)
+
+  speciesB_twins1 <- rbinom(speciesB, 1, 0.2)
+
+  speciesB_twins1 <- sum(speciesB_twins1)
+
+  speciesA_twins2 <- rbinom(speciesA_twins1, 1, 0.1)
+
+  speciesB_twins2 <- rbinom(speciesB_twins1, 1, 0.2)
+
+  prob <- (sum(speciesA_twins2) + sum(speciesB_twins2))
+          
+  prob <- prob/(length(speciesA_twins2) + length(speciesB_twins2))
+  
+  return(prob)
+}
+
+#Now let's simulate 10000 runs and plot the results
+#Set total_number_of_moms at 1000
+df <- data.frame(results = rep(0, 10000))
+for(i in 1:10000){
+  df$results[i] <- probability_of_consecutive_twins(1000)
+}
+mean_prob <- mean(df$results)
+mean_prob_text <- paste0("Mean Probability: ", round(mean(df$results), 4))
+
+ggplot(df, aes(x = results)) + 
+  geom_histogram(bins = 20, colour="black", fill="#DD8888") +
+  scale_x_continuous(breaks = pretty(df$results, n = 10)) +
+  geom_vline(aes(xintercept=mean_prob),
+            color="black", linetype="dashed", size=1) +
+  annotate("text", x = 0.1, y = 1550, label = mean_prob_text) +
+  xlab("Probability") +
+  ggtitle("Histogram of Simulations for P(Twins | Twins)") +
+  theme(plot.title = element_text(hjust = 0.5))
 
 @
+
+As can be seen by the simulation, our function approximates the true probability reasonably well after 10,000 iterations.
 
 \section{Ch. 3}
 
 \begin{problem}{1}
 \text{ }\\
-Run the code form 3M2 10,000 times. How much variation do you see in the endpoints? What does it mean? Also, see how your answers change if you increase the length of p\_grid and/or the number of samples.
+Run the code from 3M2 10,000 times. How much variation do you see in the endpoints? What does it mean? Also, see how your answers change if you increase the length of p\_grid and/or the number of samples.
 \end{problem}
 
+<<>>=
+#Histogram function to assist with plotting the endpoints
+histogram_func <- function(df, title, lower = TRUE){
+  if(lower){
+    df$results <- df$lower
+    x_label <- "HPDI Lower Endpoint"
+    text_annotation <- "Mean Lower Endpoint: "
+  } else{
+    df$results <- df$upper
+    x_label <- "HPDI Upper Endpoint"
+    text_annotation <- "Mean Upper Endpoint: "
+  }
+  
+  mean_prob <- mean(df$results)
+  mean_prob_text <- paste0(text_annotation, round(mean(df$results), 4))
+    
+  plot <- ggplot(df, aes(x = results)) + 
+          geom_histogram(bins = 20, colour="black", fill="#DD8888") +
+          scale_x_continuous(breaks = pretty(df$results, n = 10)) +
+          geom_vline(aes(xintercept=mean_prob), 
+                     color="black", linetype="dashed", size=1) +
+          xlab(x_label) +
+          ggtitle(title) +
+          theme(plot.title = element_text(hjust = 0.5))
+  
+  return(plot)
+}
+
+@
+
+Running 10,000 simulations:
 <<warning=FALSE, message=FALSE>>=
 
 p_grid <- seq(from = 0, to = 1, length.out = 1000)
@@ -162,12 +234,22 @@ print(paste0("Standard deviation of lower bound of HPDI: ",
 print(paste0("Standard deviation of upper bound of HPDI: ", 
              sd(HPDI_df[,2])))
 
+lower_plot <- histogram_func(HPDI_df, 
+               "Histogram of Lower HPDI after 10,000 Simulations")
+upper_plot <- histogram_func(HPDI_df, 
+               "Histogram of Upper HPDI after 10,000 Simulations", 
+               lower = FALSE)
+
+grid.arrange(lower_plot, upper_plot, nrow = 2)
+
 @
+
+We can see that the lower endpoint appears to vary more than upper endpoint.
 
 If we vary the length of p\_grid:
 <<warning=FALSE, message=FALSE>>=
 
-sequence <- seq(from = 100, to = 10000, by = 100)
+sequence <- seq(from = 100, to = 10000, by = 10)
 
 HPDI_df <- data.frame(lower = rep(0, length(sequence)), 
                       upper = rep(0, length(sequence)), 
@@ -197,6 +279,14 @@ print(paste0("Mean HPDI interval: ",
 print(paste0("SD of lower bound of HPDI: ", sd(HPDI_df[,1])))
 print(paste0("SD of upper bound of HPDI: ", sd(HPDI_df[,2])))
 
+lower_plot <- histogram_func(HPDI_df, 
+               "Histogram of Lower HPDI after Varying P_Grid")
+upper_plot <- histogram_func(HPDI_df, 
+               "Histogram of Upper HPDI after Varying P_Grid", 
+               lower = FALSE)
+
+grid.arrange(lower_plot, upper_plot, nrow = 2)
+
 @
 
 Now if we vary the number of samples:
@@ -209,7 +299,7 @@ data <- c(data, rep("L", 7))
 
 grid_approx <- compute_grid_approximate_posterior(p_grid, data, prior)
 
-sequence <- seq(from = 100, to = 10000, by = 100)
+sequence <- seq(from = 100, to = 10000, by = 10)
 
 HPDI_df <- data.frame(lower = rep(0, length(sequence)), 
                       upper = rep(0, length(sequence), 
@@ -232,6 +322,15 @@ print(paste0("Mean HPDI interval: ",
       mean(HPDI_df[,1]), ", ", mean(HPDI_df[,2])))
 print(paste0("SD of lower bound of HPDI: ", sd(HPDI_df[,1])))
 print(paste0("SD of upper bound of HPDI: ", sd(HPDI_df[,2])))
+
+lower_plot <- histogram_func(HPDI_df, 
+               "Histogram of Lower HPDI after Varying the Number of Samples")
+upper_plot <- histogram_func(HPDI_df, 
+               "Histogram of Upper HPDI after Varying the Number of Samples", 
+               lower = FALSE)
+
+grid.arrange(lower_plot, upper_plot, nrow = 2)
+
 
 @
 

@@ -1,0 +1,330 @@
+\documentclass[12pt,addpoints,answers]{exam}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}   % Print solutions
+ 
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb, mathtools}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{fixltx2e}
+\usepackage[shortlabels]{enumitem}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{lscape}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{textcomp}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+\singlespacing
+
+\title{Bayesian Analysis - Assignment #2}
+
+\author{Chris Hayduk}
+\date{\today}
+
+\maketitle
+
+
+
+\section{Chapter 4 (4M4-4M5-4M6) Extensions}
+
+\begin{questions}
+\question Calculate the minimum, maximum, median, mean, and standard deviation of heights for people 18 and younger, separately for males and females. Would you change your priors based on this information? Justify.
+\begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{under_18} \hlkwb{<-} \hlstd{data[data}\hlopt{$}\hlstd{age} \hlopt{<=} \hlnum{18}\hlstd{, ]}
+
+\hlstd{under_18_male} \hlkwb{<-} \hlstd{data[data}\hlopt{$}\hlstd{male} \hlopt{==} \hlnum{1}\hlstd{, ]}
+
+\hlstd{under_18_female} \hlkwb{<-} \hlstd{data[data}\hlopt{$}\hlstd{male} \hlopt{==} \hlnum{0}\hlstd{, ]}
+
+\hlstd{summary} \hlkwb{<-}
+  \hlkwd{list}\hlstd{(}\hlstr{"Height for Males Under 18"} \hlstd{=}
+       \hlkwd{list}\hlstd{(}\hlstr{"min"} \hlstd{=} \hlopt{~} \hlkwd{min}\hlstd{(.data}\hlopt{$}\hlstd{height),}
+            \hlstr{"median"} \hlstd{=} \hlopt{~} \hlkwd{median}\hlstd{(.data}\hlopt{$}\hlstd{height),}
+            \hlstr{"max"} \hlstd{=} \hlopt{~} \hlkwd{max}\hlstd{(.data}\hlopt{$}\hlstd{height),}
+            \hlstr{"mean (sd)"} \hlstd{=} \hlopt{~} \hlstd{qwraps2}\hlopt{::}\hlkwd{mean_sd}\hlstd{(.data}\hlopt{$}\hlstd{height)))}
+
+\hlstd{table1} \hlkwb{<-} \hlkwd{summary_table}\hlstd{(under_18_male, summary)}
+
+\hlcom{#print(table1, markup = "latex")}
+
+\hlstd{summary} \hlkwb{<-}
+  \hlkwd{list}\hlstd{(}\hlstr{"Height for Females Under 18"} \hlstd{=}
+       \hlkwd{list}\hlstd{(}\hlstr{"min"} \hlstd{=} \hlopt{~} \hlkwd{min}\hlstd{(.data}\hlopt{$}\hlstd{height),}
+            \hlstr{"median"} \hlstd{=} \hlopt{~} \hlkwd{median}\hlstd{(.data}\hlopt{$}\hlstd{height),}
+            \hlstr{"max"} \hlstd{=} \hlopt{~} \hlkwd{max}\hlstd{(.data}\hlopt{$}\hlstd{height),}
+            \hlstr{"mean (sd)"} \hlstd{=} \hlopt{~} \hlstd{qwraps2}\hlopt{::}\hlkwd{mean_sd}\hlstd{(.data}\hlopt{$}\hlstd{height)))}
+
+\hlstd{table2} \hlkwb{<-} \hlkwd{summary_table}\hlstd{(under_18_female, summary)}
+
+\hlcom{#print(table2, markup = "latex")}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\begin{center}
+\begin{tabular}{ | l | c | }
+\hline
+ & Under 18 Males (N = 257)\\
+\hline
+\bf{Height for Males Under 18} & ~\\
+\hline
+~~ min & 60.452\\
+\hline
+~~ median & 157.48\\
+\hline
+~~ max & 179.07\\
+\hline
+~~ mean (sd) & 142.32 $\pm$ 28.87\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{ | l | c | }
+\hline
+ & Under 18 Females (N = 287)\\
+\hline
+\bf{Height for Females Under 18} & ~\\
+\hline
+~~ min & 53.975\\
+\hline
+~~ median & 146.05\\
+\hline
+~~ max & 162.56\\
+\hline
+~~ mean (sd) & 134.63 $\pm$ 25.93\\
+\hline
+\end{tabular}
+\end{center}
+
+After examining the data in the two tables above, I would change the priors to something like the following:
+\begin{center}
+height\textsubscript{i} $\sim$ Normal($\mu$\textsubscript{i}, $\sigma$)\\
+$\mu$\textsubscript{i} = $\alpha$ + $\beta$*year\textsubscript{i}\\
+$\alpha$ $\sim$ Normal(57, 25)\\
+$\beta$ $\sim$ Normal(38, 20)\\
+$\sigma$ $\sim$ Uniform(0, 50)
+\end{center}
+
+I selected the mean for $\alpha$ by taking the weighted average of the minimum heights for males and females. I selected the mean for $\beta$ by subtracting the weighted average of minimum heights from the weighted average of maximum heights. I then divided this number by 3 in order to derive the average amount that an individual must grow over the course of 3 years in order to reach the weighted average maximum height after starting from the weighted average minimum height. I also increased the standard deviation for $\beta$ to reflect the uncertainty in the growth rate depending upon age and sex.
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Plot height (y-axis) against age (x-axis) with the points color-coded by male/female, just for those 18 and younger. What type of relationship do you see? Can you use this information to set up a model for the type of data described in 4M4 (ie., each student measured for three years)? Justify.
+\begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{under_18}\hlopt{$}\hlstd{male} \hlkwb{<-} \hlkwd{ifelse}\hlstd{(under_18}\hlopt{$}\hlstd{male} \hlopt{==} \hlnum{1}\hlstd{,} \hlstr{"male"}\hlstd{,} \hlstr{"female"}\hlstd{)}
+
+\hlkwd{names}\hlstd{(under_18)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"height"}\hlstd{,} \hlstr{"weight"}\hlstd{,} \hlstr{"age"}\hlstd{,} \hlstr{"sex"}\hlstd{)}
+
+\hlstd{sp} \hlkwb{<-} \hlkwd{ggplot}\hlstd{(under_18,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=age,} \hlkwc{y}\hlstd{=height))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color}\hlstd{=sex))} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Scatterplot of Age vs. Height"}\hlstd{)} \hlopt{+}
+  \hlkwd{labs}\hlstd{(}\hlkwc{x} \hlstd{=} \hlstr{"Age (years)"}\hlstd{,} \hlkwc{y} \hlstd{=} \hlstr{"Height (cm)"}\hlstd{)} \hlopt{+}
+  \hlkwd{scale_x_continuous}\hlstd{(}\hlkwc{breaks} \hlstd{=} \hlkwd{pretty}\hlstd{(under_18}\hlopt{$}\hlstd{age,} \hlkwc{n} \hlstd{=} \hlnum{7}\hlstd{))} \hlopt{+}
+  \hlstd{theme.info}
+
+\hlstd{sp}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-3-1} 
+
+\end{knitrout}
+
+The relationship between age and height appears to be roughly quadratic. Thus, we may want to modify the model as follows:
+\begin{center}
+height\textsubscript{i} $\sim$ Normal($\mu$\textsubscript{i}, $\sigma$)\\
+$\mu$\textsubscript{i} = $\alpha$ + $\beta$\textsubscript{1}*year\textsubscript{i} + $\beta$\textsubscript{2}*year\textsubscript{i}\textsuperscript{2}\\
+$\alpha$ $\sim$ Normal(57, 25)\\
+$\beta$\textsubscript{1} $\sim$ Normal(0, 50)\\
+$\beta$\textsubscript{2} $\sim$ Normal(0, 50)\\
+$\sigma$ $\sim$ Uniform(0, 50)
+\end{center}
+
+Now that the relationship between the coefficients and the outcome is not so clear, I have centered the priors for both $\beta$ terms at 0 and increased their uncertainty.
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Add a horizontal line at 120 cm. on your height vs. age plot. In 4M5, you learn that the average height in the 1st year was 120 cm. Can you guess roughly how old the students in such a data set would be? Would it be reasonable to assume the students in the data set are all the same age?
+\begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{sp} \hlopt{+} \hlkwd{geom_hline}\hlstd{(}\hlkwc{yintercept} \hlstd{=} \hlnum{120}\hlstd{,} \hlkwc{linetype} \hlstd{=} \hlstr{"dashed"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-4-1} 
+
+\end{knitrout}
+
+Judging by the plot, it appears that an average height of 120 cm is attained somewhere between 9 - 11 years old. Let's check the numbers:
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{nine_years_old} \hlkwb{<-} \hlstd{under_18[under_18}\hlopt{$}\hlstd{age} \hlopt{==} \hlnum{9}\hlstd{,]}
+\hlkwd{print}\hlstd{(}\hlkwd{mean}\hlstd{(nine_years_old}\hlopt{$}\hlstd{height))}
+\end{alltt}
+\begin{verbatim}
+## [1] 117.5808
+\end{verbatim}
+\begin{alltt}
+\hlstd{ten_years_old} \hlkwb{<-} \hlstd{under_18[under_18}\hlopt{$}\hlstd{age} \hlopt{==} \hlnum{10}\hlstd{,]}
+\hlkwd{print}\hlstd{(}\hlkwd{mean}\hlstd{(ten_years_old}\hlopt{$}\hlstd{height))}
+\end{alltt}
+\begin{verbatim}
+## [1] 120.015
+\end{verbatim}
+\begin{alltt}
+\hlstd{eleven_years_old} \hlkwb{<-} \hlstd{under_18[under_18}\hlopt{$}\hlstd{age} \hlopt{==} \hlnum{11}\hlstd{,]}
+\hlkwd{print}\hlstd{(}\hlkwd{mean}\hlstd{(eleven_years_old}\hlopt{$}\hlstd{height))}
+\end{alltt}
+\begin{verbatim}
+## [1] 121.2056
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+We can see based upon the output above that, if all students in the data set are the same age, they are most likely starting at 10 years old. It is reasonable to assume that the students are all the same age because the growth rate would not be very meaningful if we were looking at students from a wide range of ages. Furthermore, the average height for students that are 10 years old nearly exactly matches the average given in the question.
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question The Centers for Disease Control (CDC) have height and weight charts by age for boys and girls. Find and download this information. Based on those results, write a suitable Bayesian model for predicting height from age. Justify your choices.
+\begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{boys_height_chart} \hlkwb{<-} \hlkwd{read_csv}\hlstd{(}\hlstr{"Males Age 2-20.csv"}\hlstd{)}
+\hlstd{girls_height_chart} \hlkwb{<-} \hlkwd{read_csv}\hlstd{(}\hlstr{"Females Age 2-20.csv"}\hlstd{)}
+
+\hlkwd{head}\hlstd{(boys_height_chart)}
+\end{alltt}
+\begin{verbatim}
+## # A tibble: 6 x 10
+##   `Age (in months~ `3rd Percentile~ `5th Percentile~ `10th Percentil~
+##              <dbl>            <dbl>            <dbl>            <dbl>
+## 1             24               79.9             80.7             82.0
+## 2             24.5             80.3             81.1             82.4
+## 3             25.5             81.0             81.8             83.1
+## 4             26.5             81.7             82.6             83.8
+## 5             27.5             82.4             83.3             84.6
+## 6             28.5             83.1             84.0             85.3
+## # ... with 6 more variables: `25th Percentile Stature (in
+## #   centimeters)` <dbl>, `50th Percentile Stature (in centimeters)` <dbl>,
+## #   `75th Percentile Stature (in centimeters)` <dbl>, `90th Percentile
+## #   Stature (in centimeters)` <dbl>, `95th Percentile Stature (in
+## #   centimeters)` <dbl>, `97th Percentile Stature (in centimeters)` <dbl>
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{head}\hlstd{(girls_height_chart)}
+\end{alltt}
+\begin{verbatim}
+## # A tibble: 6 x 10
+##   `Age (in months~ `3rd Percentile~ `5th Percentile~ `10th Percentil~
+##              <dbl>            <dbl>            <dbl>            <dbl>
+## 1             24               78.4             79.3             80.5
+## 2             24.5             78.8             79.6             80.9
+## 3             25.5             79.6             80.4             81.7
+## 4             26.5             80.4             81.2             82.5
+## 5             27.5             81.1             82.0             83.3
+## 6             28.5             81.9             82.7             84.1
+## # ... with 6 more variables: `25th Percentile Stature (in
+## #   centimeters)` <dbl>, `50th Percentile Stature (in centimeters)` <dbl>,
+## #   `75th Percentile Stature (in centimeters)` <dbl>, `90th Percentile
+## #   Stature (in centimeters)` <dbl>, `95th Percentile Stature (in
+## #   centimeters)` <dbl>, `97th Percentile Stature (in centimeters)` <dbl>
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Use the \textt{Howell1} data to fit the model from part 4. Interpret your parameter estimates.
+\begin{solution}
+
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Fit a suitable (frequentist) regression model to the \textt{Howell1} data. Interpret your parameter estimates.
+\begin{solution}
+
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Replace the 0/1 representing male and female in the Howell1 data to the character strings "male" and "female". Fit a suitable (frequentist) regression model using both age and sex as predictors. Interpret your parameter estimates. Is sex a statistically significant variable?
+\begin{solution}
+
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Plot the models from questions 5, 6, and 7 on a scatter plot with height vs. age. Which model fits better? Justify your answer.
+\begin{solution}
+
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Create a new scatter plot with all of the \textt{Howell1} data, color-coded by male/female. Would the models from questions 5, 6, and 7 be appropriate to apply to the full data set? Explain. Connect to what we discussed about prediction in Lecture 3 of the Applied Regression class.
+\begin{solution}
+
+\end{solution}
+\end{questions}
+\end{document}

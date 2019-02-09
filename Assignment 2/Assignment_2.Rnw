@@ -1,0 +1,238 @@
+\documentclass[12pt,addpoints,answers]{exam}   % Print solutions
+ 
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb, mathtools}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{fixltx2e}
+\usepackage[shortlabels]{enumitem}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{lscape}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{textcomp}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+
+\begin{document}
+
+\singlespacing
+
+\title{Bayesian Analysis - Assignment #2}
+
+\author{Chris Hayduk}
+\date{\today}
+
+\maketitle
+
+<<echo=F, results = 'hide', warning=FALSE, message=FALSE>>=
+# set the global chunk options
+opts_chunk$set(message=FALSE, # don't print R messages in pdf -- CHANGE TO FALSE WHEN SUBMITTING FINAL VERSION!!!
+               warning=FALSE) # don't print warnings in pdf -- CHANGE TO FALSE WHEN SUBMITTING FINAL VERSION!!!
+
+# load .RData files, .R files, etc.
+# R packages required
+suppressMessages(library(tidyverse, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(rethinking, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(gridExtra, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(qwraps2, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+
+options(qwraps2_markup = "latex")
+knitr::opts_chunk$set(size = 'footnotesize', concordance=TRUE)
+knitr::opts_chunk$set(fig.width=10, fig.height=6)
+
+theme.info <- theme(plot.title = element_text(size=16, hjust=0.5),
+                    axis.title = element_text(size=14),
+                    axis.text = element_text(size=14))
+
+data(Howell1)
+
+data <- Howell1
+
+@
+
+\section{Chapter 4 (4M4-4M5-4M6) Extensions}
+
+\begin{questions}
+\question Calculate the minimum, maximum, median, mean, and standard deviation of heights for people 18 and younger, separately for males and females. Would you change your priors based on this information? Justify.
+\begin{solution}
+<<>>=
+
+under_18 <- data[data$age <= 18, ]
+
+under_18_male <- data[data$male == 1, ]
+
+under_18_female <- data[data$male == 0, ]
+
+summary <-
+  list("Height for Males Under 18" =
+       list("min" = ~ min(.data$height),
+            "median" = ~ median(.data$height),
+            "max" = ~ max(.data$height),
+            "mean (sd)" = ~ qwraps2::mean_sd(.data$height)))
+
+table1 <- summary_table(under_18_male, summary)
+
+#print(table1, markup = "latex")
+
+summary <- 
+  list("Height for Females Under 18" =
+       list("min" = ~ min(.data$height),
+            "median" = ~ median(.data$height),
+            "max" = ~ max(.data$height),
+            "mean (sd)" = ~ qwraps2::mean_sd(.data$height)))
+
+table2 <- summary_table(under_18_female, summary)
+
+#print(table2, markup = "latex")
+
+@
+\begin{center}
+\begin{tabular}{ | l | c | }
+\hline
+ & Under 18 Males (N = 257)\\
+\hline
+\bf{Height for Males Under 18} & ~\\
+\hline
+~~ min & 60.452\\
+\hline
+~~ median & 157.48\\
+\hline
+~~ max & 179.07\\
+\hline
+~~ mean (sd) & 142.32 $\pm$ 28.87\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{ | l | c | }
+\hline
+ & Under 18 Females (N = 287)\\
+\hline
+\bf{Height for Females Under 18} & ~\\
+\hline
+~~ min & 53.975\\
+\hline
+~~ median & 146.05\\
+\hline
+~~ max & 162.56\\
+\hline
+~~ mean (sd) & 134.63 $\pm$ 25.93\\
+\hline
+\end{tabular}
+\end{center}
+
+After examining the data in the two tables above, I would change the priors to something like the following:
+\begin{center}
+height\textsubscript{i} $\sim$ Normal($\mu$\textsubscript{i}, $\sigma$)\\
+$\mu$\textsubscript{i} = $\alpha$ + $\beta$*year\textsubscript{i}\\
+$\alpha$ $\sim$ Normal(57, 25)\\
+$\beta$ $\sim$ Normal(38, 20)\\
+$\sigma$ $\sim$ Uniform(0, 50)
+\end{center}
+
+I selected the mean for $\alpha$ by taking the weighted average of the minimum heights for males and females. I selected the mean for $\beta$ by subtracting the weighted average of minimum heights from the weighted average of maximum heights. I then divided this number by 3 in order to derive the average amount that an individual must grow over the course of 3 years in order to reach the weighted average maximum height after starting from the weighted average minimum height. I also increased the standard deviation for $\beta$ to reflect the uncertainty in the growth rate depending upon age and sex.
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Plot height (y-axis) against age (x-axis) with the points color-coded by male/female, just for those 18 and younger. What type of relationship do you see? Can you use this information to set up a model for the type of data described in 4M4 (ie., each student measured for three years)? Justify.
+\begin{solution}
+<<>>=
+under_18$male <- ifelse(under_18$male == 1, "male", "female")
+
+names(under_18) <- c("height", "weight", "age", "sex")
+
+sp <- ggplot(under_18, aes(x=age, y=height)) + 
+  geom_point(aes(color=sex)) +
+  ggtitle("Scatterplot of Age vs. Height") +
+  labs(x = "Age (years)", y = "Height (cm)") +
+  scale_x_continuous(breaks = pretty(under_18$age, n = 7)) +
+  theme.info
+
+sp
+@
+
+The relationship between age and height appears to be roughly quadratic. Thus, we may want to modify the model as follows:
+\begin{center}
+height\textsubscript{i} $\sim$ Normal($\mu$\textsubscript{i}, $\sigma$)\\
+$\mu$\textsubscript{i} = $\alpha$ + $\beta$\textsubscript{1}*year\textsubscript{i} + $\beta$\textsubscript{2}*year\textsubscript{i}\textsuperscript{2}\\
+$\alpha$ $\sim$ Normal(57, 25)\\
+$\beta$\textsubscript{1} $\sim$ Normal(0, 50)\\
+$\beta$\textsubscript{2} $\sim$ Normal(0, 50)\\
+$\sigma$ $\sim$ Uniform(0, 50)
+\end{center}
+
+Now that the relationship between the coefficients and the outcome is not so clear, I have centered the priors for both $\beta$ terms at 0 and increased their uncertainty.
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Add a horizontal line at 120 cm. on your height vs. age plot. In 4M5, you learn that the average height in the 1st year was 120 cm. Can you guess roughly how old the students in such a data set would be? Would it be reasonable to assume the students in the data set are all the same age?
+\begin{solution}
+<<>>=
+sp + geom_hline(yintercept = 120, linetype = "dashed")
+
+@
+
+Judging by the plot, it appears that an average height of 120 cm is attained somewhere between 9 - 11 years old. Let's check the numbers:
+<<>>=
+nine_years_old <- under_18[under_18$age == 9,]
+print(mean(nine_years_old$height))
+
+ten_years_old <- under_18[under_18$age == 10,]
+print(mean(ten_years_old$height))
+
+eleven_years_old <- under_18[under_18$age == 11,]
+print(mean(eleven_years_old$height))
+@
+
+We can see based upon the output above that, if all students in the data set are the same age, they are most likely starting at 10 years old. It is reasonable to assume that the students are all the same age because the growth rate would not be very meaningful if we were looking at students from a wide range of ages. Furthermore, the average height for students that are 10 years old nearly exactly matches the average given in the question.
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question The Centers for Disease Control (CDC) have height and weight charts by age for boys and girls. Find and download this information. Based on those results, write a suitable Bayesian model for predicting height from age. Justify your choices.
+\begin{solution}
+<<>>=
+boys_height_chart <- read_csv("Males Age 2-20.csv")
+girls_height_chart <- read_csv("Females Age 2-20.csv")
+
+head(boys_height_chart)
+
+@
+
+<<>>=
+head(girls_height_chart)
+
+@
+
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Use the \textt{Howell1} data to fit the model from part 4. Interpret your parameter estimates.
+\begin{solution}
+
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Fit a suitable (frequentist) regression model to the \textt{Howell1} data. Interpret your parameter estimates.
+\begin{solution}
+
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Replace the 0/1 representing male and female in the Howell1 data to the character strings "male" and "female". Fit a suitable (frequentist) regression model using both age and sex as predictors. Interpret your parameter estimates. Is sex a statistically significant variable?
+\begin{solution}
+
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Plot the models from questions 5, 6, and 7 on a scatter plot with height vs. age. Which model fits better? Justify your answer.
+\begin{solution}
+
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\question Create a new scatter plot with all of the \textt{Howell1} data, color-coded by male/female. Would the models from questions 5, 6, and 7 be appropriate to apply to the full data set? Explain. Connect to what we discussed about prediction in Lecture 3 of the Applied Regression class.
+\begin{solution}
+
+\end{solution}
+\end{questions}
+\end{document}

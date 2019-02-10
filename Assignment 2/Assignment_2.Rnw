@@ -150,7 +150,7 @@ names(under_18) <- c("height", "weight", "age", "sex")
 
 sp <- ggplot(under_18, aes(x=age, y=height)) + 
   geom_point(aes(color=sex)) +
-  ggtitle("Scatterplot of Age vs. Height") +
+  ggtitle("Scatterplot of Age vs. Height (18 & Younger)") +
   labs(x = "Age (years)", y = "Height (cm)") +
   scale_x_continuous(breaks = pretty(under_18$age, n = 7)) +
   theme.info
@@ -158,17 +158,7 @@ sp <- ggplot(under_18, aes(x=age, y=height)) +
 sp
 @
 
-The relationship between age and height appears to be roughly quadratic. Thus, we may want to modify the model as follows:
-\begin{center}
-height\textsubscript{i} $\sim$ Normal($\mu$\textsubscript{i}, $\sigma$)\\
-$\mu$\textsubscript{i} = $\alpha$ + $\beta$\textsubscript{1}*year\textsubscript{i} + $\beta$\textsubscript{2}*year\textsubscript{i}\textsuperscript{2}\\
-$\alpha$ $\sim$ Normal(57, 25)\\
-$\beta$\textsubscript{1} $\sim$ Normal(0, 50)\\
-$\beta$\textsubscript{2} $\sim$ Normal(0, 50)\\
-$\sigma$ $\sim$ Uniform(0, 50)
-\end{center}
-
-Now that the relationship between the coefficients and the outcome is not so clear, I have centered the priors for both $\beta$ terms at 0 and increased their uncertainty.
+The relationship between age and height appears to be roughly linear. Thus, we can still use the model as described in question 1.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
 \question Add a horizontal line at 120 cm. on your height vs. age plot. In 4M5, you learn that the average height in the 1st year was 120 cm. Can you guess roughly how old the students in such a data set would be? Would it be reasonable to assume the students in the data set are all the same age?
@@ -217,11 +207,21 @@ head(girls_height_chart)
 %%%%%%%%%%%%%%%%%%%%
 \question Fit a suitable (frequentist) regression model to the \textt{Howell1} data. Interpret your parameter estimates.
 \begin{solution}
+<<>>=
+linear.model1 <- lm(height ~ age, data = under_18)
+
+summary(linear.model1)
+@
 
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
 \question Replace the 0/1 representing male and female in the Howell1 data to the character strings "male" and "female". Fit a suitable (frequentist) regression model using both age and sex as predictors. Interpret your parameter estimates. Is sex a statistically significant variable?
 \begin{solution}
+<<>>=
+linear.model2 <- lm(height ~ age + sex, data = under_18)
+
+summary(linear.model2)
+@
 
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
@@ -230,8 +230,23 @@ head(girls_height_chart)
 
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
-\question Create a new scatter plot with all of the \textt{Howell1} data, color-coded by male/female. Would the models from questions 5, 6, and 7 be appropriate to apply to the full data set? Explain. Connect to what we discussed about prediction in Lecture 3 of the Applied Regression class.
+\question Create a new scatter plot with \bf{all} of the \textt{Howell1} data, color-coded by male/female. Would the models from questions 5, 6, and 7 be appropriate to apply to the full data set? Explain. Connect to what we discussed about prediction in Lecture 3 of the Applied Regression class.
 \begin{solution}
+<<>>=
+data$male <- ifelse(data$male == 1, "male", "female")
+
+names(data) <- c("height", "weight", "age", "sex")
+
+sp <- ggplot(data, aes(x=age, y=height)) + 
+  geom_point(aes(color=sex)) +
+  ggtitle("Scatterplot of Age vs. Height for Total Data Set") +
+  labs(x = "Age (years)", y = "Height (cm)") +
+  scale_x_continuous(breaks = pretty(data$age, n = 7)) +
+  theme.info
+
+sp
+
+@
 
 \end{solution}
 \end{questions}

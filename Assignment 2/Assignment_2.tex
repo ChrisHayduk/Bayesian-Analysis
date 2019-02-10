@@ -169,6 +169,7 @@ $\sigma$ $\sim$ Uniform(0, 50)
 I selected the mean for $\alpha$ by taking the weighted average of the minimum heights for males and females. I selected the mean for $\beta$ by subtracting the weighted average of minimum heights from the weighted average of maximum heights. I then divided this number by 3 in order to derive the average amount that an individual must grow over the course of 3 years in order to reach the weighted average maximum height after starting from the weighted average minimum height. I also increased the standard deviation for $\beta$ to reflect the uncertainty in the growth rate depending upon age and sex.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
+\newpage
 \question Plot height (y-axis) against age (x-axis) with the points color-coded by male/female, just for those 18 and younger. What type of relationship do you see? Can you use this information to set up a model for the type of data described in 4M4 (ie., each student measured for three years)? Justify.
 \begin{solution}
 \begin{knitrout}\footnotesize
@@ -180,7 +181,7 @@ I selected the mean for $\alpha$ by taking the weighted average of the minimum h
 
 \hlstd{sp} \hlkwb{<-} \hlkwd{ggplot}\hlstd{(under_18,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=age,} \hlkwc{y}\hlstd{=height))} \hlopt{+}
   \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color}\hlstd{=sex))} \hlopt{+}
-  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Scatterplot of Age vs. Height"}\hlstd{)} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Scatterplot of Age vs. Height (18 & Younger)"}\hlstd{)} \hlopt{+}
   \hlkwd{labs}\hlstd{(}\hlkwc{x} \hlstd{=} \hlstr{"Age (years)"}\hlstd{,} \hlkwc{y} \hlstd{=} \hlstr{"Height (cm)"}\hlstd{)} \hlopt{+}
   \hlkwd{scale_x_continuous}\hlstd{(}\hlkwc{breaks} \hlstd{=} \hlkwd{pretty}\hlstd{(under_18}\hlopt{$}\hlstd{age,} \hlkwc{n} \hlstd{=} \hlnum{7}\hlstd{))} \hlopt{+}
   \hlstd{theme.info}
@@ -192,17 +193,7 @@ I selected the mean for $\alpha$ by taking the weighted average of the minimum h
 
 \end{knitrout}
 
-The relationship between age and height appears to be roughly quadratic. Thus, we may want to modify the model as follows:
-\begin{center}
-height\textsubscript{i} $\sim$ Normal($\mu$\textsubscript{i}, $\sigma$)\\
-$\mu$\textsubscript{i} = $\alpha$ + $\beta$\textsubscript{1}*year\textsubscript{i} + $\beta$\textsubscript{2}*year\textsubscript{i}\textsuperscript{2}\\
-$\alpha$ $\sim$ Normal(57, 25)\\
-$\beta$\textsubscript{1} $\sim$ Normal(0, 50)\\
-$\beta$\textsubscript{2} $\sim$ Normal(0, 50)\\
-$\sigma$ $\sim$ Uniform(0, 50)
-\end{center}
-
-Now that the relationship between the coefficients and the outcome is not so clear, I have centered the priors for both $\beta$ terms at 0 and increased their uncertainty.
+The relationship between age and height appears to be roughly linear. Thus, we can still use the model as described in question 1.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
 \question Add a horizontal line at 120 cm. on your height vs. age plot. In 4M5, you learn that the average height in the 1st year was 120 cm. Can you guess roughly how old the students in such a data set would be? Would it be reasonable to assume the students in the data set are all the same age?
@@ -252,30 +243,54 @@ We can see based upon the output above that, if all students in the data set are
 \begin{knitrout}\footnotesize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{boys_height_chart} \hlkwb{<-} \hlkwd{read_csv}\hlstd{(}\hlstr{"Males Age 2-20.csv"}\hlstd{)}
-\hlstd{girls_height_chart} \hlkwb{<-} \hlkwd{read_csv}\hlstd{(}\hlstr{"Females Age 2-20.csv"}\hlstd{)}
+\hlstd{boys_height_chart} \hlkwb{<-} \hlkwd{read_csv}\hlstd{(}\hlstr{"Male Heights.csv"}\hlstd{)}
+\hlstd{girls_height_chart} \hlkwb{<-} \hlkwd{read_csv}\hlstd{(}\hlstr{"Female Heights.csv"}\hlstd{)}
 
-\hlkwd{head}\hlstd{(boys_height_chart)}
+\hlkwd{names}\hlstd{(boys_height_chart)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"age"}\hlstd{,} \hlstr{"3rd_perc"}\hlstd{,} \hlstr{"5th_perc"}\hlstd{,}
+                              \hlstr{"10th_perc"}\hlstd{,} \hlstr{"25th_perc"}\hlstd{,} \hlstr{"50th_perc"}\hlstd{,}
+                              \hlstr{"75th_perc"}\hlstd{,} \hlstr{"90th_perc"}\hlstd{,} \hlstr{"95th_perc"}\hlstd{,}
+                              \hlstr{"97th_perc"}\hlstd{)}
+
+\hlkwd{names}\hlstd{(girls_height_chart)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"age"}\hlstd{,} \hlstr{"3rd_perc"}\hlstd{,} \hlstr{"5th_perc"}\hlstd{,}
+                              \hlstr{"10th_perc"}\hlstd{,} \hlstr{"25th_perc"}\hlstd{,} \hlstr{"50th_perc"}\hlstd{,}
+                              \hlstr{"75th_perc"}\hlstd{,} \hlstr{"90th_perc"}\hlstd{,} \hlstr{"95th_perc"}\hlstd{,}
+                              \hlstr{"97th_perc"}\hlstd{)}
+
+\hlcom{#Assuming start age = 10 again}
+\hlstd{boys_height_at_0} \hlkwb{<-} \hlstd{boys_height_chart[boys_height_chart}\hlopt{$}\hlstd{age} \hlopt{==} \hlnum{0.0}\hlstd{,]}\hlopt{$}\hlstd{`50th_perc`}
+\hlkwd{print}\hlstd{(boys_height_at_0)}
 \end{alltt}
 \begin{verbatim}
-## # A tibble: 6 x 10
-##   `Age (in months~ `3rd Percentile~ `5th Percentile~ `10th Percentil~
-##              <dbl>            <dbl>            <dbl>            <dbl>
-## 1             24               79.9             80.7             82.0
-## 2             24.5             80.3             81.1             82.4
-## 3             25.5             81.0             81.8             83.1
-## 4             26.5             81.7             82.6             83.8
-## 5             27.5             82.4             83.3             84.6
-## 6             28.5             83.1             84.0             85.3
-## # ... with 6 more variables: `25th Percentile Stature (in
-## #   centimeters)` <dbl>, `50th Percentile Stature (in centimeters)` <dbl>,
-## #   `75th Percentile Stature (in centimeters)` <dbl>, `90th Percentile
-## #   Stature (in centimeters)` <dbl>, `95th Percentile Stature (in
-## #   centimeters)` <dbl>, `97th Percentile Stature (in centimeters)` <dbl>
+## [1] 49.98888
+\end{verbatim}
+\begin{alltt}
+\hlstd{ages} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{0.5}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{216.5}\hlstd{,} \hlkwc{by} \hlstd{=} \hlnum{12}\hlstd{)}
+\hlstd{i} \hlkwb{<-} \hlnum{1}
+\hlstd{heights} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(ages))}
+\hlstd{differences} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(ages)}\hlopt{-}\hlnum{1}\hlstd{)}
+\hlkwa{for}\hlstd{(age} \hlkwa{in} \hlstd{ages)\{}
+  \hlstd{height} \hlkwb{<-} \hlstd{boys_height_chart[boys_height_chart}\hlopt{$}\hlstd{age} \hlopt{==} \hlstd{age,]}\hlopt{$}\hlstd{`50th_perc`}
+  \hlstd{heights[i]} \hlkwb{<-} \hlstd{height}
+
+  \hlkwa{if}\hlstd{(i} \hlopt{!=} \hlnum{1}\hlstd{)\{}
+    \hlstd{differences[i}\hlopt{-}\hlnum{1}\hlstd{]} \hlkwb{<-} \hlstd{heights[i]} \hlopt{-} \hlstd{heights[i}\hlopt{-}\hlnum{1}\hlstd{]}
+  \hlstd{\}}
+
+  \hlstd{i} \hlkwb{<-} \hlstd{i} \hlopt{+} \hlnum{1}
+\hlstd{\}}
+
+\hlstd{boys_growth_rate} \hlkwb{<-} \hlkwd{mean}\hlstd{(differences)}
+
+\hlcom{#Average growth rate for boys the three years from 10 - 13}
+\hlkwd{print}\hlstd{(boys_growth_rate)}
+\end{alltt}
+\begin{verbatim}
+## [1] 6.860501
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 
+Performing a similar analysis for girls:
 \begin{knitrout}\footnotesize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -283,47 +298,329 @@ We can see based upon the output above that, if all students in the data set are
 \end{alltt}
 \begin{verbatim}
 ## # A tibble: 6 x 10
-##   `Age (in months~ `3rd Percentile~ `5th Percentile~ `10th Percentil~
-##              <dbl>            <dbl>            <dbl>            <dbl>
-## 1             24               78.4             79.3             80.5
-## 2             24.5             78.8             79.6             80.9
-## 3             25.5             79.6             80.4             81.7
-## 4             26.5             80.4             81.2             82.5
-## 5             27.5             81.1             82.0             83.3
-## 6             28.5             81.9             82.7             84.1
-## # ... with 6 more variables: `25th Percentile Stature (in
-## #   centimeters)` <dbl>, `50th Percentile Stature (in centimeters)` <dbl>,
-## #   `75th Percentile Stature (in centimeters)` <dbl>, `90th Percentile
-## #   Stature (in centimeters)` <dbl>, `95th Percentile Stature (in
-## #   centimeters)` <dbl>, `97th Percentile Stature (in centimeters)` <dbl>
+##     age `3rd_perc` `5th_perc` `10th_perc` `25th_perc` `50th_perc`
+##   <dbl>      <dbl>      <dbl>       <dbl>       <dbl>       <dbl>
+## 1   0         45.1       45.6        46.3        47.7        49.3
+## 2   0.5       47.5       48.0        48.7        50.1        51.7
+## 3   1.5       51.0       51.5        52.3        53.7        55.3
+## 4   2.5       53.6       54.2        55.0        56.5        58.1
+## 5   3.5       55.9       56.4        57.3        58.8        60.5
+## 6   4.5       57.8       58.4        59.3        60.8        62.5
+## # ... with 4 more variables: `75th_perc` <dbl>, `90th_perc` <dbl>,
+## #   `95th_perc` <dbl>, `97th_perc` <dbl>
+\end{verbatim}
+\begin{alltt}
+\hlcom{#Assuming start age = 10 again}
+\hlstd{girls_height_at_0} \hlkwb{<-} \hlstd{girls_height_chart[girls_height_chart}\hlopt{$}\hlstd{age} \hlopt{==} \hlnum{0}\hlstd{,]}\hlopt{$}\hlstd{`50th_perc`}
+\hlkwd{print}\hlstd{(girls_height_at_0)}
+\end{alltt}
+\begin{verbatim}
+## [1] 49.2864
+\end{verbatim}
+\begin{alltt}
+\hlstd{i} \hlkwb{<-} \hlnum{1}
+\hlstd{heights} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(ages))}
+\hlstd{differences} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(ages)}\hlopt{-}\hlnum{1}\hlstd{)}
+\hlkwa{for}\hlstd{(age} \hlkwa{in} \hlstd{ages)\{}
+  \hlstd{height} \hlkwb{<-} \hlstd{girls_height_chart[girls_height_chart}\hlopt{$}\hlstd{age} \hlopt{==} \hlstd{age,]}\hlopt{$}\hlstd{`50th_perc`}
+  \hlstd{heights[i]} \hlkwb{<-} \hlstd{height}
+
+  \hlkwa{if}\hlstd{(i} \hlopt{!=} \hlnum{1}\hlstd{)\{}
+    \hlstd{differences[i}\hlopt{-}\hlnum{1}\hlstd{]} \hlkwb{<-} \hlstd{heights[i]} \hlopt{-} \hlstd{heights[i}\hlopt{-}\hlnum{1}\hlstd{]}
+  \hlstd{\}}
+
+  \hlstd{i} \hlkwb{<-} \hlstd{i} \hlopt{+} \hlnum{1}
+\hlstd{\}}
+
+\hlstd{girls_growth_rate} \hlkwb{<-} \hlkwd{mean}\hlstd{(differences)}
+
+\hlcom{#Average growth rate for girls the three years from 10 - 13}
+\hlkwd{print}\hlstd{(girls_growth_rate)}
+\end{alltt}
+\begin{verbatim}
+## [1] 6.191512
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 
+Now let's average the growth rate and initial height numbers:
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mean_growth_rate} \hlkwb{<-} \hlkwd{mean}\hlstd{(}\hlkwd{c}\hlstd{(girls_growth_rate, boys_growth_rate))}
+
+\hlkwd{print}\hlstd{(mean_growth_rate)}
+\end{alltt}
+\begin{verbatim}
+## [1] 6.526007
+\end{verbatim}
+\begin{alltt}
+\hlstd{mean_starting_height} \hlkwb{<-} \hlkwd{mean}\hlstd{(}\hlkwd{c}\hlstd{(girls_height_at_0, boys_height_at_0))}
+
+\hlkwd{print}\hlstd{(mean_starting_height)}
+\end{alltt}
+\begin{verbatim}
+## [1] 49.63764
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Thus, in order to predict height using age, we will use the following model:
+\begin{center}
+height\textsubscript{i} $\sim$ Normal($\mu$\textsubscript{i}, $\sigma$)\\
+$\mu$\textsubscript{i} = $\alpha$ + $\beta$*year\textsubscript{i}\\
+$\alpha$ $\sim$ Normal(49.6, 5)\\
+$\beta$ $\sim$ Normal(6.5, 3)\\
+$\sigma$ $\sim$ Uniform(0, 50)
+\end{center}
+
+The 3rd percentile for girls at 0 years old measured 45.1 cm. Thus, it is unlikely that $\alpha$ will fall below 45.1 cm. As a result, I chose the standard deviation of the prior to be 5 cm. Since the prior is normally distributed, this means that I expect the $\alpha$ term to be within (39.6 cm, 59.6 cm) with about 95\% certainty.
+
+I chose the standard deviation of the prior for $\beta$ to be 3 cm. The correlation between age and height is clearly positive. Thus, it is highly unlikely that $\beta$ should be negative. A standard deviation of 3 cm means that I expect $\beta$ to be within (0.5 cm, 12.5 cm) with about 95\% certainty.
+
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
+\newpage
 \question Use the \textt{Howell1} data to fit the model from part 4. Interpret your parameter estimates.
 \begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{m1} \hlkwb{<-} \hlkwd{map}\hlstd{(}
+  \hlkwd{alist}\hlstd{(}
+    \hlstd{height} \hlopt{~} \hlkwd{dnorm}\hlstd{(a} \hlopt{+} \hlstd{b}\hlopt{*}\hlstd{age, sigma),}
+    \hlstd{a} \hlopt{~} \hlkwd{dnorm}\hlstd{(}\hlnum{49.6}\hlstd{,} \hlnum{5}\hlstd{),}
+    \hlstd{b} \hlopt{~} \hlkwd{dnorm}\hlstd{(}\hlnum{6.5}\hlstd{,} \hlnum{3}\hlstd{),}
+    \hlstd{sigma} \hlopt{~} \hlkwd{dunif}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{50}\hlstd{)}
+  \hlstd{),} \hlkwc{data} \hlstd{= under_18)}
 
+\hlkwd{print}\hlstd{(m1)}
+\end{alltt}
+\begin{verbatim}
+## 
+## Maximum a posteriori (MAP) model fit
+## 
+## Formula:
+## height ~ dnorm(a + b * age, sigma)
+## a ~ dnorm(49.6, 5)
+## b ~ dnorm(6.5, 3)
+## sigma ~ dunif(0, 50)
+## 
+## MAP values:
+##         a         b     sigma 
+## 72.483771  4.585385  8.482266 
+## 
+## Log-likelihood: -704
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+The intercept term, a, represents the average height when age = 0. In this case, the intercept is abou 72.5 cm. The slope, b, represents the average increase in height for a 1 year increase in age. In this case, height increases by about 4.5 cm for every 1 year of age.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
+\newpage
 \question Fit a suitable (frequentist) regression model to the \textt{Howell1} data. Interpret your parameter estimates.
 \begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{linear.model1} \hlkwb{<-} \hlkwd{lm}\hlstd{(height} \hlopt{~} \hlstd{age,} \hlkwc{data} \hlstd{= under_18)}
 
+\hlkwd{summary}\hlstd{(linear.model1)}
+\end{alltt}
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = height ~ age, data = under_18)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -21.3301  -5.0108  -0.2407   5.5884  26.7113 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  73.5153     1.0610   69.29   <2e-16 ***
+## age           4.4967     0.1086   41.40   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 8.493 on 196 degrees of freedom
+## Multiple R-squared:  0.8974,	Adjusted R-squared:  0.8969 
+## F-statistic:  1714 on 1 and 196 DF,  p-value: < 2.2e-16
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+The intercept (when age = 0) here is about 73.5 cm. The slope is about 4.5 cm. These numbers are very similar to the values obtained using our Bayesian model above. Thus, it seems that the priors did not do much to inform the model.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
+\newpage
 \question Replace the 0/1 representing male and female in the Howell1 data to the character strings "male" and "female". Fit a suitable (frequentist) regression model using both age and sex as predictors. Interpret your parameter estimates. Is sex a statistically significant variable?
 \begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{linear.model2} \hlkwb{<-} \hlkwd{lm}\hlstd{(height} \hlopt{~} \hlstd{age} \hlopt{+} \hlstd{sex,} \hlkwc{data} \hlstd{= under_18)}
 
+\hlkwd{summary}\hlstd{(linear.model2)}
+\end{alltt}
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = height ~ age + sex, data = under_18)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -23.2347  -4.9338  -0.3577   5.4779  28.4815 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  71.7192     1.1958  59.978  < 2e-16 ***
+## age           4.5096     0.1065  42.348  < 2e-16 ***
+## sexmale       3.6023     1.1858   3.038  0.00271 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 8.321 on 195 degrees of freedom
+## Multiple R-squared:  0.902,	Adjusted R-squared:  0.901 
+## F-statistic: 897.6 on 2 and 195 DF,  p-value: < 2.2e-16
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+In this case, the intercept represents the average height of females at age = 0 (about 71.72 cm). When considering males, we add the coefficient for sexmale to the intercept. Thus, the average height of males at age = 0 is 71.7192 cm + 3.6023 cm = 75.3215 cm. The slope has the same interpretation as before: the average increase in height for a 1 year increase in age. In this case, height increases by about 4.5 cm for every 1 year of age. All three terms in this model are statistically significant at significance level $\alpha$ = 0.01.
+\newpage
+Now let's try using an interaction term:
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{linear.model3} \hlkwb{<-} \hlkwd{lm}\hlstd{(height} \hlopt{~} \hlstd{age}\hlopt{*}\hlstd{sex,} \hlkwc{data} \hlstd{= under_18)}
+
+\hlkwd{summary}\hlstd{(linear.model3)}
+\end{alltt}
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = height ~ age * sex, data = under_18)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -23.2392  -4.9959  -0.4058   5.5187  28.5904 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 71.57539    1.42731  50.147   <2e-16 ***
+## age          4.52708    0.14224  31.828   <2e-16 ***
+## sexmale      3.92163    2.09090   1.876   0.0622 .  
+## age:sexmale -0.03996    0.21524  -0.186   0.8529    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 8.341 on 194 degrees of freedom
+## Multiple R-squared:  0.902,	Adjusted R-squared:  0.9005 
+## F-statistic: 595.4 on 3 and 194 DF,  p-value: < 2.2e-16
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+The estimates for the intercept, age, and sexmale are all quite similar to the previous model. Furthermore, sexmale is no longer statistically significant and the interaction term both is not statisticall significant either. The previous model also had a slightly higher adjusted R-squared value. As a result, we should favor the previous model.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
+\newpage
 \question Plot the models from questions 5, 6, and 7 on a scatter plot with height vs. age. Which model fits better? Justify your answer.
 \begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{sp} \hlopt{+} \hlkwd{geom_abline}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{intercept}\hlstd{=} \hlkwd{coef}\hlstd{(m1)[}\hlnum{1}\hlstd{],}
+                 \hlkwc{slope}\hlstd{=}\hlkwd{coef}\hlstd{(m1)[}\hlnum{2}\hlstd{],}
+                 \hlkwc{linetype} \hlstd{=} \hlstr{"Bayesian Model"}\hlstd{),}
+                 \hlkwc{color}\hlstd{=}\hlstr{"orange"}\hlstd{,}
+                 \hlkwc{size} \hlstd{=} \hlnum{1.25}\hlstd{)} \hlopt{+}
+  \hlkwd{geom_abline}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{intercept}\hlstd{=} \hlkwd{coef}\hlstd{(linear.model1)[}\hlnum{1}\hlstd{],}
+                 \hlkwc{slope}\hlstd{=}\hlkwd{coef}\hlstd{(linear.model1)[}\hlnum{2}\hlstd{],}
+                 \hlkwc{linetype} \hlstd{=} \hlstr{"Linear Model w/o Sex"}\hlstd{),}
+                 \hlkwc{color}\hlstd{=}\hlstr{"black"}\hlstd{,}
+                 \hlkwc{size} \hlstd{=} \hlnum{1.25}\hlstd{)} \hlopt{+}
+  \hlkwd{geom_abline}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{intercept}\hlstd{=} \hlkwd{coef}\hlstd{(linear.model2)[}\hlnum{1}\hlstd{],}
+                 \hlkwc{slope}\hlstd{=}\hlkwd{coef}\hlstd{(linear.model2)[}\hlnum{2}\hlstd{],}
+                 \hlkwc{linetype} \hlstd{=} \hlstr{"Linear Model w/ Sex"}\hlstd{),}
+                 \hlkwc{color}\hlstd{=}\hlstr{"green"}\hlstd{,}
+                 \hlkwc{size} \hlstd{=} \hlnum{1.25}\hlstd{)} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Scatterplot with Linear Models"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-13-1} 
 
+\end{knitrout}
+
+The three linear models fit the data almost identically.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
-\question Create a new scatter plot with all of the \textt{Howell1} data, color-coded by male/female. Would the models from questions 5, 6, and 7 be appropriate to apply to the full data set? Explain. Connect to what we discussed about prediction in Lecture 3 of the Applied Regression class.
+\newpage
+\question Create a new scatter plot with \textbf{all} of the \textt{Howell1} data, color-coded by male/female. Would the models from questions 5, 6, and 7 be appropriate to apply to the full data set? Explain. Connect to what we discussed about prediction in Lecture 3 of the Applied Regression class.
 \begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{data}\hlopt{$}\hlstd{male} \hlkwb{<-} \hlkwd{ifelse}\hlstd{(data}\hlopt{$}\hlstd{male} \hlopt{==} \hlnum{1}\hlstd{,} \hlstr{"male"}\hlstd{,} \hlstr{"female"}\hlstd{)}
+
+\hlkwd{names}\hlstd{(data)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"height"}\hlstd{,} \hlstr{"weight"}\hlstd{,} \hlstr{"age"}\hlstd{,} \hlstr{"sex"}\hlstd{)}
+
+\hlstd{sp2} \hlkwb{<-} \hlkwd{ggplot}\hlstd{(data,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=age,} \hlkwc{y}\hlstd{=height))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color}\hlstd{=sex))} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Scatterplot of Age vs. Height for Total Data Set"}\hlstd{)} \hlopt{+}
+  \hlkwd{labs}\hlstd{(}\hlkwc{x} \hlstd{=} \hlstr{"Age (years)"}\hlstd{,} \hlkwc{y} \hlstd{=} \hlstr{"Height (cm)"}\hlstd{)} \hlopt{+}
+  \hlkwd{scale_x_continuous}\hlstd{(}\hlkwc{breaks} \hlstd{=} \hlkwd{pretty}\hlstd{(data}\hlopt{$}\hlstd{age,} \hlkwc{n} \hlstd{=} \hlnum{7}\hlstd{))} \hlopt{+}
+  \hlstd{theme.info}
+
+\hlstd{sp2}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-14-1} 
+
+\end{knitrout}
+
+The three linear models would not be appropriate to apply to the full data set because the data is highly non-linear. We would likely need to add a quadratic term in order to adequately fit the full data set. Here is an example of this:
+
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{poly_model} \hlkwb{<-} \hlkwd{lm}\hlstd{(height} \hlopt{~} \hlstd{age} \hlopt{+} \hlkwd{I}\hlstd{(age}\hlopt{^}\hlnum{2}\hlstd{),} \hlkwc{data} \hlstd{= data)}
+
+\hlkwd{summary}\hlstd{(poly_model)}
+\end{alltt}
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = height ~ age + I(age^2), data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -32.931  -8.836   0.070   8.109  42.535 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 86.905857   1.233587   70.45   <2e-16 ***
+## age          3.231271   0.081550   39.62   <2e-16 ***
+## I(age^2)    -0.033672   0.001123  -29.98   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 12.37 on 541 degrees of freedom
+## Multiple R-squared:  0.7999,	Adjusted R-squared:  0.7992 
+## F-statistic:  1081 on 2 and 541 DF,  p-value: < 2.2e-16
+\end{verbatim}
+\begin{alltt}
+\hlstd{sp2} \hlopt{+} \hlkwd{stat_smooth}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{y}\hlstd{=height),} \hlkwc{method} \hlstd{=} \hlstr{"lm"}\hlstd{,}
+                  \hlkwc{formula} \hlstd{= y} \hlopt{~} \hlstd{x} \hlopt{+} \hlkwd{I}\hlstd{(x}\hlopt{^}\hlnum{2}\hlstd{),} \hlkwc{size} \hlstd{=} \hlnum{1}\hlstd{,}
+                  \hlkwc{color}\hlstd{=}\hlstr{"black"}\hlstd{)} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Scatterplot with Polynomial Model"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-15-1} 
+
+\end{knitrout}
 
 \end{solution}
 \end{questions}

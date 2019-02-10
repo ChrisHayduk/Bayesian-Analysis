@@ -141,6 +141,7 @@ $\sigma$ $\sim$ Uniform(0, 50)
 I selected the mean for $\alpha$ by taking the weighted average of the minimum heights for males and females. I selected the mean for $\beta$ by subtracting the weighted average of minimum heights from the weighted average of maximum heights. I then divided this number by 3 in order to derive the average amount that an individual must grow over the course of 3 years in order to reach the weighted average maximum height after starting from the weighted average minimum height. I also increased the standard deviation for $\beta$ to reflect the uncertainty in the growth rate depending upon age and sex.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
+\newpage
 \question Plot height (y-axis) against age (x-axis) with the points color-coded by male/female, just for those 18 and younger. What type of relationship do you see? Can you use this information to set up a model for the type of data described in 4M4 (ie., each student measured for three years)? Justify.
 \begin{solution}
 <<>>=
@@ -186,25 +187,119 @@ We can see based upon the output above that, if all students in the data set are
 \question The Centers for Disease Control (CDC) have height and weight charts by age for boys and girls. Find and download this information. Based on those results, write a suitable Bayesian model for predicting height from age. Justify your choices.
 \begin{solution}
 <<>>=
-boys_height_chart <- read_csv("Males Age 2-20.csv")
-girls_height_chart <- read_csv("Females Age 2-20.csv")
+boys_height_chart <- read_csv("Male Heights.csv")
+girls_height_chart <- read_csv("Female Heights.csv")
 
-head(boys_height_chart)
+names(boys_height_chart) <- c("age", "3rd_perc", "5th_perc",
+                              "10th_perc", "25th_perc", "50th_perc",
+                              "75th_perc", "90th_perc", "95th_perc",
+                              "97th_perc")
+
+names(girls_height_chart) <- c("age", "3rd_perc", "5th_perc",
+                              "10th_perc", "25th_perc", "50th_perc",
+                              "75th_perc", "90th_perc", "95th_perc",
+                              "97th_perc")
+
+#Assuming start age = 10 again
+boys_height_at_0 <- boys_height_chart[boys_height_chart$age == 0.0,]$`50th_perc`
+print(boys_height_at_0)
+
+ages <- seq(from = 0.5, to = 216.5, by = 12)
+i <- 1
+heights <- rep(0, length(ages))
+differences <- rep(0, length(ages)-1)
+for(age in ages){
+  height <- boys_height_chart[boys_height_chart$age == age,]$`50th_perc`
+  heights[i] <- height
+  
+  if(i != 1){
+    differences[i-1] <- heights[i] - heights[i-1]
+  }
+  
+  i <- i + 1
+}
+
+boys_growth_rate <- mean(differences)
+
+#Average growth rate for boys the three years from 10 - 13
+print(boys_growth_rate)
 
 @
 
+Performing a similar analysis for girls:
 <<>>=
 head(girls_height_chart)
 
+#Assuming start age = 10 again
+girls_height_at_0 <- girls_height_chart[girls_height_chart$age == 0,]$`50th_perc`
+print(girls_height_at_0)
+
+i <- 1
+heights <- rep(0, length(ages))
+differences <- rep(0, length(ages)-1)
+for(age in ages){
+  height <- girls_height_chart[girls_height_chart$age == age,]$`50th_perc`
+  heights[i] <- height
+  
+  if(i != 1){
+    differences[i-1] <- heights[i] - heights[i-1]
+  }
+  
+  i <- i + 1
+}
+
+girls_growth_rate <- mean(differences)
+
+#Average growth rate for girls the three years from 10 - 13
+print(girls_growth_rate)
+
 @
 
-\end{solution}
-%%%%%%%%%%%%%%%%%%%%
-\question Use the \textt{Howell1} data to fit the model from part 4. Interpret your parameter estimates.
-\begin{solution}
+Now let's average the growth rate and initial height numbers:
+<<>>=
+mean_growth_rate <- mean(c(girls_growth_rate, boys_growth_rate))
+
+print(mean_growth_rate)
+
+mean_starting_height <- mean(c(girls_height_at_0, boys_height_at_0))
+
+print(mean_starting_height)
+@
+
+Thus, in order to predict height using age, we will use the following model:
+\begin{center}
+height\textsubscript{i} $\sim$ Normal($\mu$\textsubscript{i}, $\sigma$)\\
+$\mu$\textsubscript{i} = $\alpha$ + $\beta$*year\textsubscript{i}\\
+$\alpha$ $\sim$ Normal(49.6, 5)\\
+$\beta$ $\sim$ Normal(6.5, 3)\\
+$\sigma$ $\sim$ Uniform(0, 50)
+\end{center}
+
+The 3rd percentile for girls at 0 years old measured 45.1 cm. Thus, it is unlikely that $\alpha$ will fall below 45.1 cm. As a result, I chose the standard deviation of the prior to be 5 cm. Since the prior is normally distributed, this means that I expect the $\alpha$ term to be within (39.6 cm, 59.6 cm) with about 95\% certainty.
+
+I chose the standard deviation of the prior for $\beta$ to be 3 cm. The correlation between age and height is clearly positive. Thus, it is highly unlikely that $\beta$ should be negative. A standard deviation of 3 cm means that I expect $\beta$ to be within (0.5 cm, 12.5 cm) with about 95\% certainty.
 
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
+\newpage
+\question Use the \textt{Howell1} data to fit the model from part 4. Interpret your parameter estimates.
+\begin{solution}
+<<>>=
+m1 <- map(
+  alist(
+    height ~ dnorm(a + b*age, sigma),
+    a ~ dnorm(49.6, 5),
+    b ~ dnorm(6.5, 3),
+    sigma ~ dunif(0, 50)
+  ), data = under_18)
+
+print(m1)
+@
+
+The intercept term, a, represents the average height when age = 0. In this case, the intercept is abou 72.5 cm. The slope, b, represents the average increase in height for a 1 year increase in age. In this case, height increases by about 4.5 cm for every 1 year of age.
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\newpage
 \question Fit a suitable (frequentist) regression model to the \textt{Howell1} data. Interpret your parameter estimates.
 \begin{solution}
 <<>>=
@@ -213,8 +308,10 @@ linear.model1 <- lm(height ~ age, data = under_18)
 summary(linear.model1)
 @
 
+The intercept (when age = 0) here is about 73.5 cm. The slope is about 4.5 cm. These numbers are very similar to the values obtained using our Bayesian model above. Thus, it seems that the priors did not do much to inform the model.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
+\newpage
 \question Replace the 0/1 representing male and female in the Howell1 data to the character strings "male" and "female". Fit a suitable (frequentist) regression model using both age and sex as predictors. Interpret your parameter estimates. Is sex a statistically significant variable?
 \begin{solution}
 <<>>=
@@ -223,29 +320,75 @@ linear.model2 <- lm(height ~ age + sex, data = under_18)
 summary(linear.model2)
 @
 
+In this case, the intercept represents the average height of females at age = 0 (about 71.72 cm). When considering males, we add the coefficient for sexmale to the intercept. Thus, the average height of males at age = 0 is 71.7192 cm + 3.6023 cm = 75.3215 cm. The slope has the same interpretation as before: the average increase in height for a 1 year increase in age. In this case, height increases by about 4.5 cm for every 1 year of age. All three terms in this model are statistically significant at significance level $\alpha$ = 0.01.
+\newpage
+Now let's try using an interaction term:
+<<>>=
+linear.model3 <- lm(height ~ age*sex, data = under_18)
+
+summary(linear.model3)
+@
+
+The estimates for the intercept, age, and sexmale are all quite similar to the previous model. Furthermore, sexmale is no longer statistically significant and the interaction term both is not statisticall significant either. The previous model also had a slightly higher adjusted R-squared value. As a result, we should favor the previous model.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
+\newpage
 \question Plot the models from questions 5, 6, and 7 on a scatter plot with height vs. age. Which model fits better? Justify your answer.
 \begin{solution}
+<<>>=
+sp + geom_abline(aes(intercept= coef(m1)[1],
+                 slope=coef(m1)[2], 
+                 linetype = "Bayesian Model"),
+                 color="orange",
+                 size = 1.25) +
+  geom_abline(aes(intercept= coef(linear.model1)[1],
+                 slope=coef(linear.model1)[2], 
+                 linetype = "Linear Model w/o Sex"),
+                 color="black",
+                 size = 1.25) +
+  geom_abline(aes(intercept= coef(linear.model2)[1],
+                 slope=coef(linear.model2)[2], 
+                 linetype = "Linear Model w/ Sex"),
+                 color="green",
+                 size = 1.25) +
+  ggtitle("Scatterplot with Linear Models")
+  
+  
+@
 
+The three linear models fit the data almost identically.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
-\question Create a new scatter plot with \bf{all} of the \textt{Howell1} data, color-coded by male/female. Would the models from questions 5, 6, and 7 be appropriate to apply to the full data set? Explain. Connect to what we discussed about prediction in Lecture 3 of the Applied Regression class.
+\newpage
+\question Create a new scatter plot with \textbf{all} of the \textt{Howell1} data, color-coded by male/female. Would the models from questions 5, 6, and 7 be appropriate to apply to the full data set? Explain. Connect to what we discussed about prediction in Lecture 3 of the Applied Regression class.
 \begin{solution}
 <<>>=
 data$male <- ifelse(data$male == 1, "male", "female")
 
 names(data) <- c("height", "weight", "age", "sex")
 
-sp <- ggplot(data, aes(x=age, y=height)) + 
+sp2 <- ggplot(data, aes(x=age, y=height)) + 
   geom_point(aes(color=sex)) +
   ggtitle("Scatterplot of Age vs. Height for Total Data Set") +
   labs(x = "Age (years)", y = "Height (cm)") +
   scale_x_continuous(breaks = pretty(data$age, n = 7)) +
   theme.info
 
-sp
+sp2
 
+@
+
+The three linear models would not be appropriate to apply to the full data set because the data is highly non-linear. We would likely need to add a quadratic term in order to adequately fit the full data set. Here is an example of this:
+
+<<>>=
+poly_model <- lm(height ~ age + I(age^2), data = data)
+
+summary(poly_model)
+
+sp2 + stat_smooth(aes(y=height), method = "lm",
+                  formula = y ~ x + I(x^2), size = 1,
+                  color="black") +
+  ggtitle("Scatterplot with Polynomial Model")
 @
 
 \end{solution}

@@ -309,9 +309,25 @@ summary(linear.model1)
 @
 
 The intercept (when age = 0) here is about 73.5 cm. The slope is about 4.5 cm. These numbers are very similar to the values obtained using our Bayesian model above. Thus, it seems that the priors did not do much to inform the model.
+
+Now let's attempt fitting the model using matrices:
+<<>>=
+y <- under_18$height
+
+intercept <- matrix(rep(1, length(under_18$age)), ncol = 1)
+
+x_var <- matrix(under_18$age, ncol = 1)
+
+x <- cbind(intercept, x_var)
+
+beta_hat <- solve((t(x) %*% x)) %*% t(x) %*% y
+
+print(beta_hat)
+@
+
+As you can see, matrix algebra leads to the same result for the slope and intercept as the \textt{lm()} function.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
-\newpage
 \question Replace the 0/1 representing male and female in the Howell1 data to the character strings "male" and "female". Fit a suitable (frequentist) regression model using both age and sex as predictors. Interpret your parameter estimates. Is sex a statistically significant variable?
 \begin{solution}
 <<>>=

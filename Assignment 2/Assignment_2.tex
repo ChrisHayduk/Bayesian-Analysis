@@ -408,9 +408,9 @@ I chose the standard deviation of the prior for $\beta$ to be 3 cm. The correlat
 ## 
 ## MAP values:
 ##         a         b     sigma 
-## 72.483771  4.585385  8.482266 
+## 72.470832  4.585420  8.471282 
 ## 
-## Log-likelihood: -704
+## Log-likelihood: -704.01
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -452,9 +452,34 @@ The intercept term, a, represents the average height when age = 0. In this case,
 \end{knitrout}
 
 The intercept (when age = 0) here is about 73.5 cm. The slope is about 4.5 cm. These numbers are very similar to the values obtained using our Bayesian model above. Thus, it seems that the priors did not do much to inform the model.
+
+Now let's attempt fitting the model using matrices:
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{y} \hlkwb{<-} \hlstd{under_18}\hlopt{$}\hlstd{height}
+
+\hlstd{intercept} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{length}\hlstd{(under_18}\hlopt{$}\hlstd{age)),} \hlkwc{ncol} \hlstd{=} \hlnum{1}\hlstd{)}
+
+\hlstd{x_var} \hlkwb{<-} \hlkwd{matrix}\hlstd{(under_18}\hlopt{$}\hlstd{age,} \hlkwc{ncol} \hlstd{=} \hlnum{1}\hlstd{)}
+
+\hlstd{x} \hlkwb{<-} \hlkwd{cbind}\hlstd{(intercept, x_var)}
+
+\hlstd{beta_hat} \hlkwb{<-} \hlkwd{solve}\hlstd{((}\hlkwd{t}\hlstd{(x)} \hlopt{%*%} \hlstd{x))} \hlopt{%*%} \hlkwd{t}\hlstd{(x)} \hlopt{%*%} \hlstd{y}
+
+\hlkwd{print}\hlstd{(beta_hat)}
+\end{alltt}
+\begin{verbatim}
+##           [,1]
+## [1,] 73.515325
+## [2,]  4.496675
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+As you can see, matrix algebra leads to the same result for the slope and intercept as the \textt{lm()} function.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
-\newpage
 \question Replace the 0/1 representing male and female in the Howell1 data to the character strings "male" and "female". Fit a suitable (frequentist) regression model using both age and sex as predictors. Interpret your parameter estimates. Is sex a statistically significant variable?
 \begin{solution}
 \begin{knitrout}\footnotesize
@@ -550,7 +575,7 @@ The estimates for the intercept, age, and sexmale are all quite similar to the p
   \hlkwd{ggtitle}\hlstd{(}\hlstr{"Scatterplot with Linear Models"}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-13-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-14-1} 
 
 \end{knitrout}
 
@@ -577,7 +602,7 @@ The three linear models fit the data almost identically.
 \hlstd{sp2}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-14-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-15-1} 
 
 \end{knitrout}
 
@@ -618,7 +643,7 @@ The three linear models would not be appropriate to apply to the full data set b
   \hlkwd{ggtitle}\hlstd{(}\hlstr{"Scatterplot with Polynomial Model"}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-15-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-16-1} 
 
 \end{knitrout}
 

@@ -134,11 +134,11 @@ After examining the data in the two tables above, I would change the priors to s
 height\textsubscript{i} $\sim$ Normal($\mu$\textsubscript{i}, $\sigma$)\\
 $\mu$\textsubscript{i} = $\alpha$ + $\beta$*year\textsubscript{i}\\
 $\alpha$ $\sim$ Normal(57, 25)\\
-$\beta$ $\sim$ Normal(38, 20)\\
+$\beta$ $\sim$ Normal(8.4, 4)\\
 $\sigma$ $\sim$ Uniform(0, 50)
 \end{center}
 
-I selected the mean for $\alpha$ by taking the weighted average of the minimum heights for males and females. I selected the mean for $\beta$ by subtracting the weighted average of minimum heights from the weighted average of maximum heights. I then divided this number by 3 in order to derive the average amount that an individual must grow over the course of 3 years in order to reach the weighted average maximum height after starting from the weighted average minimum height. I also increased the standard deviation for $\beta$ to reflect the uncertainty in the growth rate depending upon age and sex.
+I selected the mean for $\alpha$ by taking the weighted average of the minimum heights for males and females. I selected the mean for $\beta$ by subtracting the weighted average of minimum heights from the weighted average of maximum heights. I then divided this number by 18 in order to derive the average amount that an individual must grow per year in order to reach the weighted average maximum height after starting from the weighted average minimum height. I also set the standard deviation for $\beta$ to reflect our knowledge that $\beta \geq 0$.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -205,21 +205,20 @@ boys_height_at_0 <- boys_height_chart[boys_height_chart$age == 0.0,]$`50th_perc`
 print(boys_height_at_0)
 
 ages <- seq(from = 0.5, to = 216.5, by = 12)
-i <- 1
 heights <- rep(0, length(ages))
-differences <- rep(0, length(ages)-1)
-for(age in ages){
-  height <- boys_height_chart[boys_height_chart$age == age,]$`50th_perc`
+differences <- rep(NA, length(ages))
+for(i in 1:length(ages)){
+  height <- boys_height_chart[boys_height_chart$age == ages[i],]$`50th_perc`
   heights[i] <- height
   
   if(i != 1){
-    differences[i-1] <- heights[i] - heights[i-1]
+    differences[i] <- heights[i] - heights[i-1]
   }
-  
-  i <- i + 1
 }
 
-boys_growth_rate <- mean(differences)
+boys_data <- data.frame("age" = ages, "height" = heights, "diff" = differences)
+
+boys_growth_rate <- mean(boys_data$diff, na.rm = TRUE)
 
 #Average growth rate for boys the three years from 10 - 13
 print(boys_growth_rate)
@@ -234,21 +233,21 @@ head(girls_height_chart)
 girls_height_at_0 <- girls_height_chart[girls_height_chart$age == 0,]$`50th_perc`
 print(girls_height_at_0)
 
-i <- 1
 heights <- rep(0, length(ages))
-differences <- rep(0, length(ages)-1)
-for(age in ages){
-  height <- girls_height_chart[girls_height_chart$age == age,]$`50th_perc`
+differences <- rep(NA, length(ages))
+for(i in 1:length(ages)){
+  height <- girls_height_chart[girls_height_chart$age == ages[i],]$`50th_perc`
   heights[i] <- height
   
   if(i != 1){
-    differences[i-1] <- heights[i] - heights[i-1]
+    differences[i] <- heights[i] - heights[i-1]
   }
   
-  i <- i + 1
 }
 
-girls_growth_rate <- mean(differences)
+girls_data <- data.frame("age" = ages, "height" = heights, "diff" = differences)
+
+girls_growth_rate <- mean(girls_data$diff, na.rm = TRUE)
 
 #Average growth rate for girls the three years from 10 - 13
 print(girls_growth_rate)
@@ -275,7 +274,7 @@ $\beta$ $\sim$ Normal(6.5, 3)\\
 $\sigma$ $\sim$ Uniform(0, 50)
 \end{center}
 
-The 3rd percentile for girls at 0 years old measured 45.1 cm. Thus, it is unlikely that $\alpha$ will fall below 45.1 cm. As a result, I chose the standard deviation of the prior to be 5 cm. Since the prior is normally distributed, this means that I expect the $\alpha$ term to be within (39.6 cm, 59.6 cm) with about 95\% certainty.
+The 3rd percentile for girls at 0 years old (ie. as a newborn) measured 45.1 cm. Thus, it is unlikely that $\alpha$ will fall below 45.1 cm. As a result, I chose the standard deviation of the prior to be 5 cm. Since the prior is normally distributed, this means that I expect the $\alpha$ term to be within (39.6 cm, 59.6 cm) with about 95\% certainty.
 
 I chose the standard deviation of the prior for $\beta$ to be 3 cm. The correlation between age and height is clearly positive. Thus, it is highly unlikely that $\beta$ should be negative. A standard deviation of 3 cm means that I expect $\beta$ to be within (0.5 cm, 12.5 cm) with about 95\% certainty.
 
@@ -394,7 +393,7 @@ sp2
 
 @
 
-The three linear models would not be appropriate to apply to the full data set because the data is highly non-linear. We would likely need to add a quadratic term in order to adequately fit the full data set. Here is an example of this:
+The three linear models would not be appropriate to apply to the full data set because the data is highly non-linear since people stop growing after a certain age. We could add a quadratic term in order to attempt to adequately fit the full data set. Here is an example of this:
 
 <<>>=
 poly_model <- lm(height ~ age + I(age^2), data = data)
@@ -406,6 +405,28 @@ sp2 + stat_smooth(aes(y=height), method = "lm",
                   color="black") +
   ggtitle("Scatterplot with Polynomial Model")
 @
+
+This still does not appear to fit the data properly. Let's try a log-model instead:
+
+<<>>=
+data$log_height <- log(data$height)
+log_model <- lm(log_height ~ age, data = data)
+
+summary(log_model)
+
+ggplot(data, aes(x= age, y=log_height)) + 
+  geom_point(aes(color=sex)) +
+  ggtitle("Scatterplot with Log Model") +
+  labs(x = "Age (years)", y = "Log(Height) (log cm)") +
+  scale_x_continuous(breaks = pretty(data$age, n = 7)) +
+  theme.info +
+  stat_smooth(aes(y=log_height), method = "lm",
+                  formula = y ~ x, size = 1,
+                  color="black")
+  
+@
+
+It seems we may have been better off with the quadratic model judging by the graphs and the Adjusted R-squared values.
 
 \end{solution}
 \end{questions}

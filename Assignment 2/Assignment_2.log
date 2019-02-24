@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.12.28)  10 FEB 2019 00:49
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.12.28)  24 FEB 2019 01:48
 entering extended mode
 **./Assignment_2.tex
 (Assignment_2.tex
@@ -896,7 +896,7 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 
 {C:/Users/Chris/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2]
 Package color Info: Redefining color shadecolor on input line 176.
-<figure/unnamed-chunk-3-1.pdf, id=26, 722.7pt x 433.62pt>
+<figure/unnamed-chunk-3-1.pdf, id=27, 722.7pt x 433.62pt>
 File: figure/unnamed-chunk-3-1.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-3-1.pdf>
 Package pdftex.def Info: figure/unnamed-chunk-3-1.pdf  used on input line 192.
@@ -904,7 +904,7 @@ Package pdftex.def Info: figure/unnamed-chunk-3-1.pdf  used on input line 192.
 
 [3 <./figure/unnamed-chunk-3-1.pdf>]
 Package color Info: Redefining color shadecolor on input line 202.
-<figure/unnamed-chunk-4-1.pdf, id=38, 722.7pt x 433.62pt>
+<figure/unnamed-chunk-4-1.pdf, id=39, 722.7pt x 433.62pt>
 File: figure/unnamed-chunk-4-1.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-4-1.pdf>
 Package pdftex.def Info: figure/unnamed-chunk-4-1.pdf  used on input line 207.
@@ -918,20 +918,23 @@ LaTeX Font Info:    Try loading font information for TS1+lmtt on input line 260
 ("C:\Users\Chris\AppData\Local\Programs\MiKTeX 2.9\tex\latex\lm\ts1lmtt.fd"
 File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-Package color Info: Redefining color shadecolor on input line 295.
-Package color Info: Redefining color shadecolor on input line 348.
+Package color Info: Redefining color shadecolor on input line 294.
+Package color Info: Redefining color shadecolor on input line 347.
+
+Underfull \vbox (badness 1038) detected at line 380
+ []
 
 [5]
-Underfull \vbox (badness 10000) detected at line 381
+Underfull \vbox (badness 10000) detected at line 380
  []
 
 
-Underfull \vbox (badness 10000) detected at line 381
+Underfull \vbox (badness 10000) detected at line 380
  []
 
 [6] [7]
 ! Undefined control sequence.
-l.384 \question Use the \textt
+l.383 \question Use the \textt
                               {Howell1} data to fit the model from part 4. I...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -939,10 +942,10 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-Package color Info: Redefining color shadecolor on input line 387.
+Package color Info: Redefining color shadecolor on input line 386.
 [8]
 ! Undefined control sequence.
-l.422 ...equentist) regression model to the \textt
+l.421 ...equentist) regression model to the \textt
                                                   {Howell1} data. Interpret ...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -950,10 +953,10 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-Package color Info: Redefining color shadecolor on input line 425.
-Package color Info: Redefining color shadecolor on input line 458.
+Package color Info: Redefining color shadecolor on input line 424.
+Package color Info: Redefining color shadecolor on input line 457.
 ! Undefined control sequence.
-l.480 ...for the slope and intercept as the \textt
+l.479 ...for the slope and intercept as the \textt
                                                   {lm()} function.
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -962,19 +965,19 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 [9]
-Package color Info: Redefining color shadecolor on input line 486.
-Package color Info: Redefining color shadecolor on input line 520.
+Package color Info: Redefining color shadecolor on input line 485.
+Package color Info: Redefining color shadecolor on input line 519.
  [10] [11]
-Package color Info: Redefining color shadecolor on input line 558.
-<figure/unnamed-chunk-14-1.pdf, id=82, 722.7pt x 433.62pt>
+Package color Info: Redefining color shadecolor on input line 557.
+<figure/unnamed-chunk-14-1.pdf, id=83, 722.7pt x 433.62pt>
 File: figure/unnamed-chunk-14-1.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-14-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-14-1.pdf  used on input line 578.
+Package pdftex.def Info: figure/unnamed-chunk-14-1.pdf  used on input line 577.
 
 (pdftex.def)             Requested size: 430.06613pt x 258.04349pt.
  [12 <./figure/unnamed-chunk-14-1.pdf>]
 ! Undefined control sequence.
-l.586 ...tter plot with \textbf{all} of the \textt
+l.585 ...tter plot with \textbf{all} of the \textt
                                                   {Howell1} data, color-code...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -982,42 +985,62 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-Package color Info: Redefining color shadecolor on input line 589.
-<figure/unnamed-chunk-15-1.pdf, id=93, 722.7pt x 433.62pt>
+Package color Info: Redefining color shadecolor on input line 588.
+<figure/unnamed-chunk-15-1.pdf, id=94, 722.7pt x 433.62pt>
 File: figure/unnamed-chunk-15-1.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-15-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-15-1.pdf  used on input line 605.
+Package pdftex.def Info: figure/unnamed-chunk-15-1.pdf  used on input line 604.
 
 (pdftex.def)             Requested size: 430.06613pt x 258.04349pt.
-Package color Info: Redefining color shadecolor on input line 612.
-<figure/unnamed-chunk-16-1.pdf, id=94, 722.7pt x 433.62pt>
+Package color Info: Redefining color shadecolor on input line 611.
+<figure/unnamed-chunk-16-1.pdf, id=95, 722.7pt x 433.62pt>
 File: figure/unnamed-chunk-16-1.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-16-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-16-1.pdf  used on input line 646.
+Package pdftex.def Info: figure/unnamed-chunk-16-1.pdf  used on input line 645.
 
 (pdftex.def)             Requested size: 430.06613pt x 258.04349pt.
+Package color Info: Redefining color shadecolor on input line 652.
+<figure/unnamed-chunk-17-1.pdf, id=96, 722.7pt x 433.62pt>
+File: figure/unnamed-chunk-17-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-17-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-17-1.pdf  used on input line 691.
+
+(pdftex.def)             Requested size: 430.06613pt x 258.04349pt.
+
+Underfull \vbox (badness 1163) detected at line 697
+ []
+
 [13 <./figure/unnamed-chunk-15-1.pdf>] [14 <./figure/unnamed-chunk-16-1.pdf>]
+Underfull \vbox (badness 10000) detected at line 697
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 697
+ []
+
+[15] [16 <./figure/unnamed-chunk-17-1.pdf>]
 This exam contains 9 questions with 0 parts, 0 subparts, and 0 subsubparts.
 This exam has a total of 0 points.
 This exam has a total of 0 bonus points.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 652.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 652.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 699.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 699.
 (Assignment_2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 652.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 652.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 699.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 699.
 Package rerunfilecheck Info: File `Assignment_2.out' has not changed.
 (rerunfilecheck)             Checksum: 7942106CB0D40AC6CA20A465F218E513;72.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 652.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 699.
  ) 
 Here is how much of TeX's memory you used:
- 9614 strings out of 492970
- 144304 string characters out of 3126593
- 264653 words of memory out of 3000000
- 13292 multiletter control sequences out of 15000+200000
+ 9621 strings out of 492970
+ 144499 string characters out of 3126593
+ 264976 words of memory out of 3000000
+ 13296 multiletter control sequences out of 15000+200000
  54278 words of font info for 59 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 28i,10n,32p,627b,518s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 28i,10n,32p,576b,518s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/lm/lm-ts1.e
+nc}{C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/lm/lm-rm.e
 nc}{C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/lm/lm-math
 it.enc}{C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/lm/lm-
 ec.enc}{C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/lm/lm-
@@ -1031,9 +1054,9 @@ nts/type1/public/lm/lmsy10.pfb><C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.
 9/fonts/type1/public/lm/lmtk10.pfb><C:/Users/Chris/AppData/Local/Programs/MiKTe
 X 2.9/fonts/type1/public/lm/lmtt10.pfb><C:/Users/Chris/AppData/Local/Programs/M
 iKTeX 2.9/fonts/type1/public/lm/lmtti10.pfb>
-Output written on Assignment_2.pdf (14 pages, 336025 bytes).
+Output written on Assignment_2.pdf (16 pages, 375843 bytes).
 PDF statistics:
- 160 PDF objects out of 1000 (max. 8388607)
- 25 named destinations out of 1000 (max. 500000)
- 34 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 180 PDF objects out of 1000 (max. 8388607)
+ 27 named destinations out of 1000 (max. 500000)
+ 39 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -162,11 +162,11 @@ After examining the data in the two tables above, I would change the priors to s
 height\textsubscript{i} $\sim$ Normal($\mu$\textsubscript{i}, $\sigma$)\\
 $\mu$\textsubscript{i} = $\alpha$ + $\beta$*year\textsubscript{i}\\
 $\alpha$ $\sim$ Normal(57, 25)\\
-$\beta$ $\sim$ Normal(38, 20)\\
+$\beta$ $\sim$ Normal(8.4, 4)\\
 $\sigma$ $\sim$ Uniform(0, 50)
 \end{center}
 
-I selected the mean for $\alpha$ by taking the weighted average of the minimum heights for males and females. I selected the mean for $\beta$ by subtracting the weighted average of minimum heights from the weighted average of maximum heights. I then divided this number by 3 in order to derive the average amount that an individual must grow over the course of 3 years in order to reach the weighted average maximum height after starting from the weighted average minimum height. I also increased the standard deviation for $\beta$ to reflect the uncertainty in the growth rate depending upon age and sex.
+I selected the mean for $\alpha$ by taking the weighted average of the minimum heights for males and females. I selected the mean for $\beta$ by subtracting the weighted average of minimum heights from the weighted average of maximum heights. I then divided this number by 18 in order to derive the average amount that an individual must grow per year in order to reach the weighted average maximum height after starting from the weighted average minimum height. I also set the standard deviation for $\beta$ to reflect our knowledge that $\beta \geq 0$.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -265,21 +265,20 @@ We can see based upon the output above that, if all students in the data set are
 \end{verbatim}
 \begin{alltt}
 \hlstd{ages} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{0.5}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{216.5}\hlstd{,} \hlkwc{by} \hlstd{=} \hlnum{12}\hlstd{)}
-\hlstd{i} \hlkwb{<-} \hlnum{1}
 \hlstd{heights} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(ages))}
-\hlstd{differences} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(ages)}\hlopt{-}\hlnum{1}\hlstd{)}
-\hlkwa{for}\hlstd{(age} \hlkwa{in} \hlstd{ages)\{}
-  \hlstd{height} \hlkwb{<-} \hlstd{boys_height_chart[boys_height_chart}\hlopt{$}\hlstd{age} \hlopt{==} \hlstd{age,]}\hlopt{$}\hlstd{`50th_perc`}
+\hlstd{differences} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{NA}\hlstd{,} \hlkwd{length}\hlstd{(ages))}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(ages))\{}
+  \hlstd{height} \hlkwb{<-} \hlstd{boys_height_chart[boys_height_chart}\hlopt{$}\hlstd{age} \hlopt{==} \hlstd{ages[i],]}\hlopt{$}\hlstd{`50th_perc`}
   \hlstd{heights[i]} \hlkwb{<-} \hlstd{height}
 
   \hlkwa{if}\hlstd{(i} \hlopt{!=} \hlnum{1}\hlstd{)\{}
-    \hlstd{differences[i}\hlopt{-}\hlnum{1}\hlstd{]} \hlkwb{<-} \hlstd{heights[i]} \hlopt{-} \hlstd{heights[i}\hlopt{-}\hlnum{1}\hlstd{]}
+    \hlstd{differences[i]} \hlkwb{<-} \hlstd{heights[i]} \hlopt{-} \hlstd{heights[i}\hlopt{-}\hlnum{1}\hlstd{]}
   \hlstd{\}}
-
-  \hlstd{i} \hlkwb{<-} \hlstd{i} \hlopt{+} \hlnum{1}
 \hlstd{\}}
 
-\hlstd{boys_growth_rate} \hlkwb{<-} \hlkwd{mean}\hlstd{(differences)}
+\hlstd{boys_data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlstr{"age"} \hlstd{= ages,} \hlstr{"height"} \hlstd{= heights,} \hlstr{"diff"} \hlstd{= differences)}
+
+\hlstd{boys_growth_rate} \hlkwb{<-} \hlkwd{mean}\hlstd{(boys_data}\hlopt{$}\hlstd{diff,} \hlkwc{na.rm} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 
 \hlcom{#Average growth rate for boys the three years from 10 - 13}
 \hlkwd{print}\hlstd{(boys_growth_rate)}
@@ -318,21 +317,21 @@ Performing a similar analysis for girls:
 ## [1] 49.2864
 \end{verbatim}
 \begin{alltt}
-\hlstd{i} \hlkwb{<-} \hlnum{1}
 \hlstd{heights} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(ages))}
-\hlstd{differences} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{length}\hlstd{(ages)}\hlopt{-}\hlnum{1}\hlstd{)}
-\hlkwa{for}\hlstd{(age} \hlkwa{in} \hlstd{ages)\{}
-  \hlstd{height} \hlkwb{<-} \hlstd{girls_height_chart[girls_height_chart}\hlopt{$}\hlstd{age} \hlopt{==} \hlstd{age,]}\hlopt{$}\hlstd{`50th_perc`}
+\hlstd{differences} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{NA}\hlstd{,} \hlkwd{length}\hlstd{(ages))}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(ages))\{}
+  \hlstd{height} \hlkwb{<-} \hlstd{girls_height_chart[girls_height_chart}\hlopt{$}\hlstd{age} \hlopt{==} \hlstd{ages[i],]}\hlopt{$}\hlstd{`50th_perc`}
   \hlstd{heights[i]} \hlkwb{<-} \hlstd{height}
 
   \hlkwa{if}\hlstd{(i} \hlopt{!=} \hlnum{1}\hlstd{)\{}
-    \hlstd{differences[i}\hlopt{-}\hlnum{1}\hlstd{]} \hlkwb{<-} \hlstd{heights[i]} \hlopt{-} \hlstd{heights[i}\hlopt{-}\hlnum{1}\hlstd{]}
+    \hlstd{differences[i]} \hlkwb{<-} \hlstd{heights[i]} \hlopt{-} \hlstd{heights[i}\hlopt{-}\hlnum{1}\hlstd{]}
   \hlstd{\}}
 
-  \hlstd{i} \hlkwb{<-} \hlstd{i} \hlopt{+} \hlnum{1}
 \hlstd{\}}
 
-\hlstd{girls_growth_rate} \hlkwb{<-} \hlkwd{mean}\hlstd{(differences)}
+\hlstd{girls_data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlstr{"age"} \hlstd{= ages,} \hlstr{"height"} \hlstd{= heights,} \hlstr{"diff"} \hlstd{= differences)}
+
+\hlstd{girls_growth_rate} \hlkwb{<-} \hlkwd{mean}\hlstd{(girls_data}\hlopt{$}\hlstd{diff,} \hlkwc{na.rm} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 
 \hlcom{#Average growth rate for girls the three years from 10 - 13}
 \hlkwd{print}\hlstd{(girls_growth_rate)}
@@ -374,7 +373,7 @@ $\beta$ $\sim$ Normal(6.5, 3)\\
 $\sigma$ $\sim$ Uniform(0, 50)
 \end{center}
 
-The 3rd percentile for girls at 0 years old measured 45.1 cm. Thus, it is unlikely that $\alpha$ will fall below 45.1 cm. As a result, I chose the standard deviation of the prior to be 5 cm. Since the prior is normally distributed, this means that I expect the $\alpha$ term to be within (39.6 cm, 59.6 cm) with about 95\% certainty.
+The 3rd percentile for girls at 0 years old (ie. as a newborn) measured 45.1 cm. Thus, it is unlikely that $\alpha$ will fall below 45.1 cm. As a result, I chose the standard deviation of the prior to be 5 cm. Since the prior is normally distributed, this means that I expect the $\alpha$ term to be within (39.6 cm, 59.6 cm) with about 95\% certainty.
 
 I chose the standard deviation of the prior for $\beta$ to be 3 cm. The correlation between age and height is clearly positive. Thus, it is highly unlikely that $\beta$ should be negative. A standard deviation of 3 cm means that I expect $\beta$ to be within (0.5 cm, 12.5 cm) with about 95\% certainty.
 
@@ -408,7 +407,7 @@ I chose the standard deviation of the prior for $\beta$ to be 3 cm. The correlat
 ## 
 ## MAP values:
 ##         a         b     sigma 
-## 72.470832  4.585420  8.471282 
+## 72.470862  4.585416  8.471086 
 ## 
 ## Log-likelihood: -704.01
 \end{verbatim}
@@ -606,7 +605,7 @@ The three linear models fit the data almost identically.
 
 \end{knitrout}
 
-The three linear models would not be appropriate to apply to the full data set because the data is highly non-linear. We would likely need to add a quadratic term in order to adequately fit the full data set. Here is an example of this:
+The three linear models would not be appropriate to apply to the full data set because the data is highly non-linear since people stop growing after a certain age. We could add a quadratic term in order to attempt to adequately fit the full data set. Here is an example of this:
 
 \begin{knitrout}\footnotesize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -646,6 +645,54 @@ The three linear models would not be appropriate to apply to the full data set b
 \includegraphics[width=\maxwidth]{figure/unnamed-chunk-16-1} 
 
 \end{knitrout}
+
+This still does not appear to fit the data properly. Let's try a log-model instead:
+
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{data}\hlopt{$}\hlstd{log_height} \hlkwb{<-} \hlkwd{log}\hlstd{(data}\hlopt{$}\hlstd{height)}
+\hlstd{log_model} \hlkwb{<-} \hlkwd{lm}\hlstd{(log_height} \hlopt{~} \hlstd{age,} \hlkwc{data} \hlstd{= data)}
+
+\hlkwd{summary}\hlstd{(log_model)}
+\end{alltt}
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = log_height ~ age, data = data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.68777 -0.09971  0.03904  0.13462  0.33331 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 4.6762931  0.0134346  348.08   <2e-16 ***
+## age         0.0077467  0.0003739   20.72   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.1808 on 542 degrees of freedom
+## Multiple R-squared:  0.4419,	Adjusted R-squared:  0.4409 
+## F-statistic: 429.2 on 1 and 542 DF,  p-value: < 2.2e-16
+\end{verbatim}
+\begin{alltt}
+\hlkwd{ggplot}\hlstd{(data,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{= age,} \hlkwc{y}\hlstd{=log_height))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color}\hlstd{=sex))} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Scatterplot with Log Model"}\hlstd{)} \hlopt{+}
+  \hlkwd{labs}\hlstd{(}\hlkwc{x} \hlstd{=} \hlstr{"Age (years)"}\hlstd{,} \hlkwc{y} \hlstd{=} \hlstr{"Log(Height) (log cm)"}\hlstd{)} \hlopt{+}
+  \hlkwd{scale_x_continuous}\hlstd{(}\hlkwc{breaks} \hlstd{=} \hlkwd{pretty}\hlstd{(data}\hlopt{$}\hlstd{age,} \hlkwc{n} \hlstd{=} \hlnum{7}\hlstd{))} \hlopt{+}
+  \hlstd{theme.info} \hlopt{+}
+  \hlkwd{stat_smooth}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{y}\hlstd{=log_height),} \hlkwc{method} \hlstd{=} \hlstr{"lm"}\hlstd{,}
+                  \hlkwc{formula} \hlstd{= y} \hlopt{~} \hlstd{x,} \hlkwc{size} \hlstd{=} \hlnum{1}\hlstd{,}
+                  \hlkwc{color}\hlstd{=}\hlstr{"black"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-17-1} 
+
+\end{knitrout}
+
+It seems we may have been better off with the quadratic model judging by the graphs and the Adjusted R-squared values.
 
 \end{solution}
 \end{questions}

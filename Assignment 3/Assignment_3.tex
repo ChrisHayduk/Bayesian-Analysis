@@ -80,16 +80,6 @@
 
 
 % \noindent 
-\begin{filecontents}{mybibliography.bib}
-@book{tibshirani, 
-place={New York}, 
-title={An Introduction to Statistical Learning with Applications in R}, 
-publisher={Springer}, 
-author={James, Gareth and Witten, Daniela and Hastie, Trevor and Tibshirani, Robert}, 
-year={2017}}
-
-\end{filecontents}
-
 
 \begin{questions}
 \question On pg. 90 of CH 4 in  \emph{Statistical Rethinking}, the book uses a function \texttt{cov2cor()} to convert a covariance matrix into a correlation matrix.    Write your own function which does the same and write out the computations using matrix algebra notation.
@@ -129,16 +119,16 @@ Now let's compare the output of this function to the built-in \texttt{cov2cor()}
 \end{alltt}
 \begin{verbatim}
 ##                mu       sigma
-## mu    1.000000000 0.001816177
-## sigma 0.001816177 1.000000000
+## mu    1.000000000 0.001816966
+## sigma 0.001816966 1.000000000
 \end{verbatim}
 \begin{alltt}
 \hlkwd{my_cov2cor}\hlstd{(}\hlkwd{vcov}\hlstd{(m4.1))}
 \end{alltt}
 \begin{verbatim}
 ##                mu       sigma
-## mu    1.000000000 0.001816177
-## sigma 0.001816177 1.000000000
+## mu    1.000000000 0.001816966
+## sigma 0.001816966 1.000000000
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -147,12 +137,21 @@ Now let's compare the output of this function to the built-in \texttt{cov2cor()}
 \question On pg. 92 of CH 4 in  \emph{Statistical Rethinking}, the author talks about regression to the mean and shrinkage.  Read more about shrinkage estimation (including those articles I gave you last week), to explain more about the purpose and benefit of using shrinkage estimation.  Include citations for any references you use. 
 \begin{solution}
 
+Shrinkage estimation generallly reduces the variance in parameter estimation. This may serve to improve out-of-sample prediction by reducing the variance of the model while increasing the bias. If the "correct" parameters for a particular shrinkage method are chosen, then the trade-off between variance and bias should result in a model with better predictive capability when compared with an OLS model.
 
-\medskip
- 
-\bibliographystyle{unsrt}
-\bibliography{mybibliography}
+Ridge regression, one such shrinkage method, is very similar to OLS regression. It includes a penalty term with the RSS calculation which penalizes the model for having large $\beta$ values. The parameter $\lambda \geq 0$ controls the size of the penalty, with $\lambda = 0$ simplifying the model to OLS regression. The penalty term shrinks the $\beta$ terms towards 0 (but never reaching 0).
 
+Lasso regression is another shrinkage method which decreases the variance of the $\beta$ values. Lasso minimizes the RSS, but includes the constraint that $\sum\limits_{j=1}^{p} |\beta_j| \leq t$. If $t$ is chosen sufficiently small, then some of the $\beta$ values will be reduced all the way to 0. In this manner, lasso regression is able to perform a sort of continuous subset selection.
+
+Cite later:
+\begin{itemize}
+\item Introduction to Statistical Learning
+\item Elements of Statistical Learning
+\item Regression Modeling Strategies
+\item Brown (2007)
+\item Brown (2008)
+\item Copas (1983)
+\end{itemize}
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%%%%%
 \question On pg. 99 of CH 4 in \emph{Statistical Rethinking}, the author writes, ``But in more complex models, strong [parameter] correlations like this can make it difficult to fit the model to the data.''
@@ -162,6 +161,11 @@ Now let's compare the output of this function to the built-in \texttt{cov2cor()}
   \part Why does the author only center the $x$-variable, \texttt{weight}, and not the $y$-variable \texttt{height}?
   %%%%%%
   \end{parts}
+\begin{solution}
+  \begin{parts}
+  \part 
+  \end{parts}
+\end{solution}
 %%%%%%%%%%%%%%%%%%%%%%%%
 \question Use the \texttt{d2} data from the chapter to answer the following questions, which are extensions of \textbf{4H2}:
 \begin{parts}
@@ -179,8 +183,6 @@ Now let's compare the output of this function to the built-in \texttt{cov2cor()}
 \end{parts}
 %%%%%%%%%%%%%%%%%%%%%%%%
 \end{questions}
-
-
 
 
 \end{document}

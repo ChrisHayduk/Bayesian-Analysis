@@ -1,0 +1,186 @@
+%\documentclass[12pt,addpoints]{exam}   % Print w/o solutions
+\documentclass[12pt,addpoints,answers]{exam}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}   % Print solutions
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{lscape}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{multicol}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+\singlespacing
+%\onehalfspacing
+%\doublespacing
+
+
+\title{Chs. 4 Extra Exercises: Part 2}
+
+\author{}
+\date{\today}
+
+\maketitle
+
+
+
+
+
+% \noindent 
+\begin{filecontents}{mybibliography.bib}
+@book{tibshirani, 
+place={New York}, 
+title={An Introduction to Statistical Learning with Applications in R}, 
+publisher={Springer}, 
+author={James, Gareth and Witten, Daniela and Hastie, Trevor and Tibshirani, Robert}, 
+year={2017}}
+
+\end{filecontents}
+
+
+\begin{questions}
+\question On pg. 90 of CH 4 in  \emph{Statistical Rethinking}, the book uses a function \texttt{cov2cor()} to convert a covariance matrix into a correlation matrix.    Write your own function which does the same and write out the computations using matrix algebra notation.
+\begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{my_cov2cor} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{cov_mat}\hlstd{)\{}
+  \hlstd{diag} \hlkwb{<-} \hlkwd{diag}\hlstd{(cov_mat)}
+  \hlstd{diag_inv_sqrt} \hlkwb{<-} \hlstd{(diag)}\hlopt{^}\hlstd{(}\hlopt{-}\hlnum{1}\hlopt{/}\hlnum{2}\hlstd{)}
+  \hlstd{corr_mat} \hlkwb{<-} \hlstd{diag_inv_sqrt} \hlopt{*} \hlstd{cov_mat} \hlopt{*} \hlkwd{rep}\hlstd{(diag_inv_sqrt,} \hlkwc{each} \hlstd{=} \hlkwd{dim}\hlstd{(cov_mat)[}\hlnum{1L}\hlstd{])}
+
+  \hlkwd{return}\hlstd{(corr_mat)}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\newpage
+Now let's compare the output of this function to the built-in \texttt{cov2cor()} function:
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Test run using data from Ch. 4 pg. 87-90}
+\hlkwd{data}\hlstd{(Howell1)}
+\hlstd{d} \hlkwb{<-} \hlstd{Howell1}
+\hlstd{d2} \hlkwb{<-} \hlstd{d[d}\hlopt{$}\hlstd{age} \hlopt{>=} \hlnum{18}\hlstd{,]}
+
+\hlstd{flist} \hlkwb{<-} \hlkwd{alist}\hlstd{(}
+  \hlstd{height} \hlopt{~} \hlkwd{dnorm}\hlstd{(mu, sigma),}
+  \hlstd{mu} \hlopt{~} \hlkwd{dnorm}\hlstd{(}\hlnum{178}\hlstd{,} \hlnum{20}\hlstd{),}
+  \hlstd{sigma} \hlopt{~} \hlkwd{dunif}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{50}\hlstd{)}
+\hlstd{)}
+
+\hlstd{m4.1} \hlkwb{<-} \hlkwd{map}\hlstd{(flist,} \hlkwc{data}\hlstd{=d2)}
+
+\hlkwd{cov2cor}\hlstd{(}\hlkwd{vcov}\hlstd{(m4.1))}
+\end{alltt}
+\begin{verbatim}
+##                mu       sigma
+## mu    1.000000000 0.001816177
+## sigma 0.001816177 1.000000000
+\end{verbatim}
+\begin{alltt}
+\hlkwd{my_cov2cor}\hlstd{(}\hlkwd{vcov}\hlstd{(m4.1))}
+\end{alltt}
+\begin{verbatim}
+##                mu       sigma
+## mu    1.000000000 0.001816177
+## sigma 0.001816177 1.000000000
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\question On pg. 92 of CH 4 in  \emph{Statistical Rethinking}, the author talks about regression to the mean and shrinkage.  Read more about shrinkage estimation (including those articles I gave you last week), to explain more about the purpose and benefit of using shrinkage estimation.  Include citations for any references you use. 
+\begin{solution}
+
+
+\medskip
+ 
+\bibliographystyle{unsrt}
+\bibliography{mybibliography}
+
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\question On pg. 99 of CH 4 in \emph{Statistical Rethinking}, the author writes, ``But in more complex models, strong [parameter] correlations like this can make it difficult to fit the model to the data.''
+  \begin{parts}
+  \part Explain why correlations between pairs of parameters is a problem.  
+  %%%%%%
+  \part Why does the author only center the $x$-variable, \texttt{weight}, and not the $y$-variable \texttt{height}?
+  %%%%%%
+  \end{parts}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\question Use the \texttt{d2} data from the chapter to answer the following questions, which are extensions of \textbf{4H2}:
+\begin{parts}
+\part Fit a frequentist simple linear regression with \texttt{weight} as the explanatory variable and \texttt{height} as the response variable.  Make a scatterplot of the data and plot both the frequentist and Bayesian lines.  Is there much of a difference?
+  %%%%%%
+\part Check the regression assumptions on your frequentist model.  Include any relevant tables/graphs with your assumption checks.
+  %%%%%%
+  \part Are correlations between pairs of parameters a problem in frequentist regression?  Calculate thevariance-covariance matrix for $\boldsymbol{\hat{\beta}}=(\hat{\beta}_0,\hat{\beta}_1)$ using the formulas in the appendix to CH 3 of \emph{Regression Analysis by Example} (your regression textbook).
+  %%%%%%
+  \part Does centering \texttt{weight} make a difference in the correlations between parameters in frequentist regression?  Does it make a difference in the parameter estimates themselves?   Try using the function \texttt{scale()} to center \texttt{weight} in your code.  
+  %%%%%%
+  \part Use the function \texttt{confint()} to create a 95\% confidence interval of the slope for your frequentist regression.  Calculate a 95\% posterior probability interval for the slope for your Bayesian regression.  Interpret both and explain the difference between the two.
+  %%%%%%
+  \part Create a figure with 4 scatterplots, each with \texttt{weight} on the $x$-axis and \texttt{height} on the $y$-axis.  On the first plot, add the Bayesian fitted model and add the 95\% HPDI intervals (like Fig. 4.8).  On the second plot, add the Bayesian fitted model and add the 95\% PI intervals (also like Fig. 4.8).  On the third plot, add the frequentist fitted model and the 95\% confidence intervals for prediction (like slide 35 in Lecture 3 of the regression class).  Finally, on the fourth plot, add the frequentist fitted model and the 95\% prediction intervals for prediction (also like slide 35 in Lecture 3 of the regression class).  Interpret all four plots and explain the connections between them.  
+\end{parts}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\end{questions}
+
+
+
+
+\end{document}

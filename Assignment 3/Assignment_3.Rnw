@@ -1,0 +1,120 @@
+%\documentclass[12pt,addpoints]{exam}   % Print w/o solutions
+\documentclass[12pt,addpoints,answers]{exam}   % Print solutions
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{lscape}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{multicol}
+
+\begin{document}
+
+\singlespacing
+%\onehalfspacing
+%\doublespacing
+
+
+\title{Chs. 4 Extra Exercises: Part 2}
+
+\author{}
+\date{\today}
+
+\maketitle
+
+
+<<echo=F, results = 'hide', warning=FALSE, message=FALSE>>=
+# set the global chunk options
+opts_chunk$set(message=FALSE, # don't print R messages in pdf -- CHANGE TO FALSE WHEN SUBMITTING FINAL VERSION!!!
+               warning=FALSE) # don't print warnings in pdf -- CHANGE TO FALSE WHEN SUBMITTING FINAL VERSION!!!
+
+# load .RData files, .R files, etc.
+# R packages required
+suppressMessages(library(tidyverse, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(rethinking, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(gridExtra, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(qwraps2, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+
+options(qwraps2_markup = "latex")
+knitr::opts_chunk$set(size = 'footnotesize', concordance=TRUE)
+knitr::opts_chunk$set(fig.width=10, fig.height=6)
+
+theme.info <- theme(plot.title = element_text(size=16, hjust=0.5),
+                    axis.title = element_text(size=14),
+                    axis.text = element_text(size=14))
+
+@
+
+
+% \noindent 
+
+\begin{questions}
+\question On pg. 90 of CH 4 in  \emph{Statistical Rethinking}, the book uses a function \texttt{cov2cor()} to convert a covariance matrix into a correlation matrix.    Write your own function which does the same and write out the computations using matrix algebra notation.
+\begin{solution}
+<<>>=
+my_cov2cor <- function(cov_mat){
+  diag <- diag(cov_mat)
+  diag_inv_sqrt <- (diag)^(-1/2)
+  corr_mat <- diag_inv_sqrt * cov_mat * rep(diag_inv_sqrt, each = dim(cov_mat)[1L])
+  
+  return(corr_mat)
+}
+@
+\newpage
+Now let's compare the output of this function to the built-in \texttt{cov2cor()} function:
+<<>>=
+#Test run using data from Ch. 4 pg. 87-90
+data(Howell1)
+d <- Howell1
+d2 <- d[d$age >= 18,]
+
+flist <- alist(
+  height ~ dnorm(mu, sigma),
+  mu ~ dnorm(178, 20),
+  sigma ~ dunif(0, 50)
+)
+
+m4.1 <- map(flist, data=d2)
+
+cov2cor(vcov(m4.1))
+
+my_cov2cor(vcov(m4.1))
+@
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\question On pg. 92 of CH 4 in  \emph{Statistical Rethinking}, the author talks about regression to the mean and shrinkage.  Read more about shrinkage estimation (including those articles I gave you last week), to explain more about the purpose and benefit of using shrinkage estimation.  Include citations for any references you use. 
+\begin{solution}
+
+
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\question On pg. 99 of CH 4 in \emph{Statistical Rethinking}, the author writes, ``But in more complex models, strong [parameter] correlations like this can make it difficult to fit the model to the data.''
+  \begin{parts}
+  \part Explain why correlations between pairs of parameters is a problem.  
+  %%%%%%
+  \part Why does the author only center the $x$-variable, \texttt{weight}, and not the $y$-variable \texttt{height}?
+  %%%%%%
+  \end{parts}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\question Use the \texttt{d2} data from the chapter to answer the following questions, which are extensions of \textbf{4H2}:
+\begin{parts}
+\part Fit a frequentist simple linear regression with \texttt{weight} as the explanatory variable and \texttt{height} as the response variable.  Make a scatterplot of the data and plot both the frequentist and Bayesian lines.  Is there much of a difference?
+  %%%%%%
+\part Check the regression assumptions on your frequentist model.  Include any relevant tables/graphs with your assumption checks.
+  %%%%%%
+  \part Are correlations between pairs of parameters a problem in frequentist regression?  Calculate thevariance-covariance matrix for $\boldsymbol{\hat{\beta}}=(\hat{\beta}_0,\hat{\beta}_1)$ using the formulas in the appendix to CH 3 of \emph{Regression Analysis by Example} (your regression textbook).
+  %%%%%%
+  \part Does centering \texttt{weight} make a difference in the correlations between parameters in frequentist regression?  Does it make a difference in the parameter estimates themselves?   Try using the function \texttt{scale()} to center \texttt{weight} in your code.  
+  %%%%%%
+  \part Use the function \texttt{confint()} to create a 95\% confidence interval of the slope for your frequentist regression.  Calculate a 95\% posterior probability interval for the slope for your Bayesian regression.  Interpret both and explain the difference between the two.
+  %%%%%%
+  \part Create a figure with 4 scatterplots, each with \texttt{weight} on the $x$-axis and \texttt{height} on the $y$-axis.  On the first plot, add the Bayesian fitted model and add the 95\% HPDI intervals (like Fig. 4.8).  On the second plot, add the Bayesian fitted model and add the 95\% PI intervals (also like Fig. 4.8).  On the third plot, add the frequentist fitted model and the 95\% confidence intervals for prediction (like slide 35 in Lecture 3 of the regression class).  Finally, on the fourth plot, add the frequentist fitted model and the 95\% prediction intervals for prediction (also like slide 35 in Lecture 3 of the regression class).  Interpret all four plots and explain the connections between them.  
+\end{parts}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\end{questions}
+
+
+\end{document}

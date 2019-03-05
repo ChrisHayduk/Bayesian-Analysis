@@ -18,7 +18,7 @@
 %\doublespacing
 
 
-\title{Chs. 4 Extra Exercises: Part 2}
+\title{Ch. 4 Extra Exercises: Part 2}
 
 \author{}
 \date{\today}
@@ -37,14 +37,16 @@ suppressMessages(library(tidyverse, quietly=TRUE, warn.conflicts = FALSE, verbos
 suppressMessages(library(rethinking, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
 suppressMessages(library(gridExtra, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
 suppressMessages(library(qwraps2, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(broom, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
 
 options(qwraps2_markup = "latex")
 knitr::opts_chunk$set(size = 'footnotesize', concordance=TRUE)
-knitr::opts_chunk$set(fig.width=10, fig.height=6)
+knitr::opts_chunk$set(fig.width=10, fig.height=10)
 
 theme.info <- theme(plot.title = element_text(size=16, hjust=0.5),
                     axis.title = element_text(size=14),
                     axis.text = element_text(size=14))
+
 
 @
 
@@ -100,7 +102,6 @@ Cite later:
 \item Elements of Statistical Learning
 \item Regression Modeling Strategies
 \item Brown (2007)
-\item Brown (2008)
 \item Copas (1983)
 \end{itemize}
 \end{solution}
@@ -115,6 +116,7 @@ Cite later:
 \begin{solution}
   \begin{parts}
   \part 
+  \part Centering the $x$-variable but not the $y$-variable retains the estimate and interpretability of the $\beta$ coefficient and improves the interpretability of the intercept $\alpha$. The intercept is now interpreted as the value of $\hat{y}$ when $x$ is equal to the mean of the data. This ensures that the intercept is of practical importance, as it does not make sense to consider the case where $x = 0$ in many regression equations.
   \end{parts}
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,7 +126,7 @@ Cite later:
   %%%%%%
 \part Check the regression assumptions on your frequentist model.  Include any relevant tables/graphs with your assumption checks.
   %%%%%%
-  \part Are correlations between pairs of parameters a problem in frequentist regression?  Calculate thevariance-covariance matrix for $\boldsymbol{\hat{\beta}}=(\hat{\beta}_0,\hat{\beta}_1)$ using the formulas in the appendix to CH 3 of \emph{Regression Analysis by Example} (your regression textbook).
+  \part Are correlations between pairs of parameters a problem in frequentist regression?  Calculate the variance-covariance matrix for $\boldsymbol{\hat{\beta}}=(\hat{\beta}_0,\hat{\beta}_1)$ using the formulas in the appendix to CH 3 of \emph{Regression Analysis by Example} (your regression textbook).
   %%%%%%
   \part Does centering \texttt{weight} make a difference in the correlations between parameters in frequentist regression?  Does it make a difference in the parameter estimates themselves?   Try using the function \texttt{scale()} to center \texttt{weight} in your code.  
   %%%%%%
@@ -134,6 +136,218 @@ Cite later:
 \end{parts}
 %%%%%%%%%%%%%%%%%%%%%%%%
 \end{questions}
+\begin{solution}
+\begin{parts}
+  \part 
+<<>>=
+lm.1 <- lm(height ~ weight, data = d2)
+
+summary(lm.1)
+@
+
+<<>>=
+m4.3 <- map(
+  alist(
+    height ~ dnorm(mu, sigma),
+    mu <- a + b*weight,
+    a ~ dnorm(156, 100),
+    b ~ dnorm(0, 10),
+    sigma ~ dunif(0, 50)
+  ),
+data = d2)
+
+precis(m4.3)
+@
+  
+<<>>=
+ggplot(data = d2,mapping = aes(x = weight,y = height)) +
+  geom_point() +
+  geom_abline(color = "blue", slope = lm.1$coefficients[2],
+              intercept = lm.1$coefficients, size = 1.5, 
+              show.legend = TRUE) +
+  geom_abline(color = "red", slope = coef(m4.3)["b"], 
+              intercept = coef(m4.3)["a"], size = 1.5, 
+              show.legend = TRUE) +
+  ggtitle("Frquentist Model (Blue) vs. Bayesian Model (Red)") + theme.info
+
+@
+The two regression lines are nearly identical.
+\newpage
+  \part Regression assumptions:
+  \begin{enumerate}
+    \item Fixed $x$ with no measurement error:\\
+    The $x$ values are not fixed because we observed each weight value; they were not assigned before the regression. They are also not measured without error as any scale will likely introduce a small amount of measurement noise. However, on a well-calibrated scale, the amount of measurement noice introduced is likely ignorable.
+    \item $x$ and $y$ linearly related:\\
+    We can see from the plot above that $x$ and $y$ are clearly linearly related.
+    \item Constant variance:\\
+<<>>=
+y.augment <- augment(lm.1)
+y.augment
+
+y.augment %>% ggplot(aes(x=weight, y=.resid)) + 
+  geom_point(color="#99000070", size=2) +
+  ggtitle("Residual Plot") +
+  labs(x="Weight (kg)", y="Residuals") +
+  geom_hline(yintercept=0, color="gray50",  lty=2) +
+  theme.info
+@
+  We can see from the plot above that the variance in the residuals is constant regardless of the individual's weight.
+  \item Mean of the residuals = 0:\\
+<<>>=
+mean(y.augment$.resid)
+@
+  As you can see, the mean of the residuals is very close to 0.
+  \item Normally distributed errors:\\
+<<>>=
+y.augment %>%  ggplot(aes(sample=.resid)) +
+  stat_qq(col = "firebrick") +
+  stat_qq_line() +
+  ggtitle("Normal Quantile Plot") +
+  theme.info
+@
+  The Normal Quantile Plot shows a rougly straight line. There is some deviation towards each end of the line, indicating that the data comes from a heavy-tailed distribution. However, the deviation is small enough that we may still be able to run our regression with minimal error.
+  \end{enumerate}
+  \part 
+<<>>=
+calculate_variance_covariance_matrix <- function(x_mat, y_mat){
+  x_var <- as.matrix(x_mat)
+  intercept <- matrix(rep(1, nrow(x_var)), ncol = 1)
+  
+  X <- cbind(intercept, x_var)
+  
+  Y <- as.matrix(y_mat)
+  
+  C <- solve(t(X) %*% X)
+  
+  beta_hat <- C %*% t(X) %*% Y
+  
+  var_covar <- C * var(Y)[1]
+  
+  return(var_covar)
+}
+
+print(calculate_variance_covariance_matrix(d2$weight, d2$height))
+@
+  \part
+<<>>=
+d2$centered_weight <- scale(d2$weight, scale = FALSE)
+
+lm.2 <- lm(height ~ centered_weight, data = d2)
+
+summary(lm.2)
+
+print(calculate_variance_covariance_matrix(d2$centered_weight, d2$height))
+@
+  Each entry in the variance-covariance matrix has been altered. In the regression output, we can see that the intercept has changed while the slope has remained the same.
+  \part
+<<>>=
+#Frequentist regression confidence interval for the slope
+confint(lm.1)
+
+confint(lm.2)
+@
+
+<<>>=
+#Bayesian regression posterior probability interval for the slope
+post <- extract.samples(m4.3, n=1e4)
+
+precis(post, prob = 0.95, digits = 5)
+@
+
+The 95\% confidence interval for the slope can be thought of in this manner: if we were to take 100 different samples from the population, we would expect 95 of the regressions to yield an estimate for $\hat{\beta}_1$ that falls within the 95\% confidence interval.
+
+The 95\% posterior probability interval for the slope represents the range within which we expect 95 out of 100 slopes sampled from the posterior distribution to fall.
+
+The difference between the two lies within the interpretation of the slope parameter. Frequentist regression views $\hat{\beta}_1$ as a fixed parameter estimated from random data. However, Bayesian regression views $\hat{\beta}_1$ as a random variable with a sampling distribution (the posterior probability distribution).
+
+<<>>=
+#Bootstrap interval
+beta_hat <- rep(0, times = 10000)
+for(i in 1:10000){
+  data <- sample_n(d2, size = length(d2$height), replace = TRUE)
+  lm <- lm(height ~ weight, data = data)
+  beta_hat[i] <- lm$coefficients[2]
+}
+
+data <- data.frame("beta_hat" = beta_hat)
+
+ggplot(data, aes(x=beta_hat)) + 
+  geom_histogram(aes(y = ..density..), bins = 50,
+                 colour = "black", 
+                   fill = "white") +
+  ggtitle("Histogram of Bootstrap Estimates for the Slope Parameter") +
+  labs(x = "Slope Estimate", y = "Density") +
+  stat_function(fun = dnorm, n = 101, args = list(mean = mean(beta_hat),
+                                                  sd = sd(beta_hat))) +
+  geom_vline(xintercept = mean(beta_hat), linetype = "dashed",
+             color = "red", size = 1.5) +
+  theme.info
+@
+\newpage
+\part
+Let's plot the confidence \& prediction intervals for both the frequentist and Bayesian models:\\
+<<echo=FALSE>>=
+par(mfrow=c(2,2))
+
+weight.seq <- seq(from = 25, to = 70, by = 1)
+capture.output(mu <- link(m4.3, data=data.frame(weight=weight.seq)), file='NUL')
+mu.mean <- apply(mu, 2, mean)
+mu.HPDI <- apply(mu, 2, HPDI, prob=0.95)
+
+plot(height ~ weight, data = d2, las=TRUE, 	xlab="Weight (kg)", ylab="Height (cm)",
+	main="95% HPDI", cex.lab=2, cex.axis=1, cex.main=1.8, 
+	pch=19,  col="#99000070")
+lines(weight.seq, mu.mean)
+polygon(c(weight.seq, rev(weight.seq)), border="#00236770",
+		c(mu.HPDI[1,], rev(mu.HPDI[2,])), col="#00236770")
+
+capture.output(sim.height <- sim(m4.3, data=list(weight=weight.seq)), file='NUL')
+height.PI <- apply(sim.height, 2, PI, prob = 0.95)
+plot(height ~ weight, data = d2, las=TRUE, 	xlab="Weight (kg)", ylab="Height (cm)",
+	main="95% PI", cex.lab=2, cex.axis=1, cex.main=1.8, 
+	pch=19,  col="#99000070")
+lines(weight.seq, mu.mean)
+polygon(c(weight.seq, rev(weight.seq)), border="#00236770",
+		c(height.PI[1,], rev(height.PI[2,])), col="#00236770")
+
+plot(d2$weight, d2$height, las=TRUE, 	xlab="Weight (kg)", ylab="Height (cm)",
+	main="Confidence Interval \n(average y)", cex.lab=2, cex.axis=1, cex.main=1.8, 
+	pch=19,  col="#99000070")
+abline(coef(lm.1, col="firebrick", lwd=2)) # add regression line to plot
+
+x.vector <- weight.seq
+y.vector <- predict(lm.1, newdata=data.frame("weight"=x.vector), 
+                    interval="confidence", level=0.95)
+polygon(c(x.vector, rev(x.vector)), border="#00236770",
+		c(y.vector[,2], rev(y.vector[,3])), col="#00236770")
+
+# scatter plot with regression line and prediction band added
+plot(d2$weight, d2$height, las=TRUE, 	xlab="Weight (kg)", ylab="Height (cm)",
+	main="Prediction Interval \n(specific observation)", cex.lab=2, cex.axis=1, cex.main=1.8, 
+	pch=19,  col="#99000070")
+abline(coef(lm.1), col="firebrick", lwd=2) # add regression line to plot
+
+x.vector <- weight.seq
+y.vector <- predict(lm.1, newdata=data.frame("weight"=x.vector),
+                    interval="prediction", level=0.95)
+polygon(c(x.vector, rev(x.vector)), border="#00236770",
+		c(y.vector[,2], rev(y.vector[,3])), col="#00236770")
+
+@
+
+The plot in the top left demonstrates the densest 95\% interval for the regression line.
+
+The plot in the top right demonstrates the 95\% confidence interval for a new $y$ given each $x$ value.
+
+The bottom left plot demonstrates the 95\% confidence interval for the average $y$ value as $x$ varies.
+
+The bottom right plot demonstrates the 95\% prediction interval for a new $y$ given each $x$ value.
+
+The HPDI and Confidence Interval plots are relaying roughly the same information. They each specify that the average $y$ value for a given $x$ should fall within that region with 95\% probability.
+
+The PI and Prediction Interval plots both show the region where the model expects to find 95\% of heights in the population at each weight.
+\end{parts}
+\end{solution}
 
 
 \end{document}

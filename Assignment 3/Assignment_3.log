@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.12.28)  25 FEB 2019 01:47
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.12.28)  4 MAR 2019 01:45
 entering extended mode
 **./Assignment_3.tex
 (Assignment_3.tex
@@ -537,27 +537,124 @@ File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 148.
 
-[2] [3] [4]
+[2] [3]
+Package color Info: Redefining color shadecolor on input line 190.
+Package color Info: Redefining color shadecolor on input line 220.
+Package color Info: Redefining color shadecolor on input line 244.
+<figure/unnamed-chunk-6-1.pdf, id=37, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-6-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-6-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-6-1.pdf  used on input line 257.
+(pdftex.def)             Requested size: 426.14972pt x 426.1467pt.
+Package color Info: Redefining color shadecolor on input line 270.
+<figure/unnamed-chunk-7-1.pdf, id=38, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-7-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-7-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-7-1.pdf  used on input line 300.
+(pdftex.def)             Requested size: 400.30003pt x 400.29823pt.
+Package color Info: Redefining color shadecolor on input line 306.
+Package color Info: Redefining color shadecolor on input line 318.
+<figure/unnamed-chunk-9-1.pdf, id=39, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-9-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-9-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-9-1.pdf  used on input line 327.
+(pdftex.def)             Requested size: 400.30003pt x 400.29823pt.
+Package color Info: Redefining color shadecolor on input line 334.
+Package color Info: Redefining color shadecolor on input line 364.
+Package color Info: Redefining color shadecolor on input line 405.
+Package color Info: Redefining color shadecolor on input line 427.
+Package color Info: Redefining color shadecolor on input line 450.
+<figure/unnamed-chunk-14-1.pdf, id=40, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-14-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-14-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-14-1.pdf  used on input line 475.
+
+(pdftex.def)             Requested size: 426.14972pt x 426.1467pt.
+Package color Info: Redefining color shadecolor on input line 482.
+<figure/unnamed-chunk-15-1.pdf, id=41, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-15-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-15-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-15-1.pdf  used on input line 483.
+
+(pdftex.def)             Requested size: 426.14972pt x 426.1467pt.
+ [4]
+Underfull \vbox (badness 10000) detected at line 499
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 499
+ []
+
+[5] [6 <./figure/unnamed-chunk-6-1.pdf>]
+Underfull \vbox (badness 10000) detected at line 499
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 499
+ []
+
+[7]
+Underfull \vbox (badness 2237) detected at line 499
+ []
+
+
+Underfull \vbox (badness 2237) detected at line 499
+ []
+
+[8 <./figure/unnamed-chunk-7-1.pdf>]
+Underfull \vbox (badness 10000) detected at line 499
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 499
+ []
+
+[9 <./figure/unnamed-chunk-9-1.pdf>]
+Underfull \vbox (badness 10000) detected at line 499
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 499
+ []
+
+[10]
+Underfull \vbox (badness 10000) detected at line 499
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 499
+ []
+
+[11]
+Underfull \vbox (badness 10000) detected at line 499
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 499
+ []
+
+[12] [13 <./figure/unnamed-chunk-14-1.pdf>] [14 <./figure/unnamed-chunk-15-1.pd
+f>] [15]
 This exam contains 4 questions with 8 parts, 0 subparts, and 0 subsubparts.
 This exam has a total of 0 points.
 This exam has a total of 0 bonus points.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 188.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 188.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 502.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 502.
 (Assignment_3.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 188.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 188.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 502.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 502.
 Package rerunfilecheck Info: File `Assignment_3.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 188.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 502.
  ) 
 Here is how much of TeX's memory you used:
- 7431 strings out of 492970
- 108544 string characters out of 3126593
- 218327 words of memory out of 3000000
- 11187 multiletter control sequences out of 15000+200000
+ 7491 strings out of 492970
+ 109776 string characters out of 3126593
+ 266824 words of memory out of 3000000
+ 11218 multiletter control sequences out of 15000+200000
  14804 words of font info for 57 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 28i,10n,27p,767b,529s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 31i,10n,27p,767b,527s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts
 /cm/cmbx12.pfb><C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/pu
 blic/amsfonts/cm/cmex10.pfb><C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/f
@@ -574,9 +671,9 @@ TeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Chris/AppData/Local
 AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:
 /Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/c
 mtt12.pfb>
-Output written on Assignment_3.pdf (4 pages, 145055 bytes).
+Output written on Assignment_3.pdf (15 pages, 337287 bytes).
 PDF statistics:
- 91 PDF objects out of 1000 (max. 8388607)
- 18 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 195 PDF objects out of 1000 (max. 8388607)
+ 41 named destinations out of 1000 (max. 500000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

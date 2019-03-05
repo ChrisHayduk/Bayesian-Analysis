@@ -68,7 +68,7 @@
 %\doublespacing
 
 
-\title{Chs. 4 Extra Exercises: Part 2}
+\title{Ch. 4 Extra Exercises: Part 2}
 
 \author{}
 \date{\today}
@@ -119,16 +119,16 @@ Now let's compare the output of this function to the built-in \texttt{cov2cor()}
 \end{alltt}
 \begin{verbatim}
 ##                mu       sigma
-## mu    1.000000000 0.001816966
-## sigma 0.001816966 1.000000000
+## mu    1.000000000 0.002073111
+## sigma 0.002073111 1.000000000
 \end{verbatim}
 \begin{alltt}
 \hlkwd{my_cov2cor}\hlstd{(}\hlkwd{vcov}\hlstd{(m4.1))}
 \end{alltt}
 \begin{verbatim}
 ##                mu       sigma
-## mu    1.000000000 0.001816966
-## sigma 0.001816966 1.000000000
+## mu    1.000000000 0.002073111
+## sigma 0.002073111 1.000000000
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -149,7 +149,6 @@ Cite later:
 \item Elements of Statistical Learning
 \item Regression Modeling Strategies
 \item Brown (2007)
-\item Brown (2008)
 \item Copas (1983)
 \end{itemize}
 \end{solution}
@@ -164,6 +163,7 @@ Cite later:
 \begin{solution}
   \begin{parts}
   \part 
+  \part Centering the $x$-variable but not the $y$-variable retains the estimate and interpretability of the $\beta$ coefficient and improves the interpretability of the intercept $\alpha$. The intercept is now interpreted as the value of $\hat{y}$ when $x$ is equal to the mean of the data. This ensures that the intercept is of practical importance, as it does not make sense to consider the case where $x = 0$ in many regression equations.
   \end{parts}
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,7 +173,7 @@ Cite later:
   %%%%%%
 \part Check the regression assumptions on your frequentist model.  Include any relevant tables/graphs with your assumption checks.
   %%%%%%
-  \part Are correlations between pairs of parameters a problem in frequentist regression?  Calculate thevariance-covariance matrix for $\boldsymbol{\hat{\beta}}=(\hat{\beta}_0,\hat{\beta}_1)$ using the formulas in the appendix to CH 3 of \emph{Regression Analysis by Example} (your regression textbook).
+  \part Are correlations between pairs of parameters a problem in frequentist regression?  Calculate the variance-covariance matrix for $\boldsymbol{\hat{\beta}}=(\hat{\beta}_0,\hat{\beta}_1)$ using the formulas in the appendix to CH 3 of \emph{Regression Analysis by Example} (your regression textbook).
   %%%%%%
   \part Does centering \texttt{weight} make a difference in the correlations between parameters in frequentist regression?  Does it make a difference in the parameter estimates themselves?   Try using the function \texttt{scale()} to center \texttt{weight} in your code.  
   %%%%%%
@@ -183,6 +183,320 @@ Cite later:
 \end{parts}
 %%%%%%%%%%%%%%%%%%%%%%%%
 \end{questions}
+\begin{solution}
+\begin{parts}
+  \part 
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{lm.1} \hlkwb{<-} \hlkwd{lm}\hlstd{(height} \hlopt{~} \hlstd{weight,} \hlkwc{data} \hlstd{= d2)}
+
+\hlkwd{summary}\hlstd{(lm.1)}
+\end{alltt}
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = height ~ weight, data = d2)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -19.7464  -2.8835   0.0222   3.1424  14.7744 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 113.87939    1.91107   59.59   <2e-16 ***
+## weight        0.90503    0.04205   21.52   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 5.086 on 350 degrees of freedom
+## Multiple R-squared:  0.5696,	Adjusted R-squared:  0.5684 
+## F-statistic: 463.3 on 1 and 350 DF,  p-value: < 2.2e-16
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{m4.3} \hlkwb{<-} \hlkwd{map}\hlstd{(}
+  \hlkwd{alist}\hlstd{(}
+    \hlstd{height} \hlopt{~} \hlkwd{dnorm}\hlstd{(mu, sigma),}
+    \hlstd{mu} \hlkwb{<-} \hlstd{a} \hlopt{+} \hlstd{b}\hlopt{*}\hlstd{weight,}
+    \hlstd{a} \hlopt{~} \hlkwd{dnorm}\hlstd{(}\hlnum{156}\hlstd{,} \hlnum{100}\hlstd{),}
+    \hlstd{b} \hlopt{~} \hlkwd{dnorm}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{10}\hlstd{),}
+    \hlstd{sigma} \hlopt{~} \hlkwd{dunif}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{50}\hlstd{)}
+  \hlstd{),}
+\hlkwc{data} \hlstd{= d2)}
+
+\hlkwd{precis}\hlstd{(m4.3)}
+\end{alltt}
+\begin{verbatim}
+##         Mean StdDev   5.5%  94.5%
+## a     113.90   1.91 110.85 116.94
+## b       0.90   0.04   0.84   0.97
+## sigma   5.07   0.19   4.77   5.38
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+  
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{ggplot}\hlstd{(}\hlkwc{data} \hlstd{= d2,}\hlkwc{mapping} \hlstd{=} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= weight,}\hlkwc{y} \hlstd{= height))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{()} \hlopt{+}
+  \hlkwd{geom_abline}\hlstd{(}\hlkwc{color} \hlstd{=} \hlstr{"blue"}\hlstd{,} \hlkwc{slope} \hlstd{= lm.1}\hlopt{$}\hlstd{coefficients[}\hlnum{2}\hlstd{],}
+              \hlkwc{intercept} \hlstd{= lm.1}\hlopt{$}\hlstd{coefficients,} \hlkwc{size} \hlstd{=} \hlnum{1.5}\hlstd{,}
+              \hlkwc{show.legend} \hlstd{=} \hlnum{TRUE}\hlstd{)} \hlopt{+}
+  \hlkwd{geom_abline}\hlstd{(}\hlkwc{color} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{slope} \hlstd{=} \hlkwd{coef}\hlstd{(m4.3)[}\hlstr{"b"}\hlstd{],}
+              \hlkwc{intercept} \hlstd{=} \hlkwd{coef}\hlstd{(m4.3)[}\hlstr{"a"}\hlstd{],} \hlkwc{size} \hlstd{=} \hlnum{1.5}\hlstd{,}
+              \hlkwc{show.legend} \hlstd{=} \hlnum{TRUE}\hlstd{)} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Frquentist Model (Blue) vs. Bayesian Model (Red)"}\hlstd{)} \hlopt{+} \hlstd{theme.info}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-6-1} 
+
+\end{knitrout}
+The two regression lines are nearly identical.
+\newpage
+  \part Regression assumptions:
+  \begin{enumerate}
+    \item Fixed $x$ with no measurement error:\\
+    The $x$ values are not fixed because we observed each weight value; they were not assigned before the regression. They are also not measured without error as any scale will likely introduce a small amount of measurement noise. However, on a well-calibrated scale, the amount of measurement noice introduced is likely ignorable.
+    \item $x$ and $y$ linearly related:\\
+    We can see from the plot above that $x$ and $y$ are clearly linearly related.
+    \item Constant variance:\\
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{y.augment} \hlkwb{<-} \hlkwd{augment}\hlstd{(lm.1)}
+\hlstd{y.augment}
+\end{alltt}
+\begin{verbatim}
+## # A tibble: 352 x 10
+##    .rownames height weight .fitted .se.fit .resid    .hat .sigma .cooksd
+##  * <chr>      <dbl>  <dbl>   <dbl>   <dbl>  <dbl>   <dbl>  <dbl>   <dbl>
+##  1 1           152.   47.8    157.   0.296 -5.40  0.00339   5.09 1.92e-3
+##  2 2           140.   36.5    147.   0.449 -7.20  0.00778   5.08 7.92e-3
+##  3 3           137.   31.9    143.   0.615 -6.19  0.0146    5.08 1.12e-2
+##  4 4           157.   53.0    162.   0.434 -5.04  0.00727   5.09 3.62e-3
+##  5 5           145.   41.3    151.   0.313 -5.82  0.00378   5.08 2.50e-3
+##  6 6           164.   63.0    171.   0.804 -7.06  0.0250    5.08 2.53e-2
+##  7 7           149.   38.2    148.   0.392  0.734 0.00595   5.09 6.27e-5
+##  8 8           169.   55.5    164.   0.518  4.82  0.0104    5.09 4.75e-3
+##  9 9           148.   34.9    145.   0.505  2.52  0.00984   5.09 1.23e-3
+## 10 10          165.   54.5    163.   0.483  1.91  0.00900   5.09 6.45e-4
+## # ... with 342 more rows, and 1 more variable: .std.resid <dbl>
+\end{verbatim}
+\begin{alltt}
+\hlstd{y.augment} \hlopt{%>%} \hlkwd{ggplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=weight,} \hlkwc{y}\hlstd{=.resid))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{"#99000070"}\hlstd{,} \hlkwc{size}\hlstd{=}\hlnum{2}\hlstd{)} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Residual Plot"}\hlstd{)} \hlopt{+}
+  \hlkwd{labs}\hlstd{(}\hlkwc{x}\hlstd{=}\hlstr{"Weight (kg)"}\hlstd{,} \hlkwc{y}\hlstd{=}\hlstr{"Residuals"}\hlstd{)} \hlopt{+}
+  \hlkwd{geom_hline}\hlstd{(}\hlkwc{yintercept}\hlstd{=}\hlnum{0}\hlstd{,} \hlkwc{color}\hlstd{=}\hlstr{"gray50"}\hlstd{,}  \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)} \hlopt{+}
+  \hlstd{theme.info}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-7-1} 
+
+\end{knitrout}
+  We can see from the plot above that the variance in the residuals is constant regardless of the individual's weight.
+  \item Mean of the residuals = 0:\\
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{mean}\hlstd{(y.augment}\hlopt{$}\hlstd{.resid)}
+\end{alltt}
+\begin{verbatim}
+## [1] 5.337416e-17
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+  As you can see, the mean of the residuals is very close to 0.
+  \item Normally distributed errors:\\
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{y.augment} \hlopt{%>%}  \hlkwd{ggplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{sample}\hlstd{=.resid))} \hlopt{+}
+  \hlkwd{stat_qq}\hlstd{(}\hlkwc{col} \hlstd{=} \hlstr{"firebrick"}\hlstd{)} \hlopt{+}
+  \hlkwd{stat_qq_line}\hlstd{()} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Normal Quantile Plot"}\hlstd{)} \hlopt{+}
+  \hlstd{theme.info}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-9-1} 
+
+\end{knitrout}
+  The Normal Quantile Plot shows a rougly straight line. There is some deviation towards each end of the line, indicating that the data comes from a heavy-tailed distribution. However, the deviation is small enough that we may still be able to run our regression with minimal error.
+  \end{enumerate}
+  \part 
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{calculate_variance_covariance_matrix} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x_mat}\hlstd{,} \hlkwc{y_mat}\hlstd{)\{}
+  \hlstd{x_var} \hlkwb{<-} \hlkwd{as.matrix}\hlstd{(x_mat)}
+  \hlstd{intercept} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{nrow}\hlstd{(x_var)),} \hlkwc{ncol} \hlstd{=} \hlnum{1}\hlstd{)}
+
+  \hlstd{X} \hlkwb{<-} \hlkwd{cbind}\hlstd{(intercept, x_var)}
+
+  \hlstd{Y} \hlkwb{<-} \hlkwd{as.matrix}\hlstd{(y_mat)}
+
+  \hlstd{C} \hlkwb{<-} \hlkwd{solve}\hlstd{(}\hlkwd{t}\hlstd{(X)} \hlopt{%*%} \hlstd{X)}
+
+  \hlstd{beta_hat} \hlkwb{<-} \hlstd{C} \hlopt{%*%} \hlkwd{t}\hlstd{(X)} \hlopt{%*%} \hlstd{Y}
+
+  \hlstd{var_covar} \hlkwb{<-} \hlstd{C} \hlopt{*} \hlkwd{var}\hlstd{(Y)[}\hlnum{1}\hlstd{]}
+
+  \hlkwd{return}\hlstd{(var_covar)}
+\hlstd{\}}
+
+\hlkwd{print}\hlstd{(}\hlkwd{calculate_variance_covariance_matrix}\hlstd{(d2}\hlopt{$}\hlstd{weight, d2}\hlopt{$}\hlstd{height))}
+\end{alltt}
+\begin{verbatim}
+##           [,1]         [,2]
+## [1,]  8.462223 -0.184304039
+## [2,] -0.184304  0.004096511
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+  \part
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{d2}\hlopt{$}\hlstd{centered_weight} \hlkwb{<-} \hlkwd{scale}\hlstd{(d2}\hlopt{$}\hlstd{weight,} \hlkwc{scale} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+
+\hlstd{lm.2} \hlkwb{<-} \hlkwd{lm}\hlstd{(height} \hlopt{~} \hlstd{centered_weight,} \hlkwc{data} \hlstd{= d2)}
+
+\hlkwd{summary}\hlstd{(lm.2)}
+\end{alltt}
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = height ~ centered_weight, data = d2)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -19.7464  -2.8835   0.0222   3.1424  14.7744 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)     154.59709    0.27110  570.25   <2e-16 ***
+## centered_weight   0.90503    0.04205   21.52   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 5.086 on 350 degrees of freedom
+## Multiple R-squared:  0.5696,	Adjusted R-squared:  0.5684 
+## F-statistic: 463.3 on 1 and 350 DF,  p-value: < 2.2e-16
+\end{verbatim}
+\begin{alltt}
+\hlkwd{print}\hlstd{(}\hlkwd{calculate_variance_covariance_matrix}\hlstd{(d2}\hlopt{$}\hlstd{centered_weight, d2}\hlopt{$}\hlstd{height))}
+\end{alltt}
+\begin{verbatim}
+##               [,1]          [,2]
+## [1,]  1.702946e-01 -3.638433e-18
+## [2,] -3.638433e-18  4.096511e-03
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+  Each entry in the variance-covariance matrix has been altered. In the regression output, we can see that the intercept has changed while the slope has remained the same.
+  \part
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Frequentist regression confidence interval for the slope}
+\hlkwd{confint}\hlstd{(lm.1)}
+\end{alltt}
+\begin{verbatim}
+##                   2.5 %      97.5 %
+## (Intercept) 110.1207774 117.6380098
+## weight        0.8223315   0.9877267
+\end{verbatim}
+\begin{alltt}
+\hlkwd{confint}\hlstd{(lm.2)}
+\end{alltt}
+\begin{verbatim}
+##                       2.5 %      97.5 %
+## (Intercept)     154.0638974 155.1302878
+## centered_weight   0.8223315   0.9877267
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Bayesian regression posterior probability interval for the slope}
+\hlstd{post} \hlkwb{<-} \hlkwd{extract.samples}\hlstd{(m4.3,} \hlkwc{n}\hlstd{=}\hlnum{1e4}\hlstd{)}
+
+\hlkwd{precis}\hlstd{(post,} \hlkwc{prob} \hlstd{=} \hlnum{0.95}\hlstd{,} \hlkwc{digits} \hlstd{=} \hlnum{5}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##            Mean  StdDev     |0.95     0.95|
+## a     113.88343 1.91555 110.21521 117.64612
+## b       0.90489 0.04213   0.82236   0.98618
+## sigma   5.07235 0.19136   4.71182   5.45869
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+The 95\% confidence interval for the slope can be thought of in this manner: if we were to take 100 different samples from the population, we would expect 95 of the regressions to yield an estimate for $\hat{\beta}_1$ that falls within the 95\% confidence interval.
+
+The 95\% posterior probability interval for the slope represents the range within which we expect 95 out of 100 slopes sampled from the posterior distribution to fall.
+
+The difference between the two lies within the interpretation of the slope parameter. Frequentist regression views $\hat{\beta}_1$ as a fixed parameter estimated from random data. However, Bayesian regression views $\hat{\beta}_1$ as a random variable with a sampling distribution (the posterior probability distribution).
+
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Bootstrap interval}
+\hlstd{beta_hat} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{10000}\hlstd{)}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{10000}\hlstd{)\{}
+  \hlstd{data} \hlkwb{<-} \hlkwd{sample_n}\hlstd{(d2,} \hlkwc{size} \hlstd{=} \hlkwd{length}\hlstd{(d2}\hlopt{$}\hlstd{height),} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+  \hlstd{lm} \hlkwb{<-} \hlkwd{lm}\hlstd{(height} \hlopt{~} \hlstd{weight,} \hlkwc{data} \hlstd{= data)}
+  \hlstd{beta_hat[i]} \hlkwb{<-} \hlstd{lm}\hlopt{$}\hlstd{coefficients[}\hlnum{2}\hlstd{]}
+\hlstd{\}}
+
+\hlstd{data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlstr{"beta_hat"} \hlstd{= beta_hat)}
+
+\hlkwd{ggplot}\hlstd{(data,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=beta_hat))} \hlopt{+}
+  \hlkwd{geom_histogram}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{y} \hlstd{= ..density..),} \hlkwc{bins} \hlstd{=} \hlnum{50}\hlstd{,}
+                 \hlkwc{colour} \hlstd{=} \hlstr{"black"}\hlstd{,}
+                   \hlkwc{fill} \hlstd{=} \hlstr{"white"}\hlstd{)} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Histogram of Bootstrap Estimates for the Slope Parameter"}\hlstd{)} \hlopt{+}
+  \hlkwd{labs}\hlstd{(}\hlkwc{x} \hlstd{=} \hlstr{"Slope Estimate"}\hlstd{,} \hlkwc{y} \hlstd{=} \hlstr{"Density"}\hlstd{)} \hlopt{+}
+  \hlkwd{stat_function}\hlstd{(}\hlkwc{fun} \hlstd{= dnorm,} \hlkwc{n} \hlstd{=} \hlnum{101}\hlstd{,} \hlkwc{args} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{mean} \hlstd{=} \hlkwd{mean}\hlstd{(beta_hat),}
+                                                  \hlkwc{sd} \hlstd{=} \hlkwd{sd}\hlstd{(beta_hat)))} \hlopt{+}
+  \hlkwd{geom_vline}\hlstd{(}\hlkwc{xintercept} \hlstd{=} \hlkwd{mean}\hlstd{(beta_hat),} \hlkwc{linetype} \hlstd{=} \hlstr{"dashed"}\hlstd{,}
+             \hlkwc{color} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{size} \hlstd{=} \hlnum{1.5}\hlstd{)} \hlopt{+}
+  \hlstd{theme.info}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-14-1} 
+
+\end{knitrout}
+\newpage
+\part
+Let's plot the confidence \& prediction intervals for both the frequentist and Bayesian models:\\
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-15-1} 
+
+\end{knitrout}
+
+The plot in the top left demonstrates the densest 95\% interval for the regression line.
+
+The plot in the top right demonstrates the 95\% confidence interval for a new $y$ given each $x$ value.
+
+The bottom left plot demonstrates the 95\% confidence interval for the average $y$ value as $x$ varies.
+
+The bottom right plot demonstrates the 95\% prediction interval for a new $y$ given each $x$ value.
+
+The HPDI and Confidence Interval plots are relaying roughly the same information. They each specify that the average $y$ value for a given $x$ should fall within that region with 95\% probability.
+
+The PI and Prediction Interval plots both show the region where the model expects to find 95\% of heights in the population at each weight.
+\end{parts}
+\end{solution}
 
 
 \end{document}

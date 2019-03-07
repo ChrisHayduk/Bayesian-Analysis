@@ -162,16 +162,17 @@ precis(m4.3)
 <<>>=
 ggplot(data = d2,mapping = aes(x = weight,y = height)) +
   geom_point() +
-  geom_abline(color = "blue", slope = lm.1$coefficients[2],
-              intercept = lm.1$coefficients, size = 1.5, 
-              show.legend = TRUE) +
-  geom_abline(color = "red", slope = coef(m4.3)["b"], 
-              intercept = coef(m4.3)["a"], size = 1.5, 
-              show.legend = TRUE) +
-  ggtitle("Frquentist Model (Blue) vs. Bayesian Model (Red)") + theme.info
+  geom_abline(aes(color = "Frequentist Model", slope = lm.1$coefficients[2],
+              intercept = lm.1$coefficients[1]), size = 1.5) +
+  geom_abline(aes(color = "Bayesian Model", slope = coef(m4.3)["b"], 
+              intercept = coef(m4.3)["a"]), size = 1.5) +
+  ggtitle("Frquentist Model vs. Bayesian Model") + 
+  labs(color = "type of model") +
+  scale_color_manual(values = c("firebrick", "navyblue")) +
+  theme.info
 
 @
-The two regression lines are nearly identical.
+The two regression lines are essentially identical.
 \newpage
   \part Regression assumptions:
   \begin{enumerate}

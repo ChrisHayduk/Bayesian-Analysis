@@ -119,16 +119,16 @@ Now let's compare the output of this function to the built-in \texttt{cov2cor()}
 \end{alltt}
 \begin{verbatim}
 ##                mu       sigma
-## mu    1.000000000 0.002073111
-## sigma 0.002073111 1.000000000
+## mu    1.000000000 0.001816912
+## sigma 0.001816912 1.000000000
 \end{verbatim}
 \begin{alltt}
 \hlkwd{my_cov2cor}\hlstd{(}\hlkwd{vcov}\hlstd{(m4.1))}
 \end{alltt}
 \begin{verbatim}
 ##                mu       sigma
-## mu    1.000000000 0.002073111
-## sigma 0.002073111 1.000000000
+## mu    1.000000000 0.001816912
+## sigma 0.001816912 1.000000000
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -143,14 +143,19 @@ Ridge regression, one such shrinkage method, is very similar to OLS regression. 
 
 Lasso regression is another shrinkage method which decreases the variance of the $\beta$ values. Lasso minimizes the RSS, but includes the constraint that $\sum\limits_{j=1}^{p} |\beta_j| \leq t$. If $t$ is chosen sufficiently small, then some of the $\beta$ values will be reduced all the way to 0. In this manner, lasso regression is able to perform a sort of continuous subset selection.
 
-Cite later:
-\begin{itemize}
-\item Introduction to Statistical Learning
-\item Elements of Statistical Learning
-\item Regression Modeling Strategies
-\item Brown (2007)
-\item Copas (1983)
-\end{itemize}
+\begin{thebibliography}{9}
+\bibitem{islr}
+James, Gareth, et al. \textit{An Introduction to Statistical Learning: with Applications in R}. Springer, 2017.
+
+\bibitem{eslr}
+Hastie, Trevor, et al. \textit{The Elements of Statistical Learning}. Springer, 2004.
+
+\bibitem{regmodeling}
+Harrell, Frank. \textit{Regression Modeling Strategies}. Springer, 2016.
+
+\bibitem{brown}
+Brown, Lawrence. \textit{A Unified View of Regression, Shrinkage, Empirical Bayes, Hierarchical Bayes, and Random Effects}. Oberwolfach Reports, 2007.
+\end{thebibliography}
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%%%%%
 \question On pg. 99 of CH 4 in \emph{Statistical Rethinking}, the author writes, ``But in more complex models, strong [parameter] correlations like this can make it difficult to fit the model to the data.''
@@ -162,7 +167,57 @@ Cite later:
   \end{parts}
 \begin{solution}
   \begin{parts}
-  \part 
+  \part Let's try calculating the variance-covariance matrix to see why correlation between parameter estimates can be problematic:
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Create model}
+\hlstd{model} \hlkwb{<-} \hlkwd{lm}\hlstd{(height} \hlopt{~} \hlstd{age} \hlopt{+} \hlstd{weight,} \hlkwc{data} \hlstd{= d2)}
+\hlkwd{cov2cor}\hlstd{(}\hlkwd{vcov}\hlstd{(model))}
+\end{alltt}
+\begin{verbatim}
+##             (Intercept)        age     weight
+## (Intercept)   1.0000000 -0.4787928 -0.9387455
+## age          -0.4787928  1.0000000  0.1729043
+## weight       -0.9387455  0.1729043  1.0000000
+\end{verbatim}
+\begin{alltt}
+\hlcom{#Calculate variance-covariance matrix by marix algebra}
+\hlstd{X} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{age} \hlstd{= d2}\hlopt{$}\hlstd{age,} \hlkwc{weight} \hlstd{= d2}\hlopt{$}\hlstd{weight)}
+\hlstd{X} \hlkwb{<-} \hlkwd{data.matrix}\hlstd{(X)}
+\hlstd{Y} \hlkwb{<-} \hlkwd{data.matrix}\hlstd{(d2}\hlopt{$}\hlstd{height)}
+
+\hlstd{n} \hlkwb{<-} \hlkwd{nrow}\hlstd{(X)}
+\hlstd{p} \hlkwb{<-} \hlkwd{length}\hlstd{(model}\hlopt{$}\hlstd{coefficients)}
+
+\hlstd{I} \hlkwb{<-} \hlkwd{diag}\hlstd{(n)}
+
+\hlstd{C} \hlkwb{<-} \hlkwd{solve}\hlstd{((}\hlkwd{t}\hlstd{(X)} \hlopt{%*%} \hlstd{X))}
+\hlstd{P} \hlkwb{<-} \hlstd{X} \hlopt{%*%} \hlstd{C} \hlopt{%*%} \hlkwd{t}\hlstd{(X)}
+
+\hlstd{var} \hlkwb{<-} \hlstd{(}\hlkwd{t}\hlstd{(Y)} \hlopt{%*%} \hlstd{(I}\hlopt{-}\hlstd{P)} \hlopt{%*%} \hlstd{Y)}\hlopt{/}\hlstd{(n} \hlopt{-} \hlstd{p} \hlopt{-} \hlnum{1}\hlstd{)}
+
+\hlcom{#Variance-covariance matrix for model}
+\hlkwd{vcov}\hlstd{(model)}
+\end{alltt}
+\begin{verbatim}
+##             (Intercept)           age        weight
+## (Intercept)  4.74264415 -0.0180072460 -0.0873138157
+## age         -0.01800725  0.0002982488  0.0001275322
+## weight      -0.08731382  0.0001275322  0.0018241041
+\end{verbatim}
+\begin{alltt}
+\hlcom{#Unbiased estimator of variance-covariance matrix}
+\hlstd{var[}\hlnum{1}\hlstd{]}\hlopt{*}\hlstd{C}
+\end{alltt}
+\begin{verbatim}
+##                 age       weight
+## age     0.002009493 -0.001783175
+## weight -0.001783175  0.001893643
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+  
   \part Centering the $x$-variable but not the $y$-variable retains the estimate and interpretability of the $\beta$ coefficient and improves the interpretability of the intercept $\alpha$. The intercept is now interpreted as the value of $\hat{y}$ when $x$ is equal to the mean of the data. This ensures that the intercept is of practical importance, as it does not make sense to consider the case where $x = 0$ in many regression equations.
   \end{parts}
 \end{solution}
@@ -245,19 +300,20 @@ Cite later:
 \begin{alltt}
 \hlkwd{ggplot}\hlstd{(}\hlkwc{data} \hlstd{= d2,}\hlkwc{mapping} \hlstd{=} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= weight,}\hlkwc{y} \hlstd{= height))} \hlopt{+}
   \hlkwd{geom_point}\hlstd{()} \hlopt{+}
-  \hlkwd{geom_abline}\hlstd{(}\hlkwc{color} \hlstd{=} \hlstr{"blue"}\hlstd{,} \hlkwc{slope} \hlstd{= lm.1}\hlopt{$}\hlstd{coefficients[}\hlnum{2}\hlstd{],}
-              \hlkwc{intercept} \hlstd{= lm.1}\hlopt{$}\hlstd{coefficients,} \hlkwc{size} \hlstd{=} \hlnum{1.5}\hlstd{,}
-              \hlkwc{show.legend} \hlstd{=} \hlnum{TRUE}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_abline}\hlstd{(}\hlkwc{color} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{slope} \hlstd{=} \hlkwd{coef}\hlstd{(m4.3)[}\hlstr{"b"}\hlstd{],}
-              \hlkwc{intercept} \hlstd{=} \hlkwd{coef}\hlstd{(m4.3)[}\hlstr{"a"}\hlstd{],} \hlkwc{size} \hlstd{=} \hlnum{1.5}\hlstd{,}
-              \hlkwc{show.legend} \hlstd{=} \hlnum{TRUE}\hlstd{)} \hlopt{+}
-  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Frquentist Model (Blue) vs. Bayesian Model (Red)"}\hlstd{)} \hlopt{+} \hlstd{theme.info}
+  \hlkwd{geom_abline}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color} \hlstd{=} \hlstr{"Frequentist Model"}\hlstd{,} \hlkwc{slope} \hlstd{= lm.1}\hlopt{$}\hlstd{coefficients[}\hlnum{2}\hlstd{],}
+              \hlkwc{intercept} \hlstd{= lm.1}\hlopt{$}\hlstd{coefficients[}\hlnum{1}\hlstd{]),} \hlkwc{size} \hlstd{=} \hlnum{1.5}\hlstd{)} \hlopt{+}
+  \hlkwd{geom_abline}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color} \hlstd{=} \hlstr{"Bayesian Model"}\hlstd{,} \hlkwc{slope} \hlstd{=} \hlkwd{coef}\hlstd{(m4.3)[}\hlstr{"b"}\hlstd{],}
+              \hlkwc{intercept} \hlstd{=} \hlkwd{coef}\hlstd{(m4.3)[}\hlstr{"a"}\hlstd{]),} \hlkwc{size} \hlstd{=} \hlnum{1.5}\hlstd{)} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"Frquentist Model vs. Bayesian Model"}\hlstd{)} \hlopt{+}
+  \hlkwd{labs}\hlstd{(}\hlkwc{color} \hlstd{=} \hlstr{"type of model"}\hlstd{)} \hlopt{+}
+  \hlkwd{scale_color_manual}\hlstd{(}\hlkwc{values} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"firebrick"}\hlstd{,} \hlstr{"navyblue"}\hlstd{))} \hlopt{+}
+  \hlstd{theme.info}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-6-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-7-1} 
 
 \end{knitrout}
-The two regression lines are nearly identical.
+The two regression lines are essentially identical.
 \newpage
   \part Regression assumptions:
   \begin{enumerate}
@@ -275,7 +331,7 @@ The two regression lines are nearly identical.
 \begin{verbatim}
 ## # A tibble: 352 x 10
 ##    .rownames height weight .fitted .se.fit .resid    .hat .sigma .cooksd
-##  * <chr>      <dbl>  <dbl>   <dbl>   <dbl>  <dbl>   <dbl>  <dbl>   <dbl>
+##    <chr>      <dbl>  <dbl>   <dbl>   <dbl>  <dbl>   <dbl>  <dbl>   <dbl>
 ##  1 1           152.   47.8    157.   0.296 -5.40  0.00339   5.09 1.92e-3
 ##  2 2           140.   36.5    147.   0.449 -7.20  0.00778   5.08 7.92e-3
 ##  3 3           137.   31.9    143.   0.615 -6.19  0.0146    5.08 1.12e-2
@@ -297,7 +353,7 @@ The two regression lines are nearly identical.
   \hlstd{theme.info}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-7-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-8-1} 
 
 \end{knitrout}
   We can see from the plot above that the variance in the residuals is constant regardless of the individual's weight.
@@ -324,7 +380,7 @@ The two regression lines are nearly identical.
   \hlstd{theme.info}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-9-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-10-1} 
 
 \end{knitrout}
   The Normal Quantile Plot shows a rougly straight line. There is some deviation towards each end of the line, indicating that the data comes from a heavy-tailed distribution. However, the deviation is small enough that we may still be able to run our regression with minimal error.
@@ -433,9 +489,9 @@ The two regression lines are nearly identical.
 \end{alltt}
 \begin{verbatim}
 ##            Mean  StdDev     |0.95     0.95|
-## a     113.88343 1.91555 110.21521 117.64612
-## b       0.90489 0.04213   0.82236   0.98618
-## sigma   5.07235 0.19136   4.71182   5.45869
+## a     113.87267 1.88844 110.27727 117.64641
+## b       0.90505 0.04152   0.82278   0.98419
+## sigma   5.07377 0.19095   4.68890   5.44710
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -472,7 +528,7 @@ The difference between the two lies within the interpretation of the slope param
   \hlstd{theme.info}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-14-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-15-1} 
 
 \end{knitrout}
 \newpage
@@ -480,7 +536,7 @@ The difference between the two lies within the interpretation of the slope param
 Let's plot the confidence \& prediction intervals for both the frequentist and Bayesian models:\\
 \begin{knitrout}\footnotesize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-15-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-16-1} 
 
 \end{knitrout}
 

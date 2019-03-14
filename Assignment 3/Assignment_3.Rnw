@@ -96,14 +96,19 @@ Ridge regression, one such shrinkage method, is very similar to OLS regression. 
 
 Lasso regression is another shrinkage method which decreases the variance of the $\beta$ values. Lasso minimizes the RSS, but includes the constraint that $\sum\limits_{j=1}^{p} |\beta_j| \leq t$. If $t$ is chosen sufficiently small, then some of the $\beta$ values will be reduced all the way to 0. In this manner, lasso regression is able to perform a sort of continuous subset selection.
 
-Cite later:
-\begin{itemize}
-\item Introduction to Statistical Learning
-\item Elements of Statistical Learning
-\item Regression Modeling Strategies
-\item Brown (2007)
-\item Copas (1983)
-\end{itemize}
+\begin{thebibliography}{9}
+\bibitem{islr}
+James, Gareth, et al. \textit{An Introduction to Statistical Learning: with Applications in R}. Springer, 2017.
+
+\bibitem{eslr}
+Hastie, Trevor, et al. \textit{The Elements of Statistical Learning}. Springer, 2004.
+
+\bibitem{regmodeling}
+Harrell, Frank. \textit{Regression Modeling Strategies}. Springer, 2016.
+
+\bibitem{brown}
+Brown, Lawrence. \textit{A Unified View of Regression, Shrinkage, Empirical Bayes, Hierarchical Bayes, and Random Effects}. Oberwolfach Reports, 2007.
+\end{thebibliography}
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%%%%%
 \question On pg. 99 of CH 4 in \emph{Statistical Rethinking}, the author writes, ``But in more complex models, strong [parameter] correlations like this can make it difficult to fit the model to the data.''
@@ -115,7 +120,34 @@ Cite later:
   \end{parts}
 \begin{solution}
   \begin{parts}
-  \part 
+  \part Let's try calculating the variance-covariance matrix to see why correlation between parameter estimates can be problematic:
+<<>>=
+#Create model
+model <- lm(height ~ age + weight, data = d2)
+cov2cor(vcov(model))
+
+#Calculate variance-covariance matrix by marix algebra
+X <- data.frame(age = d2$age, weight = d2$weight)
+X <- data.matrix(X)
+Y <- data.matrix(d2$height)
+
+n <- nrow(X)
+p <- length(model$coefficients)
+
+I <- diag(n)
+
+C <- solve((t(X) %*% X))
+P <- X %*% C %*% t(X)
+
+var <- (t(Y) %*% (I-P) %*% Y)/(n - p - 1)
+
+#Variance-covariance matrix for model
+vcov(model)
+
+#Unbiased estimator of variance-covariance matrix
+var[1]*C
+@
+  
   \part Centering the $x$-variable but not the $y$-variable retains the estimate and interpretability of the $\beta$ coefficient and improves the interpretability of the intercept $\alpha$. The intercept is now interpreted as the value of $\hat{y}$ when $x$ is equal to the mean of the data. This ensures that the intercept is of practical importance, as it does not make sense to consider the case where $x = 0$ in many regression equations.
   \end{parts}
 \end{solution}

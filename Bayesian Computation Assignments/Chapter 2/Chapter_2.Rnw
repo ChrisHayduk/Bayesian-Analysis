@@ -124,6 +124,14 @@ hist(ps, xlab="p", main="Simulated Draws from the Posterior Distribution of p")
 %%%%%%%%%%%%%%%%%%%%%%%%
 \question Replicate the following functions: \texttt{pdiscp()}, \texttt{pbetap()}, and \texttt{discint()}.
 \begin{solution}
+  \begin{parts}
+  \part Let's start with \texttt{pdiscp()}:
+<<>>=
+pdiscp <- function(p, prior, m, ys){
+  
+}
+@
+  
 
 \end{solution}
 \end{questions}

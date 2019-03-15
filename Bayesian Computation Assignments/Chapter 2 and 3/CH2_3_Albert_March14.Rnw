@@ -191,7 +191,6 @@ ab <- c(3.26, 7.19)
 m <- 20
 ys <- 0:20
 pred <- pbetap(ab, m, ys)
-print(pred)
 round(cbind(0:20, pred), 3)
 @
 \newpage
@@ -264,11 +263,73 @@ discint(dist, covprob)
 f(\tilde{y}) &=& \int f_B(\tilde{y}|m,p)g(p)dp \\
              &=& {m\choose\tilde{y}}\frac{B(a+\tilde{y},b+m-\tilde{y})}{B(a,b)}
 \end{eqnarray*}
-where $\tilde{y}=0,\ldots,m$.  
+where $\tilde{y}=0,\ldots,m$.
+%%%%%%%%%
+\begin{solution}
+\begin{align*}
+f(\tilde{y}) &= \int f_B(\tilde{y}|m,p)g(p)dp \\
+&= \int_{0}^{1} \left({m\choose \tilde{y}}p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(\int_{0}^{1} p^{a-1}(1-p)^{b-1} dp\right)\right) dp\\
+&= {m\choose \tilde{y}} \int_{0}^{1} \left(p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(\int_{0}^{1} p^{a-1}(1-p)^{b-1} dp\right)\right) dp\\
+&= {m\choose \tilde{y}} \int_{0}^{1} \left(p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(B(a, b)\right)\right) dp\\
+&= {m\choose \tilde{y}} B(a,b) \int_{0}^{1} p^{\tilde{y}}(1-p)^{m-\tilde{y}} dp\\
+&= {m\choose \tilde{y}} B(a,b) B(\tilde{y} + 1, m - \tilde{y} + 1)
+\end{align*}
+Not sure where to go from here. \textbf{Come back to this one later.}
+\end{solution}
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \question \textbf{Chapter 2: Introduction to Bayesian Thinking} Exercise 5.
+%%%%%%%%%
+\begin{solution}
+<<>>=
+mu <- c(20, 30, 40, 50, 60, 70)
+prior <- c(.1, .15, .25, .25, .15, .1)
+prior <- prior/sum(prior)
+
+y <- c(38.6, 42.4, 57.5, 40.5, 51.7, 67.1, 33.4, 60.9, 64.1, 40.1, 40.7, 6.4)
+ybar <- mean(y)
+
+n <- length(y)
+sigma_squared <- var(y)
+
+like <- exp(-(n/(2*sigma_squared))*(mu - ybar)^2)
+post <- prior*like/sum(prior*like)
+
+dist <- cbind(mu, post)
+discint(dist, 0.8)
+@
+\end{solution}
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \question \textbf{Chapter 2: Introduction to Bayesian Thinking} Exercise 6.
+%%%%%%%%%
+\begin{solution}
+<<>>=
+#a)
+lambda <- c(0.5, 1, 1.5, 2, 2.5, 3)
+prior <- c(0.1, 0.2, 0.3, 0.2, 0.15, 0.05)
+prior <- prior/sum(prior)
+
+pred <- rep(NA, length = length(lambda))
+y <- 12
+
+for(i in 1:length(lambda)){
+  pred[i] <- prior[i]*exp(-6*lambda[i])*(6*lambda[i])^12
+}
+pred <- pred/sum(pred)
+pred <- cbind(lambda, pred)
+print(round(pred,5))
+
+#b)
+predictive_prob <- rep(NA, length = length(lambda))
+for(i in 1:length(lambda)){
+  predictive_prob[i] <- exp(-7*lambda[i])*pred[i]
+}
+
+sum(predictive_prob)
+@
+\end{solution}
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \question  \textbf{Chapter 3: Single-Parameter Models} Write your own versions of the functions \texttt{beta.binomial.mix()} and \texttt{pbetat()}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

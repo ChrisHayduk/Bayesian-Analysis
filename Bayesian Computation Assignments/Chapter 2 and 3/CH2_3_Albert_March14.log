@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.12.28)  15 MAR 2019 16:11
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.12.28)  15 MAR 2019 18:34
 entering extended mode
 **./CH2_3_Albert_March14.tex
 (CH2_3_Albert_March14.tex
@@ -540,62 +540,58 @@ Package color Info: Redefining color shadecolor on input line 184.
 Package color Info: Redefining color shadecolor on input line 209.
 Package color Info: Redefining color shadecolor on input line 250.
 Package color Info: Redefining color shadecolor on input line 273.
-Package color Info: Redefining color shadecolor on input line 321.
-Package color Info: Redefining color shadecolor on input line 372.
+Package color Info: Redefining color shadecolor on input line 311.
+Package color Info: Redefining color shadecolor on input line 362.
 [1
 
 {C:/Users/Chris/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2]
 [3 <./figure/unnamed-chunk-4-1.pdf>] [4 <./figure/unnamed-chunk-5-1.pdf>]
-Underfull \vbox (badness 10000) detected at line 396
+Underfull \vbox (badness 10000) detected at line 386
  []
 
 
-Underfull \vbox (badness 10000) detected at line 396
+Underfull \vbox (badness 10000) detected at line 386
  []
 
-[5] [6]
-Underfull \vbox (badness 10000) detected at line 396
- []
-
-
-Underfull \vbox (badness 10000) detected at line 396
- []
-
-[7] [8]
-Underfull \vbox (badness 10000) detected at line 396
+[5] [6] [7]
+Underfull \vbox (badness 10000) detected at line 386
  []
 
 
-Underfull \vbox (badness 10000) detected at line 396
+Underfull \vbox (badness 10000) detected at line 386
  []
 
-[9]
+[8]
 
 Package amsmath Warning: Foreign command \atopwithdelims;
 (amsmath)                \frac or \genfrac should be used instead
-(amsmath)                 on input line 401.
+(amsmath)                 on input line 391.
 
-[10]
+[9]
+Package color Info: Redefining color shadecolor on input line 412.
+ [10]
+Package color Info: Redefining color shadecolor on input line 448.
+ [11] [12]
 This exam contains 7 questions with 4 parts, 0 subparts, and 0 subsubparts.
 This exam has a total of 0 points.
 This exam has a total of 0 bonus points.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 427.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 427.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 509.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 509.
 (CH2_3_Albert_March14.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 427.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 427.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 509.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 509.
 Package rerunfilecheck Info: File `CH2_3_Albert_March14.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 427.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 509.
  ) 
 Here is how much of TeX's memory you used:
- 7427 strings out of 492970
- 109006 string characters out of 3126593
- 266068 words of memory out of 3000000
- 11183 multiletter control sequences out of 15000+200000
+ 7432 strings out of 492970
+ 109046 string characters out of 3126593
+ 264598 words of memory out of 3000000
+ 11186 multiletter control sequences out of 15000+200000
  12342 words of font info for 49 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 29i,10n,27p,290b,581s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 28i,12n,27p,347b,581s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts
 /cm/cmbx12.pfb><C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/pu
 blic/amsfonts/cm/cmex10.pfb><C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/f
@@ -607,12 +603,14 @@ ris/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb>
 m/cmr17.pfb><C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publi
 c/amsfonts/cm/cmr8.pfb><C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/
 type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Chris/AppData/Local/Programs/MiKT
-eX 2.9/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users/Chris/AppData/Local/
-Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/Chris/A
-ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on CH2_3_Albert_March14.pdf (10 pages, 187044 bytes).
+eX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/Chris/AppData/Local/P
+rograms/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users/Chris/Ap
+pData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/U
+sers/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmt
+t12.pfb>
+Output written on CH2_3_Albert_March14.pdf (12 pages, 200709 bytes).
 PDF statistics:
- 131 PDF objects out of 1000 (max. 8388607)
- 26 named destinations out of 1000 (max. 500000)
+ 143 PDF objects out of 1000 (max. 8388607)
+ 28 named destinations out of 1000 (max. 500000)
  11 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -277,16 +277,6 @@ Finally, let's generate and plot the posterior:
 \hlstd{m} \hlkwb{<-} \hlnum{20}
 \hlstd{ys} \hlkwb{<-} \hlnum{0}\hlopt{:}\hlnum{20}
 \hlstd{pred} \hlkwb{<-} \hlkwd{pbetap}\hlstd{(ab, m, ys)}
-\hlkwd{print}\hlstd{(pred)}
-\end{alltt}
-\begin{verbatim}
-##  [1] 1.812205e-02 4.511485e-02 7.248106e-02 9.456396e-02 1.084896e-01
-##  [6] 1.135841e-01 1.106895e-01 1.015339e-01 8.821389e-02 7.280839e-02
-## [11] 5.712007e-02 4.252974e-02 2.994441e-02 1.981684e-02 1.221463e-02
-## [16] 6.917948e-03 3.527752e-03 1.568885e-03 5.764529e-04 1.575142e-04
-## [21] 2.438293e-05
-\end{verbatim}
-\begin{alltt}
 \hlkwd{round}\hlstd{(}\hlkwd{cbind}\hlstd{(}\hlnum{0}\hlopt{:}\hlnum{20}\hlstd{, pred),} \hlnum{3}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
@@ -385,7 +375,7 @@ Finally, let's generate and plot the posterior:
 \end{alltt}
 \begin{verbatim}
 ## $prob
-## [1] 0.913
+## [1] 0.902
 ## 
 ## $set
 ##  [1]  1  2  3  4  5  6  7  8  9 10 11
@@ -400,11 +390,103 @@ Finally, let's generate and plot the posterior:
 f(\tilde{y}) &=& \int f_B(\tilde{y}|m,p)g(p)dp \\
              &=& {m\choose\tilde{y}}\frac{B(a+\tilde{y},b+m-\tilde{y})}{B(a,b)}
 \end{eqnarray*}
-where $\tilde{y}=0,\ldots,m$.  
+where $\tilde{y}=0,\ldots,m$.
+%%%%%%%%%
+\begin{solution}
+\begin{align*}
+f(\tilde{y}) &= \int f_B(\tilde{y}|m,p)g(p)dp \\
+&= \int_{0}^{1} \left({m\choose \tilde{y}}p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(\int_{0}^{1} p^{a-1}(1-p)^{b-1} dp\right)\right) dp\\
+&= {m\choose \tilde{y}} \int_{0}^{1} \left(p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(\int_{0}^{1} p^{a-1}(1-p)^{b-1} dp\right)\right) dp\\
+&= {m\choose \tilde{y}} \int_{0}^{1} \left(p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(B(a, b)\right)\right) dp\\
+&= {m\choose \tilde{y}} B(a,b) \int_{0}^{1} p^{\tilde{y}}(1-p)^{m-\tilde{y}} dp\\
+&= {m\choose \tilde{y}} B(a,b) B(\tilde{y} + 1, m - \tilde{y} + 1)
+\end{align*}
+Not sure where to go from here. \textbf{Come back to this one later.}
+\end{solution}
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \question \textbf{Chapter 2: Introduction to Bayesian Thinking} Exercise 5.
+%%%%%%%%%
+\begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mu} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{20}\hlstd{,} \hlnum{30}\hlstd{,} \hlnum{40}\hlstd{,} \hlnum{50}\hlstd{,} \hlnum{60}\hlstd{,} \hlnum{70}\hlstd{)}
+\hlstd{prior} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{.1}\hlstd{,} \hlnum{.15}\hlstd{,} \hlnum{.25}\hlstd{,} \hlnum{.25}\hlstd{,} \hlnum{.15}\hlstd{,} \hlnum{.1}\hlstd{)}
+\hlstd{prior} \hlkwb{<-} \hlstd{prior}\hlopt{/}\hlkwd{sum}\hlstd{(prior)}
+
+\hlstd{y} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{38.6}\hlstd{,} \hlnum{42.4}\hlstd{,} \hlnum{57.5}\hlstd{,} \hlnum{40.5}\hlstd{,} \hlnum{51.7}\hlstd{,} \hlnum{67.1}\hlstd{,} \hlnum{33.4}\hlstd{,} \hlnum{60.9}\hlstd{,} \hlnum{64.1}\hlstd{,} \hlnum{40.1}\hlstd{,} \hlnum{40.7}\hlstd{,} \hlnum{6.4}\hlstd{)}
+\hlstd{ybar} \hlkwb{<-} \hlkwd{mean}\hlstd{(y)}
+
+\hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(y)}
+\hlstd{sigma_squared} \hlkwb{<-} \hlkwd{var}\hlstd{(y)}
+
+\hlstd{like} \hlkwb{<-} \hlkwd{exp}\hlstd{(}\hlopt{-}\hlstd{(n}\hlopt{/}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{sigma_squared))}\hlopt{*}\hlstd{(mu} \hlopt{-} \hlstd{ybar)}\hlopt{^}\hlnum{2}\hlstd{)}
+\hlstd{post} \hlkwb{<-} \hlstd{prior}\hlopt{*}\hlstd{like}\hlopt{/}\hlkwd{sum}\hlstd{(prior}\hlopt{*}\hlstd{like)}
+
+\hlstd{dist} \hlkwb{<-} \hlkwd{cbind}\hlstd{(mu, post)}
+\hlkwd{discint}\hlstd{(dist,} \hlnum{0.8}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## $prob
+##      post 
+## 0.9921244 
+## 
+## $set
+## mu mu 
+## 40 50
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{solution}
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \question \textbf{Chapter 2: Introduction to Bayesian Thinking} Exercise 6.
+%%%%%%%%%
+\begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#a)}
+\hlstd{lambda} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0.5}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1.5}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{2.5}\hlstd{,} \hlnum{3}\hlstd{)}
+\hlstd{prior} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.2}\hlstd{,} \hlnum{0.3}\hlstd{,} \hlnum{0.2}\hlstd{,} \hlnum{0.15}\hlstd{,} \hlnum{0.05}\hlstd{)}
+\hlstd{prior} \hlkwb{<-} \hlstd{prior}\hlopt{/}\hlkwd{sum}\hlstd{(prior)}
+
+\hlstd{pred} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{NA}\hlstd{,} \hlkwc{length} \hlstd{=} \hlkwd{length}\hlstd{(lambda))}
+\hlstd{y} \hlkwb{<-} \hlnum{12}
+
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(lambda))\{}
+  \hlstd{pred[i]} \hlkwb{<-} \hlstd{prior[i]}\hlopt{*}\hlkwd{exp}\hlstd{(}\hlopt{-}\hlnum{6}\hlopt{*}\hlstd{lambda[i])}\hlopt{*}\hlstd{(}\hlnum{6}\hlopt{*}\hlstd{lambda[i])}\hlopt{^}\hlnum{12}
+\hlstd{\}}
+\hlstd{pred} \hlkwb{<-} \hlstd{pred}\hlopt{/}\hlkwd{sum}\hlstd{(pred)}
+\hlstd{pred} \hlkwb{<-} \hlkwd{cbind}\hlstd{(lambda, pred)}
+\hlkwd{print}\hlstd{(}\hlkwd{round}\hlstd{(pred,}\hlnum{5}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+##      lambda    pred
+## [1,]    0.5 0.00009
+## [2,]    1.0 0.03679
+## [3,]    1.5 0.35652
+## [4,]    2.0 0.37357
+## [5,]    2.5 0.20299
+## [6,]    3.0 0.03004
+\end{verbatim}
+\begin{alltt}
+\hlcom{#b)}
+\hlstd{predictive_prob} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{NA}\hlstd{,} \hlkwc{length} \hlstd{=} \hlkwd{length}\hlstd{(lambda))}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(lambda))\{}
+  \hlstd{predictive_prob[i]} \hlkwb{<-} \hlkwd{exp}\hlstd{(}\hlopt{-}\hlnum{7}\hlopt{*}\hlstd{lambda[i])}\hlopt{*}\hlstd{pred[i]}
+\hlstd{\}}
+
+\hlkwd{sum}\hlstd{(predictive_prob)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.01605361
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{solution}
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \question  \textbf{Chapter 3: Single-Parameter Models} Write your own versions of the functions \texttt{beta.binomial.mix()} and \texttt{pbetat()}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

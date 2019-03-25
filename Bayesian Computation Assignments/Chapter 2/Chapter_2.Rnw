@@ -100,7 +100,7 @@ Now let's plot the prior:
 <<>>=
 #Output histogram of prior
 curve(get_histprior_value(x, histprior), from=0, to = 1, 
-      ylim = c(0, 0.3), n = 10000,
+      ylim = c(0, 0.3), n = 100000,
       xlab="p", ylab = "Prior density", main = "Histogram Prior")
 
 @

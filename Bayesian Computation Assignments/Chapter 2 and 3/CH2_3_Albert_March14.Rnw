@@ -1,0 +1,352 @@
+%\documentclass[12pt,addpoints]{exam}   % Print w/o solutions
+\documentclass[12pt,addpoints,answers]{exam}   % Print solutions
+%%%% comment out ONE of the above lines  
+%    - the first line prints the document without the solutions, just questions
+%    - the second prints the document with solutions.
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{lscape}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{multicol}
+
+\begin{document}
+
+\singlespacing
+%\onehalfspacing
+%\doublespacing
+
+
+\title{Assignment Covering Chapters 2 \& 3 of \emph{Bayesian Computation with R}}
+
+\author{Chris Hayduk}
+\date{\today}
+
+\maketitle
+
+<<echo=F, results = 'hide', warning=FALSE, message=FALSE>>=
+# set the global chunk options
+opts_chunk$set(message=FALSE, # don't print R messages in pdf -- CHANGE TO FALSE WHEN SUBMITTING FINAL VERSION!!!
+               warning=FALSE) # don't print warnings in pdf -- CHANGE TO FALSE WHEN SUBMITTING FINAL VERSION!!!
+
+# load .RData files, .R files, etc.
+# R packages required
+suppressMessages(library(tidyverse, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(rethinking, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(gridExtra, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(qwraps2, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(broom, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(nnet, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+
+options(qwraps2_markup = "latex")
+knitr::opts_chunk$set(size = 'footnotesize', concordance=TRUE)
+knitr::opts_chunk$set(fig.width=10, fig.height=10)
+
+theme.info <- theme(plot.title = element_text(size=16, hjust=0.5),
+                    axis.title = element_text(size=14),
+                    axis.text = element_text(size=14))
+@
+
+\begin{questions}
+\question \textbf{Chapter 2: Introduction to Bayesian Thinking} Write your own code for the following:
+%%%%%%%%%
+\begin{parts}
+\part Simulating a sample from a posterior distribution when you have a histogram prior.  
+%%%%%%%%%
+\part Prior predictive density function, \texttt{pdiscp()}.  
+%%%%%%%%%
+\part Prior predictive density function, \texttt{pbetap()}.
+%%%%%%%%%
+\part Discrete credible interval, \texttt{discint}.
+\end{parts}
+%%%%%%%%%
+\begin{solution}
+\begin{parts}
+\part Let's start by defining a function to generate the values for the histogram prior:
+<<>>=
+#Function to generate prior values for each value in x
+get_histprior_value <- function(x, histprior){
+  vec <- rep(NA, length=length(x))
+  for(i in 1:length(vec)){
+    new_vec <- histprior[histprior[,1]>=x[i],]
+    
+    #Check if new_vec is matrix or vector and index accordingly
+    if(!is.null(ncol(new_vec))){
+      vec[i] <- new_vec[1,2]
+    } else{
+      vec[i] <- new_vec[2]
+    }
+  }
+  
+  return(vec)
+}
+@
+\newpage
+Now let's prepare the data for input into our new \texttt{get\_histprior\_value} function:
+<<>>=
+#Generate points for interval
+interval <- seq(0.1, 1, by = 0.1)
+
+#Prior probability
+prior <- c(1, 5.2, 8, 7.2, 4.6, 2.1, 0.7, 0.1, 0, 0)
+prior <- prior/sum(prior)
+
+#Create the histogram prior
+histprior <- sample(interval, 10000, replace=TRUE, prob = prior)
+histprior <- table(histprior)/sum(table(histprior))
+histprior <- as.matrix(histprior)
+names <- rownames(histprior)
+rownames(histprior) <- NULL
+histprior <- cbind(as.numeric(names),as.numeric(histprior))
+histprior <- rbind(histprior, c(0.9, 0))
+histprior <- rbind(histprior, c(1.0, 0))
+@
+\newpage
+Now let's plot the prior:
+<<>>=
+#Output histogram of prior
+curve(get_histprior_value(x, histprior), from=0, to = 1, 
+      ylim = c(0, 0.3), n = 10000,
+      xlab="p", ylab = "Prior density", main = "Histogram Prior")
+
+@
+\newpage
+Finally, let's generate and plot the posterior:
+<<>>=
+s <- 11
+f <- 16
+
+p <- seq(0, 1, length = 10000)
+
+post <- get_histprior_value(p, histprior) * dbeta(p, s+1, f+1)
+
+post <- post/sum(post)
+
+ps <- sample(p, replace = TRUE, prob = post)
+
+hist(ps, xlab="p", main="Simulated Draws from the Posterior Distribution of p")
+@
+\newpage
+\part Let's start with \texttt{pdiscp()}:
+<<>>=
+pdiscp <- function(p, prior, m, ys){
+  pred <- rep(NA, length = length(ys))
+  
+  #Loop through possible y values
+  for(i in 1:length(ys)){
+    val <- 0
+    #Loop through possible proportions in discrete prior
+    for(j in 1:length(p)){
+      f <- choose(m, ys[i]) * (p[j])^(ys[i]) * (1-p[j])^(m-ys[i])
+      g <- prior[j]
+      val <- val + (f*g)
+    }
+    pred[i] <- val
+  }
+  
+  #Return vector of probabilities for each y value
+  return(pred)
+}
+@
+
+<<>>=
+#Test run
+p <- seq(0.05, 0.95, by=0.1)
+prior <- c(1, 5.2, 8, 7.2, 4.6, 2.1, 0.7, 0.1, 0, 0)
+prior <- prior/sum(prior)
+m <- 20
+ys <- 0:20
+pred <- pdiscp(p, prior, m, ys)
+
+round(cbind(0:20, pred), 3)
+@
+\newpage
+\part Now let's try \texttt{pbetap()}:
+<<>>=
+pbetap <- function(ab, m, ys){
+  pred <- rep(NA, length = length(ys))
+  
+  for(i in 1:length(ys)){
+    choose <- choose(m, ys[i])
+    
+    beta_num <- beta(ab[1] + ys[i], ab[2] + m - ys[i])
+
+    beta_denom <- beta(ab[1], ab[2])
+    
+    pred[i] <- choose*(beta_num/beta_denom)
+  }
+  
+  #Return vector of probabilities for each y value
+  return(pred)
+}
+@
+
+<<>>=
+#Test run
+ab <- c(3.26, 7.19)
+m <- 20
+ys <- 0:20
+pred <- pbetap(ab, m, ys)
+round(cbind(0:20, pred), 3)
+@
+\newpage
+\part Finally, here's \texttt{discint}:
+<<>>=
+discint <- function(dist, covprob){
+  total_prob <- 0
+  y_list <- c()
+  
+  #Find max probability value
+  #Centers credible interval around y value with max probability
+  i <- which.is.max(dist[,2])
+  total_prob <- total_prob + dist[i,2]
+  y_list <- c(y_list, dist[i,1])
+  
+  i_prev <- i-1
+  i_next <- i+1
+  
+  while(total_prob < covprob){
+    #Check if previous row is within range of matrix
+    if(i_prev >= 1 & i_prev <= nrow(dist)){
+      prev_val <- dist[i_prev,2]
+    } else{
+      prev_val <- -1
+    }
+    
+    #Check if next row is within range of matrix
+    if(i_next >= 1 & i_next <= nrow(dist)){
+      next_val <- dist[i_next,2]
+    } else{
+      next_val <- -1
+    }
+    
+    #Compare values for i_next and i_prev
+    if(dist[i_next,2] >= dist[i_prev,2]){
+      total_prob <- total_prob + dist[i_next, 2]
+      y_list <- c(y_list, dist[i_next, 1])
+      i_next <- i_next + 1
+    } else{
+      total_prob <- total_prob + dist[i_prev, 2] 
+      y_list <- c(y_list, dist[i_prev, 1])
+      i_prev <- i_prev - 1
+    }
+  }
+  
+  output <- list(prob = total_prob, set = sort(y_list))
+  
+  return(output)
+}
+@
+
+<<>>=
+#Test run
+p <- rbeta(1000, 3.26, 7.19)
+y <- rbinom(1000, 20, p)
+freq <- table(y)
+ys <- as.integer(names(freq))
+predprob <- freq/sum(freq)
+
+dist <- cbind(ys, predprob)
+covprob <- 0.9
+
+discint(dist, covprob)
+@
+\end{parts}
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\question \textbf{Chapter 2: Introduction to Bayesian Thinking}  Show how the author derived the predictive density formula below with a $beta(a,b)$ prior (pg. 31 of book):
+\begin{eqnarray*}
+f(\tilde{y}) &=& \int f_B(\tilde{y}|m,p)g(p)dp \\
+             &=& {m\choose\tilde{y}}\frac{B(a+\tilde{y},b+m-\tilde{y})}{B(a,b)}
+\end{eqnarray*}
+where $\tilde{y}=0,\ldots,m$.
+%%%%%%%%%
+\begin{solution}
+\begin{align*}
+f(\tilde{y}) &= \int f_B(\tilde{y}|m,p)g(p)dp \\
+&= \int_{0}^{1} \left({m\choose \tilde{y}}p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(\int_{0}^{1} p^{a-1}(1-p)^{b-1} dp\right)\right) dp\\
+&= {m\choose \tilde{y}} \int_{0}^{1} \left(p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(\int_{0}^{1} p^{a-1}(1-p)^{b-1} dp\right)\right) dp\\
+&= {m\choose \tilde{y}} \int_{0}^{1} \left(p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(B(a, b)\right)\right) dp\\
+&= {m\choose \tilde{y}} B(a,b) \int_{0}^{1} p^{\tilde{y}}(1-p)^{m-\tilde{y}} dp\\
+&= {m\choose \tilde{y}} B(a,b) B(\tilde{y} + 1, m - \tilde{y} + 1)
+\end{align*}
+Not sure where to go from here. \textbf{Come back to this one later.}
+\end{solution}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\question \textbf{Chapter 2: Introduction to Bayesian Thinking} Exercise 5.
+%%%%%%%%%
+\begin{solution}
+<<>>=
+mu <- c(20, 30, 40, 50, 60, 70)
+prior <- c(.1, .15, .25, .25, .15, .1)
+prior <- prior/sum(prior)
+
+y <- c(38.6, 42.4, 57.5, 40.5, 51.7, 67.1, 33.4, 60.9, 64.1, 40.1, 40.7, 6.4)
+ybar <- mean(y)
+
+n <- length(y)
+sigma_squared <- var(y)
+
+like <- exp(-(n/(2*sigma_squared))*(mu - ybar)^2)
+post <- prior*like/sum(prior*like)
+
+dist <- cbind(mu, post)
+discint(dist, 0.8)
+@
+\end{solution}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\question \textbf{Chapter 2: Introduction to Bayesian Thinking} Exercise 6.
+%%%%%%%%%
+\begin{solution}
+<<>>=
+#a)
+lambda <- c(0.5, 1, 1.5, 2, 2.5, 3)
+prior <- c(0.1, 0.2, 0.3, 0.2, 0.15, 0.05)
+prior <- prior/sum(prior)
+
+pred <- rep(NA, length = length(lambda))
+y <- 12
+
+for(i in 1:length(lambda)){
+  pred[i] <- prior[i]*exp(-6*lambda[i])*(6*lambda[i])^12
+}
+pred <- pred/sum(pred)
+pred <- cbind(lambda, pred)
+print(round(pred,5))
+
+#b)
+predictive_prob <- rep(NA, length = length(lambda))
+for(i in 1:length(lambda)){
+  predictive_prob[i] <- exp(-7*lambda[i])*pred[i]
+}
+
+sum(predictive_prob)
+@
+\end{solution}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\question  \textbf{Chapter 3: Single-Parameter Models} Write your own versions of the functions \texttt{beta.binomial.mix()} and \texttt{pbetat()}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\question \textbf{Chapter 3: Single-Parameter Models} On pg. 55, Albert writes, ``One can show that the posterior probability that the coin is fair is given by:''
+\begin{eqnarray*}
+\lambda(y) &=& \frac{0.5P_0(Y\leq 5)}{0.5P_0(Y\leq 5) + 0.5P_1(Y\leq 5)}.
+\end{eqnarray*}
+Show this.  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\question \textbf{Chapter 3: Single-Parameter Models} Do all Exercises at the end of the chapter.  
+\end{questions}
+
+
+%\begin{thebibliography}{}
+%
+%\bibitem{McElreath (2016)}[rethinking]
+%McElreath, R. (2016).  \emph{Statistical Rethinking: A Bayesian Course with Examples in R and Stan}.  CRC Press. 
+%\end{thebibliography}
+
+\end{document}

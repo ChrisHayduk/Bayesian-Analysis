@@ -1,0 +1,138 @@
+\documentclass[12pt,addpoints,answers]{exam}   % Print solutions
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{lscape}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{multicol}
+
+
+\begin{document}
+
+\singlespacing
+%\onehalfspacing
+%\doublespacing
+
+
+\title{Bayesian Computation Ch 2 Assignment}
+
+\author{}
+\date{\today}
+
+\maketitle
+
+
+<<echo=F, results = 'hide', warning=FALSE, message=FALSE>>=
+# set the global chunk options
+opts_chunk$set(message=FALSE, # don't print R messages in pdf -- CHANGE TO FALSE WHEN SUBMITTING FINAL VERSION!!!
+               warning=FALSE) # don't print warnings in pdf -- CHANGE TO FALSE WHEN SUBMITTING FINAL VERSION!!!
+
+# load .RData files, .R files, etc.
+# R packages required
+suppressMessages(library(tidyverse, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(rethinking, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(gridExtra, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(qwraps2, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(broom, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+
+options(qwraps2_markup = "latex")
+knitr::opts_chunk$set(size = 'footnotesize', concordance=TRUE)
+knitr::opts_chunk$set(fig.width=10, fig.height=10)
+
+theme.info <- theme(plot.title = element_text(size=16, hjust=0.5),
+                    axis.title = element_text(size=14),
+                    axis.text = element_text(size=14))
+
+
+@
+
+
+% \noindent 
+
+\begin{questions}
+\question Simulate a sample from a posterior distribution when you have a histogram prior.
+\begin{solution}
+Let's start by defining a function to generate the values for the histogram prior:
+<<>>=
+#Function to generate prior values for each value in x
+get_histprior_value <- function(x, histprior){
+  vec <- rep(NA, length=length(x))
+  for(i in 1:length(vec)){
+    new_vec <- histprior[histprior[,1]>=x[i],]
+    
+    #Check if new_vec is matrix or vector and index accordingly
+    if(!is.null(ncol(new_vec))){
+      vec[i] <- new_vec[1,2]
+    } else{
+      vec[i] <- new_vec[2]
+    }
+  }
+  
+  return(vec)
+}
+@
+\newpage
+Now let's prepare the data for input into our new \texttt{get\_histprior\_value} function:
+<<>>=
+#Generate points for interval
+interval <- seq(0.1, 1, by = 0.1)
+
+#Prior probability
+prior <- c(1, 5.2, 8, 7.2, 4.6, 2.1, 0.7, 0.1, 0, 0)
+prior <- prior/sum(prior)
+
+#Create the histogram prior
+histprior <- sample(interval, 10000, replace=TRUE, prob = prior)
+histprior <- table(histprior)/sum(table(histprior))
+histprior <- as.matrix(histprior)
+names <- rownames(histprior)
+rownames(histprior) <- NULL
+histprior <- cbind(as.numeric(names),as.numeric(histprior))
+histprior <- rbind(histprior, c(0.9, 0))
+histprior <- rbind(histprior, c(1.0, 0))
+@
+\newpage
+Now let's plot the prior:
+<<>>=
+#Output histogram of prior
+curve(get_histprior_value(x, histprior), from=0, to = 1, 
+      ylim = c(0, 0.3), n = 100000,
+      xlab="p", ylab = "Prior density", main = "Histogram Prior")
+
+@
+\newpage
+Finally, let's generate and plot the posterior:
+<<>>=
+s <- 11
+f <- 16
+
+p <- seq(0, 1, length = 10000)
+
+post <- get_histprior_value(p, histprior) * dbeta(p, s+1, f+1)
+
+post <- post/sum(post)
+
+ps <- sample(p, replace = TRUE, prob = post)
+
+hist(ps, xlab="p", main="Simulated Draws from the Posterior Distribution of p")
+@
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\question Replicate the following functions: \texttt{pdiscp()}, \texttt{pbetap()}, and \texttt{discint()}.
+\begin{solution}
+  \begin{parts}
+  \part Let's start with \texttt{pdiscp()}:
+<<>>=
+pdiscp <- function(p, prior, m, ys){
+  
+}
+@
+  
+
+\end{solution}
+\end{questions}
+\end{document}

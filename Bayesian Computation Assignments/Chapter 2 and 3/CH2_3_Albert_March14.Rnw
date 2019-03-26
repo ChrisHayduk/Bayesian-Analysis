@@ -40,6 +40,7 @@ suppressMessages(library(rethinking, quietly=TRUE, warn.conflicts = FALSE, verbo
 suppressMessages(library(gridExtra, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
 suppressMessages(library(qwraps2, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
 suppressMessages(library(broom, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(latex2exp, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
 suppressMessages(library(nnet, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
 
 options(qwraps2_markup = "latex")
@@ -331,22 +332,191 @@ sum(predictive_prob)
 \end{solution}
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\question  \textbf{Chapter 3: Single-Parameter Models} Write your own versions of the functions \texttt{beta.binomial.mix()} and \texttt{pbetat()}.
+\question  \textbf{Chapter 3: Single-Parameter Models} Write your own versions of the functions \texttt{binomial.beta.mix()} and \texttt{pbetat()}.
+%%%%%%%%%
+\begin{solution}
+<<>>=
+binomial.beta.mix <- function(probs, betpar, data){
+  m = data[1] + data[2]
+  
+  lambda_data <- (probs[1] * pbetap(betpar[1,], m, data[1]))/
+    (probs[1] * pbetap(betpar[1,], m, data[1]) +
+       probs[2] * pbetap(betpar[2,], m, data[1]))
+  
+  posterior <- c()
+  posterior$probs <- matrix(c(lambda_data, (1-lambda_data)), nrow=1, ncol=2)
+  colnames(posterior$probs) <- c("beta.par1", "beta.par2")
+  
+  posterior$betapar <- rbind(c(betapar[1,1] + data[1], betapar[1,2] + data[2]),
+                             c(betapar[2,1] + data[1], betapar[2,2] + data[2]))
+  rownames(posterior$betapar) <- c("beta.par1", "beta.par2")
+  colnames(posterior$betapar) <- c("", "")
+  
+  return(posterior)
+}
+@
+
+Here is an example run using the values from the book (p. 51-52):
+<<>>=
+#Example run
+probs <- c(.5, .5)
+beta.par1 <- c(6, 14)
+beta.par2 <- c(14, 6)
+betapar <- rbind(beta.par1, beta.par2)
+data <- c(7,3)
+
+post <- binomial.beta.mix(probs, betapar, data)
+
+post$probs
+
+post$betapar
+
+@
+\newpage
+Now let's plot the posterior and the prior:
+<<>>=
+curve(post$probs[1]*dbeta(x,13,17) + post$probs[2]*dbeta(x,21,9),
+      from = 0, to = 1, lwd=3, xlab = "P", ylab = "Density")
+curve(0.5*dbeta(x,6,12)+0.5*dbeta(x,12,6),0,1,add=TRUE)
+legend("topleft", legend=c("Prior", "Posterior"), lwd=c(1,3))
+@
+\end{solution}
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \question \textbf{Chapter 3: Single-Parameter Models} On pg. 55, Albert writes, ``One can show that the posterior probability that the coin is fair is given by:''
 \begin{eqnarray*}
 \lambda(y) &=& \frac{0.5P_0(Y\leq 5)}{0.5P_0(Y\leq 5) + 0.5P_1(Y\leq 5)}.
 \end{eqnarray*}
-Show this.  
+Show this.
+%%%%%%%%%
+\begin{solution}
+\textbf{Come back to this one later.}
+\end{solution}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \question \textbf{Chapter 3: Single-Parameter Models} Do all Exercises at the end of the chapter.  
 \end{questions}
+%%%%%%%%%
+\begin{solution}
+\begin{enumerate}
+\item
+<<>>=
+data <- c(0, 10, 9, 8, 11, 3, 3, 8, 8, 11)
 
+theta <- seq(from = -2, to = 12, by = 0.1)
 
+posterior_density <- rep(1, length(theta))
+
+for(i in 1:length(theta)){
+  for(j in 1:length(data)){
+    posterior_density[i] <- posterior_density[i] * (1/(1+((data[j] - theta[i])^2)))
+  }
+}
+
+posterior_density <- posterior_density/sum(posterior_density)
+
+df <- data.frame(theta = theta, posterior = posterior_density)
+
+ggplot(df, aes(x = theta, y = posterior)) + 
+  geom_line() +
+  xlab(TeX('$\\theta$')) +
+  ggtitle(TeX('Posterior Density of $\\theta$')) +
+  theme.info
+
+samples <- sample(theta, 100000, replace = TRUE, prob = posterior_density)
+
+#Posterior mean
+mean(samples)
+
+#Posterior standard deviation
+sd(samples)
+
+@
+
+\item Let $\theta = 1/\lambda = \lambda^{-1}$. Then we have $\lambda = \theta^{-1}$ and:
+\begin{align*}
+\lambda^{-n-1}e^{-s/\lambda} &= (\theta^{-1})^{-n-1}e^{-s/(\theta^{-1})}\\
+&= \theta^{-1(-n-1)}e^{-s\theta}\\
+&= \theta^{n+1}e^{-s\theta}
+\end{align*}
+
+So, $\theta$ has a gamma density with shape parameter $n + 2$ and rate parameters $s$.
+<<>>=
+burn_times <- c(751, 594, 1213, 1126, 819)
+
+n <- length(burn_times)
+s <- sum(burn_times)
+
+theta_draws <- rgamma(1000, shape = n+2, rate = s)
+
+lambda_draws <- 1/theta_draws
+
+greater_than_1000 <- sum(lambda_draws > 1000)
+
+posterior_prob_greater_than_1000 <- greater_than_1000/length(lambda_draws)
+
+print(posterior_prob_greater_than_1000)
+@
+
+\item We know $100 \leq N \leq 200$. So,
+
+<<>>=
+N <- seq(from = 100, to = 200, by = 1)
+post <- rep(0, length = length(N))
+
+n <- length(y)
+
+for(i in 1:length(post)){
+  post[i] <- 1/(N[i]^n)
+}
+
+samples <- sample(N, 100000, replace = TRUE, prob = post)
+
+#Posterior mean
+mean(samples)
+
+#Posterior standard deviation
+sd(samples)
+@
+
+\item 
+<<>>=
+p1 <- rbeta(1000, shape1 = 100, shape2 = 100)
+
+df1 <- data.frame(p1 = p1)
+
+ggplot(data = df1, aes(x=p1)) + geom_histogram(bins = 15) + theme.info
+
+#Mean of P1. Target is 0.5
+mean(p1)
+
+#Probability that 0.44 < p < 0.56. Target is a probability of 0.9
+(sum(p1 < 0.56) - sum(p1 < 0.44))/length(p1)
+
+p2 <- 0.9*rbeta(1000, 500, 500) + 0.1*rbeta(1000, 1, 1)
+
+df2 <- data.frame(p2 = p2)
+
+ggplot(data = df2, aes(x=p2)) + geom_histogram(bins = 15) + theme.info
+
+#Mean of P2. Target is 0.5
+mean(p2)
+
+#Probability that 0.44 < p < 0.56. Target is a probability of 0.9
+(sum(p2 < 0.56) - sum(p2 < 0.44))/length(p2)
+
+#Continue this one later
+@
+
+\item 
+<<>>=
+
+@
+
+\end{enumerate}
+\end{solution}
 %\begin{thebibliography}{}
 %
 %\bibitem{McElreath (2016)}[rethinking]
 %McElreath, R. (2016).  \emph{Statistical Rethinking: A Bayesian Course with Examples in R and Stan}.  CRC Press. 
 %\end{thebibliography}
-
 \end{document}

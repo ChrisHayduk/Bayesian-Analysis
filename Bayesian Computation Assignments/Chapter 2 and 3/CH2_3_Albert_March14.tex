@@ -375,7 +375,7 @@ Finally, let's generate and plot the posterior:
 \end{alltt}
 \begin{verbatim}
 ## $prob
-## [1] 0.902
+## [1] 0.903
 ## 
 ## $set
 ##  [1]  1  2  3  4  5  6  7  8  9 10 11
@@ -488,22 +488,269 @@ Not sure where to go from here. \textbf{Come back to this one later.}
 \end{solution}
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\question  \textbf{Chapter 3: Single-Parameter Models} Write your own versions of the functions \texttt{beta.binomial.mix()} and \texttt{pbetat()}.
+\question  \textbf{Chapter 3: Single-Parameter Models} Write your own versions of the functions \texttt{binomial.beta.mix()} and \texttt{pbetat()}.
+%%%%%%%%%
+\begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{binomial.beta.mix} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{probs}\hlstd{,} \hlkwc{betpar}\hlstd{,} \hlkwc{data}\hlstd{)\{}
+  \hlstd{m} \hlkwb{=} \hlstd{data[}\hlnum{1}\hlstd{]} \hlopt{+} \hlstd{data[}\hlnum{2}\hlstd{]}
+
+  \hlstd{lambda_data} \hlkwb{<-} \hlstd{(probs[}\hlnum{1}\hlstd{]} \hlopt{*} \hlkwd{pbetap}\hlstd{(betpar[}\hlnum{1}\hlstd{,], m, data[}\hlnum{1}\hlstd{]))}\hlopt{/}
+    \hlstd{(probs[}\hlnum{1}\hlstd{]} \hlopt{*} \hlkwd{pbetap}\hlstd{(betpar[}\hlnum{1}\hlstd{,], m, data[}\hlnum{1}\hlstd{])} \hlopt{+}
+       \hlstd{probs[}\hlnum{2}\hlstd{]} \hlopt{*} \hlkwd{pbetap}\hlstd{(betpar[}\hlnum{2}\hlstd{,], m, data[}\hlnum{1}\hlstd{]))}
+
+  \hlstd{posterior} \hlkwb{<-} \hlkwd{c}\hlstd{()}
+  \hlstd{posterior}\hlopt{$}\hlstd{probs} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{c}\hlstd{(lambda_data, (}\hlnum{1}\hlopt{-}\hlstd{lambda_data)),} \hlkwc{nrow}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{ncol}\hlstd{=}\hlnum{2}\hlstd{)}
+  \hlkwd{colnames}\hlstd{(posterior}\hlopt{$}\hlstd{probs)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"beta.par1"}\hlstd{,} \hlstr{"beta.par2"}\hlstd{)}
+
+  \hlstd{posterior}\hlopt{$}\hlstd{betapar} \hlkwb{<-} \hlkwd{rbind}\hlstd{(}\hlkwd{c}\hlstd{(betapar[}\hlnum{1}\hlstd{,}\hlnum{1}\hlstd{]} \hlopt{+} \hlstd{data[}\hlnum{1}\hlstd{], betapar[}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{]} \hlopt{+} \hlstd{data[}\hlnum{2}\hlstd{]),}
+                             \hlkwd{c}\hlstd{(betapar[}\hlnum{2}\hlstd{,}\hlnum{1}\hlstd{]} \hlopt{+} \hlstd{data[}\hlnum{1}\hlstd{], betapar[}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{]} \hlopt{+} \hlstd{data[}\hlnum{2}\hlstd{]))}
+  \hlkwd{rownames}\hlstd{(posterior}\hlopt{$}\hlstd{betapar)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"beta.par1"}\hlstd{,} \hlstr{"beta.par2"}\hlstd{)}
+  \hlkwd{colnames}\hlstd{(posterior}\hlopt{$}\hlstd{betapar)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{""}\hlstd{,} \hlstr{""}\hlstd{)}
+
+  \hlkwd{return}\hlstd{(posterior)}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Here is an example run using the values from the book (p. 51-52):
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Example run}
+\hlstd{probs} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{.5}\hlstd{,} \hlnum{.5}\hlstd{)}
+\hlstd{beta.par1} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{6}\hlstd{,} \hlnum{14}\hlstd{)}
+\hlstd{beta.par2} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{14}\hlstd{,} \hlnum{6}\hlstd{)}
+\hlstd{betapar} \hlkwb{<-} \hlkwd{rbind}\hlstd{(beta.par1, beta.par2)}
+\hlstd{data} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{7}\hlstd{,}\hlnum{3}\hlstd{)}
+
+\hlstd{post} \hlkwb{<-} \hlkwd{binomial.beta.mix}\hlstd{(probs, betapar, data)}
+
+\hlstd{post}\hlopt{$}\hlstd{probs}
+\end{alltt}
+\begin{verbatim}
+##       beta.par1 beta.par2
+## [1,] 0.09269663 0.9073034
+\end{verbatim}
+\begin{alltt}
+\hlstd{post}\hlopt{$}\hlstd{betapar}
+\end{alltt}
+\begin{verbatim}
+##                
+## beta.par1 13 17
+## beta.par2 21  9
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\newpage
+Now let's plot the posterior and the prior:
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{curve}\hlstd{(post}\hlopt{$}\hlstd{probs[}\hlnum{1}\hlstd{]}\hlopt{*}\hlkwd{dbeta}\hlstd{(x,}\hlnum{13}\hlstd{,}\hlnum{17}\hlstd{)} \hlopt{+} \hlstd{post}\hlopt{$}\hlstd{probs[}\hlnum{2}\hlstd{]}\hlopt{*}\hlkwd{dbeta}\hlstd{(x,}\hlnum{21}\hlstd{,}\hlnum{9}\hlstd{),}
+      \hlkwc{from} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlstr{"P"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"Density"}\hlstd{)}
+\hlkwd{curve}\hlstd{(}\hlnum{0.5}\hlopt{*}\hlkwd{dbeta}\hlstd{(x,}\hlnum{6}\hlstd{,}\hlnum{12}\hlstd{)}\hlopt{+}\hlnum{0.5}\hlopt{*}\hlkwd{dbeta}\hlstd{(x,}\hlnum{12}\hlstd{,}\hlnum{6}\hlstd{),}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{,}\hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\hlkwd{legend}\hlstd{(}\hlstr{"topleft"}\hlstd{,} \hlkwc{legend}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"Prior"}\hlstd{,} \hlstr{"Posterior"}\hlstd{),} \hlkwc{lwd}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{3}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-16-1} 
+
+\end{knitrout}
+\end{solution}
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \question \textbf{Chapter 3: Single-Parameter Models} On pg. 55, Albert writes, ``One can show that the posterior probability that the coin is fair is given by:''
 \begin{eqnarray*}
 \lambda(y) &=& \frac{0.5P_0(Y\leq 5)}{0.5P_0(Y\leq 5) + 0.5P_1(Y\leq 5)}.
 \end{eqnarray*}
-Show this.  
+Show this.
+%%%%%%%%%
+\begin{solution}
+\textbf{Come back to this one later.}
+\end{solution}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \question \textbf{Chapter 3: Single-Parameter Models} Do all Exercises at the end of the chapter.  
 \end{questions}
+%%%%%%%%%
+\begin{solution}
+\begin{enumerate}
+\item
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{data} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{10}\hlstd{,} \hlnum{9}\hlstd{,} \hlnum{8}\hlstd{,} \hlnum{11}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{8}\hlstd{,} \hlnum{8}\hlstd{,} \hlnum{11}\hlstd{)}
+
+\hlstd{theta} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlopt{-}\hlnum{2}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{12}\hlstd{,} \hlkwc{by} \hlstd{=} \hlnum{0.1}\hlstd{)}
+
+\hlstd{posterior_density} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{length}\hlstd{(theta))}
+
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(theta))\{}
+  \hlkwa{for}\hlstd{(j} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(data))\{}
+    \hlstd{posterior_density[i]} \hlkwb{<-} \hlstd{posterior_density[i]} \hlopt{*} \hlstd{(}\hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlstd{((data[j]} \hlopt{-} \hlstd{theta[i])}\hlopt{^}\hlnum{2}\hlstd{)))}
+  \hlstd{\}}
+\hlstd{\}}
+
+\hlstd{posterior_density} \hlkwb{<-} \hlstd{posterior_density}\hlopt{/}\hlkwd{sum}\hlstd{(posterior_density)}
+
+\hlstd{df} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{theta} \hlstd{= theta,} \hlkwc{posterior} \hlstd{= posterior_density)}
+
+\hlkwd{ggplot}\hlstd{(df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= theta,} \hlkwc{y} \hlstd{= posterior))} \hlopt{+}
+  \hlkwd{geom_line}\hlstd{()} \hlopt{+}
+  \hlkwd{xlab}\hlstd{(}\hlkwd{TeX}\hlstd{(}\hlstr{'$\textbackslash{}\textbackslash{}theta$'}\hlstd{))} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlkwd{TeX}\hlstd{(}\hlstr{'Posterior Density of $\textbackslash{}\textbackslash{}theta$'}\hlstd{))} \hlopt{+}
+  \hlstd{theme.info}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-17-1} 
+\begin{kframe}\begin{alltt}
+\hlstd{samples} \hlkwb{<-} \hlkwd{sample}\hlstd{(theta,} \hlnum{100000}\hlstd{,} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{prob} \hlstd{= posterior_density)}
+
+\hlcom{#Posterior mean}
+\hlkwd{mean}\hlstd{(samples)}
+\end{alltt}
+\begin{verbatim}
+## [1] 8.632004
+\end{verbatim}
+\begin{alltt}
+\hlcom{#Posterior standard deviation}
+\hlkwd{sd}\hlstd{(samples)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.6475669
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\item Let $\theta = 1/\lambda = \lambda^{-1}$. Then we have $\lambda = \theta^{-1}$ and:
+\begin{align*}
+\lambda^{-n-1}e^{-s/\lambda} &= (\theta^{-1})^{-n-1}e^{-s/(\theta^{-1})}\\
+&= \theta^{-1(-n-1)}e^{-s\theta}\\
+&= \theta^{n+1}e^{-s\theta}
+\end{align*}
+
+So, $\theta$ has a gamma density with shape parameter $n + 2$ and rate parameters $s$.
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{burn_times} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{751}\hlstd{,} \hlnum{594}\hlstd{,} \hlnum{1213}\hlstd{,} \hlnum{1126}\hlstd{,} \hlnum{819}\hlstd{)}
+
+\hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(burn_times)}
+\hlstd{s} \hlkwb{<-} \hlkwd{sum}\hlstd{(burn_times)}
+
+\hlstd{theta_draws} \hlkwb{<-} \hlkwd{rgamma}\hlstd{(}\hlnum{1000}\hlstd{,} \hlkwc{shape} \hlstd{= n}\hlopt{+}\hlnum{2}\hlstd{,} \hlkwc{rate} \hlstd{= s)}
+
+\hlstd{lambda_draws} \hlkwb{<-} \hlnum{1}\hlopt{/}\hlstd{theta_draws}
+
+\hlstd{greater_than_1000} \hlkwb{<-} \hlkwd{sum}\hlstd{(lambda_draws} \hlopt{>} \hlnum{1000}\hlstd{)}
+
+\hlstd{posterior_prob_greater_than_1000} \hlkwb{<-} \hlstd{greater_than_1000}\hlopt{/}\hlkwd{length}\hlstd{(lambda_draws)}
+
+\hlkwd{print}\hlstd{(posterior_prob_greater_than_1000)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.184
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\item We know $100 \leq N \leq 200$. So,
+
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{N} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from} \hlstd{=} \hlnum{100}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{200}\hlstd{,} \hlkwc{by} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlstd{post} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwc{length} \hlstd{=} \hlkwd{length}\hlstd{(N))}
+
+\hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(y)}
+
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(post))\{}
+  \hlstd{post[i]} \hlkwb{<-} \hlnum{1}\hlopt{/}\hlstd{(N[i]}\hlopt{^}\hlstd{n)}
+\hlstd{\}}
+
+\hlstd{samples} \hlkwb{<-} \hlkwd{sample}\hlstd{(N,} \hlnum{100000}\hlstd{,} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{prob} \hlstd{= post)}
+
+\hlcom{#Posterior mean}
+\hlkwd{mean}\hlstd{(samples)}
+\end{alltt}
+\begin{verbatim}
+## [1] 144.1586
+\end{verbatim}
+\begin{alltt}
+\hlcom{#Posterior standard deviation}
+\hlkwd{sd}\hlstd{(samples)}
+\end{alltt}
+\begin{verbatim}
+## [1] 29.04718
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\item 
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{p1} \hlkwb{<-} \hlkwd{rbeta}\hlstd{(}\hlnum{1000}\hlstd{,} \hlkwc{shape1} \hlstd{=} \hlnum{100}\hlstd{,} \hlkwc{shape2} \hlstd{=} \hlnum{100}\hlstd{)}
+
+\hlstd{df1} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{p1} \hlstd{= p1)}
+
+\hlkwd{ggplot}\hlstd{(}\hlkwc{data} \hlstd{= df1,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=p1))} \hlopt{+} \hlkwd{geom_histogram}\hlstd{(}\hlkwc{bins} \hlstd{=} \hlnum{15}\hlstd{)} \hlopt{+} \hlstd{theme.info}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-20-1} 
+\begin{kframe}\begin{alltt}
+\hlcom{#Mean of P1. Target is 0.5}
+\hlkwd{mean}\hlstd{(p1)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.4992613
+\end{verbatim}
+\begin{alltt}
+\hlcom{#Probability that 0.44 < p < 0.56. Target is a probability of 0.9}
+\hlstd{(}\hlkwd{sum}\hlstd{(p1} \hlopt{<} \hlnum{0.56}\hlstd{)} \hlopt{-} \hlkwd{sum}\hlstd{(p1} \hlopt{<} \hlnum{0.44}\hlstd{))}\hlopt{/}\hlkwd{length}\hlstd{(p1)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.902
+\end{verbatim}
+\begin{alltt}
+\hlstd{p2} \hlkwb{<-} \hlnum{0.9}\hlopt{*}\hlkwd{rbeta}\hlstd{(}\hlnum{1000}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{500}\hlstd{)} \hlopt{+} \hlnum{0.1}\hlopt{*}\hlkwd{rbeta}\hlstd{(}\hlnum{1000}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{)}
+
+\hlstd{df2} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{p2} \hlstd{= p2)}
+
+\hlkwd{ggplot}\hlstd{(}\hlkwc{data} \hlstd{= df2,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=p2))} \hlopt{+} \hlkwd{geom_histogram}\hlstd{(}\hlkwc{bins} \hlstd{=} \hlnum{15}\hlstd{)} \hlopt{+} \hlstd{theme.info}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-20-2} 
+\begin{kframe}\begin{alltt}
+\hlcom{#Mean of P2. Target is 0.5}
+\hlkwd{mean}\hlstd{(p2)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.4994086
+\end{verbatim}
+\begin{alltt}
+\hlcom{#Probability that 0.44 < p < 0.56. Target is a probability of 0.9}
+\hlstd{(}\hlkwd{sum}\hlstd{(p2} \hlopt{<} \hlnum{0.56}\hlstd{)} \hlopt{-} \hlkwd{sum}\hlstd{(p2} \hlopt{<} \hlnum{0.44}\hlstd{))}\hlopt{/}\hlkwd{length}\hlstd{(p2)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.974
+\end{verbatim}
+\begin{alltt}
+\hlcom{#Continue this one later}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\item 
 
 
+\end{enumerate}
+\end{solution}
 %\begin{thebibliography}{}
 %
 %\bibitem{McElreath (2016)}[rethinking]
 %McElreath, R. (2016).  \emph{Statistical Rethinking: A Bayesian Course with Examples in R and Stan}.  CRC Press. 
 %\end{thebibliography}
-
 \end{document}

@@ -269,13 +269,12 @@ where $\tilde{y}=0,\ldots,m$.
 \begin{solution}
 \begin{align*}
 f(\tilde{y}) &= \int f_B(\tilde{y}|m,p)g(p)dp \\
-&= \int_{0}^{1} \left({m\choose \tilde{y}}p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(\int_{0}^{1} p^{a-1}(1-p)^{b-1} dp\right)\right) dp\\
-&= {m\choose \tilde{y}} \int_{0}^{1} \left(p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(\int_{0}^{1} p^{a-1}(1-p)^{b-1} dp\right)\right) dp\\
-&= {m\choose \tilde{y}} \int_{0}^{1} \left(p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(B(a, b)\right)\right) dp\\
-&= {m\choose \tilde{y}} B(a,b) \int_{0}^{1} p^{\tilde{y}}(1-p)^{m-\tilde{y}} dp\\
-&= {m\choose \tilde{y}} B(a,b) B(\tilde{y} + 1, m - \tilde{y} + 1)
+&= \int_{0}^{1} {m\choose \tilde{y}}p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(\frac{1}{B(a,b)} p^{a-1}(1-p)^{b-1}\right) dp\\
+&= {m\choose \tilde{y}} \frac{1}{B(a,b)} \int_{0}^{1} p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(p^{a-1}(1-p)^{b-1}\right) dp\\
+&= {m\choose \tilde{y}} \frac{1}{B(a,b)} \int_{0}^{1} p^{\tilde{y}+a-1}(1-p)^{m-\tilde{y}+b-1} dp\\
+&= {m\choose \tilde{y}} \frac{1}{B(a,b)} B(a+\tilde{y}, b+m-\tilde{y})\\
+&= {m\choose \tilde{y}} \frac{B(a+\tilde{y}, b+m-\tilde{y})}{B(a,b)}
 \end{align*}
-Not sure where to go from here. \textbf{Come back to this one later.}
 \end{solution}
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -390,7 +389,11 @@ legend("topleft", legend=c("Prior", "Posterior"), lwd=c(1,3))
 Show this.
 %%%%%%%%%
 \begin{solution}
-\textbf{Come back to this one later.}
+On pg. 54, Albert shows that the posterior density of the model where the coin is fair ($p = 0.5$) is given by:
+$$ \lambda(y) = \frac{.5p(y|.5)}{.5p(y|.5) + .5m_1(y)} $$
+where $p(y|.5)$ is the binomial density for $y$ when $p = .5$ and $m_1(y)$ is the (prior) predictive density for $y$ using the beta density.
+
+The equation on pg. 55 essentially takes the above equation and sums over the probability of $y = 0, 1, 2, 3, 4, 5$.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \question \textbf{Chapter 3: Single-Parameter Models} Do all Exercises at the end of the chapter.  

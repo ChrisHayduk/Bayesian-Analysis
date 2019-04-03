@@ -375,7 +375,7 @@ Finally, let's generate and plot the posterior:
 \end{alltt}
 \begin{verbatim}
 ## $prob
-## [1] 0.903
+## [1] 0.904
 ## 
 ## $set
 ##  [1]  1  2  3  4  5  6  7  8  9 10 11
@@ -395,13 +395,12 @@ where $\tilde{y}=0,\ldots,m$.
 \begin{solution}
 \begin{align*}
 f(\tilde{y}) &= \int f_B(\tilde{y}|m,p)g(p)dp \\
-&= \int_{0}^{1} \left({m\choose \tilde{y}}p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(\int_{0}^{1} p^{a-1}(1-p)^{b-1} dp\right)\right) dp\\
-&= {m\choose \tilde{y}} \int_{0}^{1} \left(p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(\int_{0}^{1} p^{a-1}(1-p)^{b-1} dp\right)\right) dp\\
-&= {m\choose \tilde{y}} \int_{0}^{1} \left(p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(B(a, b)\right)\right) dp\\
-&= {m\choose \tilde{y}} B(a,b) \int_{0}^{1} p^{\tilde{y}}(1-p)^{m-\tilde{y}} dp\\
-&= {m\choose \tilde{y}} B(a,b) B(\tilde{y} + 1, m - \tilde{y} + 1)
+&= \int_{0}^{1} {m\choose \tilde{y}}p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(\frac{1}{B(a,b)} p^{a-1}(1-p)^{b-1}\right) dp\\
+&= {m\choose \tilde{y}} \frac{1}{B(a,b)} \int_{0}^{1} p^{\tilde{y}}(1-p)^{m-\tilde{y}}\left(p^{a-1}(1-p)^{b-1}\right) dp\\
+&= {m\choose \tilde{y}} \frac{1}{B(a,b)} \int_{0}^{1} p^{\tilde{y}+a-1}(1-p)^{m-\tilde{y}+b-1} dp\\
+&= {m\choose \tilde{y}} \frac{1}{B(a,b)} B(a+\tilde{y}, b+m-\tilde{y})\\
+&= {m\choose \tilde{y}} \frac{B(a+\tilde{y}, b+m-\tilde{y})}{B(a,b)}
 \end{align*}
-Not sure where to go from here. \textbf{Come back to this one later.}
 \end{solution}
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -569,7 +568,11 @@ Now let's plot the posterior and the prior:
 Show this.
 %%%%%%%%%
 \begin{solution}
-\textbf{Come back to this one later.}
+On pg. 54, Albert shows that the posterior density of the model where the coin is fair ($p = 0.5$) is given by:
+$$ \lambda(y) = \frac{.5p(y|.5)}{.5p(y|.5) + .5m_1(y)} $$
+where $p(y|.5)$ is the binomial density for $y$ when $p = .5$ and $m_1(y)$ is the (prior) predictive density for $y$ using the beta density.
+
+The equation on pg. 55 essentially takes the above equation and sums over the probability of $y = 0, 1, 2, 3, 4, 5$.
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \question \textbf{Chapter 3: Single-Parameter Models} Do all Exercises at the end of the chapter.  
@@ -612,14 +615,14 @@ Show this.
 \hlkwd{mean}\hlstd{(samples)}
 \end{alltt}
 \begin{verbatim}
-## [1] 8.632004
+## [1] 8.633841
 \end{verbatim}
 \begin{alltt}
 \hlcom{#Posterior standard deviation}
 \hlkwd{sd}\hlstd{(samples)}
 \end{alltt}
 \begin{verbatim}
-## [1] 0.6475669
+## [1] 0.6448397
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -651,7 +654,7 @@ So, $\theta$ has a gamma density with shape parameter $n + 2$ and rate parameter
 \hlkwd{print}\hlstd{(posterior_prob_greater_than_1000)}
 \end{alltt}
 \begin{verbatim}
-## [1] 0.184
+## [1] 0.155
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -676,14 +679,14 @@ So, $\theta$ has a gamma density with shape parameter $n + 2$ and rate parameter
 \hlkwd{mean}\hlstd{(samples)}
 \end{alltt}
 \begin{verbatim}
-## [1] 144.1586
+## [1] 143.9599
 \end{verbatim}
 \begin{alltt}
 \hlcom{#Posterior standard deviation}
 \hlkwd{sd}\hlstd{(samples)}
 \end{alltt}
 \begin{verbatim}
-## [1] 29.04718
+## [1] 29.04414
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -705,14 +708,14 @@ So, $\theta$ has a gamma density with shape parameter $n + 2$ and rate parameter
 \hlkwd{mean}\hlstd{(p1)}
 \end{alltt}
 \begin{verbatim}
-## [1] 0.4992613
+## [1] 0.4999318
 \end{verbatim}
 \begin{alltt}
 \hlcom{#Probability that 0.44 < p < 0.56. Target is a probability of 0.9}
 \hlstd{(}\hlkwd{sum}\hlstd{(p1} \hlopt{<} \hlnum{0.56}\hlstd{)} \hlopt{-} \hlkwd{sum}\hlstd{(p1} \hlopt{<} \hlnum{0.44}\hlstd{))}\hlopt{/}\hlkwd{length}\hlstd{(p1)}
 \end{alltt}
 \begin{verbatim}
-## [1] 0.902
+## [1] 0.9
 \end{verbatim}
 \begin{alltt}
 \hlstd{p2} \hlkwb{<-} \hlnum{0.9}\hlopt{*}\hlkwd{rbeta}\hlstd{(}\hlnum{1000}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{500}\hlstd{)} \hlopt{+} \hlnum{0.1}\hlopt{*}\hlkwd{rbeta}\hlstd{(}\hlnum{1000}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{)}
@@ -728,14 +731,14 @@ So, $\theta$ has a gamma density with shape parameter $n + 2$ and rate parameter
 \hlkwd{mean}\hlstd{(p2)}
 \end{alltt}
 \begin{verbatim}
-## [1] 0.4994086
+## [1] 0.4994789
 \end{verbatim}
 \begin{alltt}
 \hlcom{#Probability that 0.44 < p < 0.56. Target is a probability of 0.9}
 \hlstd{(}\hlkwd{sum}\hlstd{(p2} \hlopt{<} \hlnum{0.56}\hlstd{)} \hlopt{-} \hlkwd{sum}\hlstd{(p2} \hlopt{<} \hlnum{0.44}\hlstd{))}\hlopt{/}\hlkwd{length}\hlstd{(p2)}
 \end{alltt}
 \begin{verbatim}
-## [1] 0.974
+## [1] 0.958
 \end{verbatim}
 \begin{alltt}
 \hlcom{#Continue this one later}

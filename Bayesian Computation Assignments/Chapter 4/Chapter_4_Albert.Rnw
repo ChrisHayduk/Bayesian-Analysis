@@ -1,0 +1,84 @@
+%\documentclass[12pt,addpoints]{exam}   % Print w/o solutions
+\documentclass[12pt,addpoints,answers]{exam}   % Print solutions
+%%%% comment out ONE of the above lines  
+%    - the first line prints the document without the solutions, just questions
+%    - the second prints the document with solutions.
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{lscape}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{multicol}
+
+\begin{document}
+
+\singlespacing
+%\onehalfspacing
+%\doublespacing
+
+
+\title{Assignment Covering Chapter 4 of \emph{Bayesian Computation with R}}
+
+\author{Chris Hayduk}
+\date{\today}
+
+\maketitle
+
+<<echo=F, results = 'hide', warning=FALSE, message=FALSE>>=
+# set the global chunk options
+opts_chunk$set(message=FALSE, # don't print R messages in pdf -- CHANGE TO FALSE WHEN SUBMITTING FINAL VERSION!!!
+               warning=FALSE) # don't print warnings in pdf -- CHANGE TO FALSE WHEN SUBMITTING FINAL VERSION!!!
+
+# load .RData files, .R files, etc.
+# R packages required
+suppressMessages(library(tidyverse, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(rethinking, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(gridExtra, quietly=TRUE, warn.conflicts = FALSE, verbose=FALSE))
+suppressMessages(library(qwraps2, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(broom, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(latex2exp, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(nnet, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+
+options(qwraps2_markup = "latex")
+knitr::opts_chunk$set(size = 'footnotesize', concordance=TRUE)
+knitr::opts_chunk$set(fig.width=10, fig.height=10)
+
+theme.info <- theme(plot.title = element_text(size=16, hjust=0.5),
+                    axis.title = element_text(size=14),
+                    axis.text = element_text(size=14))
+@
+
+\begin{questions}
+\question \textbf{Chapter 4: Multiparameter Models} Write your own code for the following:
+%%%%%%%%%
+\begin{parts}
+\part \texttt{normchi2post()} on pg. 64
+%%%%%%%%%
+%\part \texttt{mycontour()} on pg. 64
+%%%%%%%%%
+\part \texttt{normpostsim()} on pg. 64
+%%%%%%%%%
+\part \texttt{rdirichlet()} on pg. 66
+%%%%%%%%%
+\part \texttt{beta.select()} on pg. 71
+%%%%%%%%%
+\part \texttt{logisticpost()} on pg. 72
+%%%%%%%%%
+%\part \texttt{simcontour()} on pg. 73
+%%%%%%%%%
+\part \texttt{howardprior()} on pg. 77
+\end{parts}
+%%%%%%%%%%%%%%%%%%%%%
+\question \textbf{Chapter 4: Multiparameter Models} Pg. 66 introduces the Dirichlet distribution.  Draw pdfs of this distribution for various parameter values using the functions in the R package. Find some examples on the internet of where the Dirichlet distribution is used in statistics.  
+%%%%%%%%%%%%%%%%%%%%%
+\question Do all CH. 4 exercises.  
+%%%%%%%%%%%%%%%%%%%%%
+\question \textbf{CH4, Q8 extra:} fit model using a frequentist logistic regression model; figure out how to make the equivalent confidence interval for part (d).  (Could use bootstrap, probably BC\_a and its approximation ABC, try package \texttt{\emph{bootBCa}}; include a histogram of your BC\_a bootstrap resampled probability values and normal quantile plot of those values.  Let number of bootstrap samples be $B=9,999$.)
+\end{questions}
+
+
+\end{document}

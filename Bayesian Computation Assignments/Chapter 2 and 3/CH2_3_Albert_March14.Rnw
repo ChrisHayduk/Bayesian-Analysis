@@ -282,19 +282,25 @@ f(\tilde{y}) &= \int f_B(\tilde{y}|m,p)g(p)dp \\
 %%%%%%%%%
 \begin{solution}
 <<>>=
+#a)
 mu <- c(20, 30, 40, 50, 60, 70)
 prior <- c(.1, .15, .25, .25, .15, .1)
 prior <- prior/sum(prior)
 
+#b)
 y <- c(38.6, 42.4, 57.5, 40.5, 51.7, 67.1, 33.4, 60.9, 64.1, 40.1, 40.7, 6.4)
 ybar <- mean(y)
 
+#c)
 n <- length(y)
 sigma_squared <- var(y)
 
 like <- exp(-(n/(2*sigma_squared))*(mu - ybar)^2)
+
+#d)
 post <- prior*like/sum(prior*like)
 
+#e)
 dist <- cbind(mu, post)
 discint(dist, 0.8)
 @
@@ -403,10 +409,12 @@ The equation on pg. 55 essentially takes the above equation and sums over the pr
 \begin{enumerate}
 \item
 <<>>=
+#a)
 data <- c(0, 10, 9, 8, 11, 3, 3, 8, 8, 11)
 
 theta <- seq(from = -2, to = 12, by = 0.1)
 
+#b)
 posterior_density <- rep(1, length(theta))
 
 for(i in 1:length(theta)){
@@ -417,6 +425,7 @@ for(i in 1:length(theta)){
 
 posterior_density <- posterior_density/sum(posterior_density)
 
+#c)
 df <- data.frame(theta = theta, posterior = posterior_density)
 
 ggplot(df, aes(x = theta, y = posterior)) + 
@@ -425,6 +434,7 @@ ggplot(df, aes(x = theta, y = posterior)) +
   ggtitle(TeX('Posterior Density of $\\theta$')) +
   theme.info
 
+#d)
 samples <- sample(theta, 100000, replace = TRUE, prob = posterior_density)
 
 #Posterior mean
@@ -444,6 +454,7 @@ sd(samples)
 
 So, $\theta$ has a gamma density with shape parameter $n + 2$ and rate parameters $s$.
 <<>>=
+#b)
 burn_times <- c(751, 594, 1213, 1126, 819)
 
 n <- length(burn_times)
@@ -451,15 +462,17 @@ s <- sum(burn_times)
 
 theta_draws <- rgamma(1000, shape = n+2, rate = s)
 
+#c)
 lambda_draws <- 1/theta_draws
 
+#d)
 greater_than_1000 <- sum(lambda_draws > 1000)
 
 posterior_prob_greater_than_1000 <- greater_than_1000/length(lambda_draws)
 
 print(posterior_prob_greater_than_1000)
 @
-
+\newpage
 \item We know $100 \leq N \leq 200$. So,
 
 <<>>=
@@ -480,15 +493,18 @@ mean(samples)
 #Posterior standard deviation
 sd(samples)
 @
-
+\newpage
 \item 
 <<>>=
+#a)
 p1 <- rbeta(1000, shape1 = 100, shape2 = 100)
 
 df1 <- data.frame(p1 = p1)
 
 ggplot(data = df1, aes(x=p1)) + geom_histogram(bins = 15) + theme.info
+@
 
+<<>>=
 #Mean of P1. Target is 0.5
 mean(p1)
 
@@ -500,19 +516,245 @@ p2 <- 0.9*rbeta(1000, 500, 500) + 0.1*rbeta(1000, 1, 1)
 df2 <- data.frame(p2 = p2)
 
 ggplot(data = df2, aes(x=p2)) + geom_histogram(bins = 15) + theme.info
+@
 
+<<>>=
 #Mean of P2. Target is 0.5
 mean(p2)
 
 #Probability that 0.44 < p < 0.56. Target is a probability of 0.9
 (sum(p2 < 0.56) - sum(p2 < 0.44))/length(p2)
-
-#Continue this one later
 @
+
+<<>>=
+#b)
+s <- 45
+f <- 55
+
+a1 <- 100
+b1 <- 100
+
+posterior1 <- rbeta(1000,a1+s, b1+f)
+
+mean(posterior1)
+
+quantile(posterior1, c(0.05, 0.95))
+@
+
+<<>>=
+probs <- c(.9, .1)
+beta.par1 <- c(500, 500)
+beta.par2 <- c(1, 1)
+betapar <- rbind(beta.par1, beta.par2)
+data <- c(s,f)
+
+post <- binomial.beta.mix(probs, betapar, data)
+
+posterior2 <- post$probs[1] * 
+  rbeta(1000, post$betapar[1,1] + 
+          s, post$betapar[1,2] + f) + 
+  post$probs[2] * 
+  rbeta(1000, post$betapar[2,1] + 
+          s, post$betapar[2,2] + f)
+
+mean(posterior2)
+
+quantile(posterior2, c(0.05, 0.95))
+@
+
+<<>>=
+#c)
+s <- 30
+f <- 70
+
+s <- 45
+f <- 55
+
+a1 <- 100
+b1 <- 100
+
+posterior1 <- rbeta(1000,a1+s, b1+f)
+
+mean(posterior1)
+
+quantile(posterior1, c(0.05, 0.95))
+
+probs <- c(.9, .1)
+beta.par1 <- c(500, 500)
+beta.par2 <- c(1, 1)
+betapar <- rbind(beta.par1, beta.par2)
+data <- c(s,f)
+
+post <- binomial.beta.mix(probs, betapar, data)
+
+posterior2 <- post$probs[1] * rbeta(1000, post$betapar[1,1] + 
+                                      s, post$betapar[1,2] + f) + 
+  post$probs[2] * 
+  rbeta(1000, post$betapar[2,1] + s, post$betapar[2,2] + f)
+
+mean(posterior2)
+
+quantile(posterior2, c(0.05, 0.95))
+@
+
+In both cases, the means of the posteriors and the 90\% confidence intervals are affected by the choice of prior. The difference is not overly drastic, but the means may differ by up to 0.04 depending upon the simulation.
 
 \item 
 <<>>=
+#a)
+p_value <- 2 * (1-pbinom(8, 20, 0.2))
 
+print(p_value)
+@
+
+This value is smaller than 0.05, so we can reject the hypothesis that the person does not have ESP.
+
+<<>>=
+pbetat <- function(p, prob, beta_params, data){
+  y <- data[1]
+  f <- data[2]
+  a <- beta_params[1]
+  b <- beta_params[2]
+  
+  m1 <- dbinom(y, n, p) * dbeta(p, a,b)/dbeta(p, a+y, b+n-y)
+
+  #Lambda is the posterior probability that p = 0.2
+  lambda <- dbinom(y,n,p)/(dbinom(y,n,p) + m1)
+  
+  return(lambda)
+}
+
+#b)
+n <- 20
+y <- 8
+a <- 1
+b <- 4
+p <- 0.2
+prob <- 0.5
+
+#Lambda is the posterior probability that p = 0.2
+lambda <- pbetat(p, prob, c(1, 4), c(y, n-y))
+
+print(lambda)
+@
+
+There is more evidence for the hypothesis that $p = 0.2$ than is suggested by the p-value above
+
+<<>>=
+#c)
+#Prior 1
+print(pbetat(p, prob, c(.5, 2), c(y, n-y)))
+
+#Prior 2
+print(pbetat(p, prob, c(2, 8), c(y, n-y)))
+
+#Prior 3
+print(pbetat(p, prob, c(8, 32), c(y, n-y)))
+
+@
+
+All four Bayesian computations assert that the posterior probability that $p = 2$ is between about $0.32$ and $0.4$. The range of posterior values is quite large and suggests a fairly sizeable probability that $p = 2$ is true. Since actual ESP is highly unlikely, we should not conclude that this person has ESP, which contradicts the analysis we performed using p-values.
+\newpage
+\item
+<<>>=
+#a)
+mu <- seq(from = 0, to = 140, by = 1)
+sigma <- 10
+s <- 1
+f <- 17
+
+likelihood <- (pnorm(70, mu, sigma))^s * (1 - pnorm(70, mu, sigma))^f
+
+likelihood <- likelihood/sum(likelihood)
+
+data <- data.frame(mu = mu, likelihood = likelihood)
+
+ggplot(data, aes(x= mu, y= likelihood)) + 
+  geom_line() + 
+  ggtitle(TeX("Posterior Density of $\\mu$")) +
+  ylab("Posterior") +
+  xlab(TeX("$\\mu$")) +
+  theme.info
+
+#b)
+posterior_mean <- likelihood * mu
+posterior_mean <- sum(posterior_mean)
+
+print(posterior_mean)
+
+#c)
+prob_greater_than_80 <- sum(likelihood[mu > 80])
+
+print(prob_greater_than_80)
+@
+\newpage
+\item
+<<>>=
+suppressMessages(library(LearnBayes, quietly=TRUE, 
+                         warn.conflicts = FALSE,verbose = FALSE))
+
+
+#a)
+curve(0.5*dgamma(x, 1.5, 1000) + 0.5*dgamma(x,7,1000),
+      from = 0, to = 1, lwd = 3, 
+      xlab = "P", ylab = "Prior Density")
+
+#b)
+probs <- c(0.5, 0.5)
+gamma.par1 <- c(1.5, 1000)
+gamma.par2 <- c(7, 1000)
+gammapar <- rbind(gamma.par1, gamma.par2)
+
+#Data is supposed to contain a vector of counts and a vector of time intervals
+#How to set this up?
+data <- c()
+
+#poisson.gamma.mix(probs, gammpar, data)
+
+#Come back to this one
+@
+\newpage
+\item
+<<>>=
+#a)
+lambda <- seq(from = 0.1, to = 1000, by = 0.1)
+
+prior <- 1/lambda
+
+like <- pexp(100, 1/lambda)^3 * dexp(100,1/lambda)*
+  (pexp(300, 1/lambda) - pexp(100,1/lambda))^3*
+  dexp(300,1/lambda)*(1-pexp(300,1/lambda))^4
+
+posterior <- like*prior
+
+posterior <- posterior/sum(posterior)
+
+data <- data.frame(lambda = lambda, posterior = posterior)
+
+ggplot(data, aes(x= lambda, y= posterior)) + 
+  geom_line() + 
+  ggtitle(TeX("Posterior Density of $\\lambda$")) +
+  ylab("Posterior") +
+  xlab(TeX("$\\lambda$")) +
+  theme.info
+@
+
+<<>>=
+#b)
+mean_lambda <- lambda*posterior
+
+mean_lambda <- sum(mean_lambda)
+
+print(mean_lambda)
+
+sample <- sample(lambda, size = 100000, replace = TRUE, prob = posterior)
+
+print(sd(sample))
+
+#c)
+prob_between_300_and_500 <- sum(posterior[300 <= lambda & lambda <= 500])
+
+print(prob_between_300_and_500)
 @
 
 \end{enumerate}

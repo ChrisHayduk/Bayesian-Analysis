@@ -42,6 +42,8 @@ suppressMessages(library(qwraps2, quietly=TRUE, warn.conflicts = FALSE,verbose =
 suppressMessages(library(broom, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
 suppressMessages(library(latex2exp, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
 suppressMessages(library(nnet, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(LearnBayes, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(mvtnorm, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
 
 options(qwraps2_markup = "latex")
 knitr::opts_chunk$set(size = 'footnotesize', concordance=TRUE)
@@ -72,6 +74,90 @@ theme.info <- theme(plot.title = element_text(size=16, hjust=0.5),
 %%%%%%%%%
 \part \texttt{howardprior()} on pg. 77
 \end{parts}
+%%%%%%%%%
+\begin{solution}
+\begin{parts}
+  \part 
+<<>>=
+normchi2post <- function(theta, data){
+  mean <- theta[1]
+  variance <- theta[2]
+
+  y_bar <- mean(data)
+    
+  S <- sum((data-y_bar)^2)
+  n <- length(data)
+
+  posterior_density <- 1/((variance^(n/2+1))) * 
+    exp(-1/(2*variance)*(S+n*(mean-y_bar)^2))
+
+  log_density <- log(posterior_density)
+  #print(log_density)
+  return(log_density)
+}
+
+#Example run
+
+data("marathontimes")
+attach(marathontimes)
+
+d <- mycontour(normchi2post, c(220, 330, 500, 9000), time, xlab="mean", 
+               ylab="variance")
+@
+  
+  \part
+<<>>=
+normpostsim <- function(data, m){
+  S <- sum((data-mean(data))^2)
+  
+  n <- length(data)
+  
+  sigma2 <- S/rchisq(m, n-1)
+  
+  mu <- rnorm(m, mean = mean(data), sd = sqrt(sigma2)/sqrt(n))
+  
+  results <- data.frame(mu = mu, sigma2 = sigma2)
+  
+  return(results)
+}
+
+#Example run
+results <- normpostsim(time, 1000)
+d <- mycontour(normchi2post, c(220, 330, 500, 9000), time, xlab="mean", 
+               ylab="variance")
+points(results$mu, results$sigma2)
+@
+  
+  \part
+<<>>=
+rdirichlet <- function(m, alpha){
+  theta <- matrix(nrow = m, ncol = length(alpha))
+  
+  for(i in 1:length(alpha)){
+    theta[,i] <- rgamma(m, alpha[i], 1)
+  }
+  
+  for(i in 1:nrow(theta)){
+    T = sum(theta[i,])
+    
+    theta[i,] <- theta[i,]/T
+  }
+  
+  return(theta)
+}
+
+results <- rdirichlet(1000, c(728,584,138))
+
+hist(results[,1] - results[,2], main = "")
+@
+  
+  \part
+<<>>=
+
+@
+  
+\end{parts}
+\end{solution}
 %%%%%%%%%%%%%%%%%%%%%
 \question \textbf{Chapter 4: Multiparameter Models} Pg. 66 introduces the Dirichlet distribution.  Draw pdfs of this distribution for various parameter values using the functions in the R package. Find some examples on the internet of where the Dirichlet distribution is used in statistics.  
 %%%%%%%%%%%%%%%%%%%%%

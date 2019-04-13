@@ -86,7 +86,7 @@
 \begin{parts}
 \part \texttt{normchi2post()} on pg. 64
 %%%%%%%%%
-%\part \texttt{mycontour()} on pg. 64
+\part \texttt{mycontour()} on pg. 64
 %%%%%%%%%
 \part \texttt{normpostsim()} on pg. 64
 %%%%%%%%%
@@ -129,11 +129,64 @@
 \hlkwd{data}\hlstd{(}\hlstr{"marathontimes"}\hlstd{)}
 \hlkwd{attach}\hlstd{(marathontimes)}
 
-\hlstd{d} \hlkwb{<-} \hlkwd{mycontour}\hlstd{(normchi2post,} \hlkwd{c}\hlstd{(}\hlnum{220}\hlstd{,} \hlnum{330}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{9000}\hlstd{), time,} \hlkwc{xlab}\hlstd{=}\hlstr{"mean"}\hlstd{,}
+\hlstd{d} \hlkwb{<-} \hlstd{LearnBayes}\hlopt{::}\hlkwd{mycontour}\hlstd{(normchi2post,} \hlkwd{c}\hlstd{(}\hlnum{220}\hlstd{,} \hlnum{330}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{9000}\hlstd{), time,} \hlkwc{xlab}\hlstd{=}\hlstr{"mean"}\hlstd{,}
                \hlkwc{ylab}\hlstd{=}\hlstr{"variance"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/unnamed-chunk-2-1} 
+
+\end{knitrout}
+  
+  \part
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mycontour} \hlkwb{<-} \hlkwa{function} \hlstd{(}\hlkwc{logf}\hlstd{,} \hlkwc{limits}\hlstd{,} \hlkwc{data}\hlstd{,} \hlkwc{num_points}\hlstd{,} \hlkwc{levels}\hlstd{,} \hlkwc{...}\hlstd{)}
+\hlstd{\{}
+    \hlstd{LOGF} \hlkwb{=} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{data}\hlstd{) \{}
+        \hlkwa{if} \hlstd{(}\hlkwd{is.matrix}\hlstd{(theta)} \hlopt{==} \hlnum{TRUE}\hlstd{) \{}
+            \hlstd{val} \hlkwb{=} \hlkwd{matrix}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{c}\hlstd{(}\hlkwd{dim}\hlstd{(theta)[}\hlnum{1}\hlstd{],} \hlnum{1}\hlstd{))}
+            \hlkwa{for} \hlstd{(j} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{dim}\hlstd{(theta)[}\hlnum{1}\hlstd{]) val[j]} \hlkwb{=} \hlkwd{logf}\hlstd{(theta[j,}
+                \hlstd{], data)}
+        \hlstd{\}}
+        \hlkwa{else} \hlstd{val} \hlkwb{=} \hlkwd{logf}\hlstd{(theta, data)}
+        \hlkwd{return}\hlstd{(val)}
+    \hlstd{\}}
+    \hlstd{ng} \hlkwb{=} \hlstd{num_points}
+    \hlstd{x0} \hlkwb{=} \hlkwd{seq}\hlstd{(limits[}\hlnum{1}\hlstd{], limits[}\hlnum{2}\hlstd{],} \hlkwc{len} \hlstd{= ng)}
+    \hlstd{y0} \hlkwb{=} \hlkwd{seq}\hlstd{(limits[}\hlnum{3}\hlstd{], limits[}\hlnum{4}\hlstd{],} \hlkwc{len} \hlstd{= ng)}
+    \hlstd{X} \hlkwb{=} \hlkwd{outer}\hlstd{(x0,} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{, ng))}
+    \hlstd{Y} \hlkwb{=} \hlkwd{outer}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{, ng), y0)}
+    \hlstd{n2} \hlkwb{=} \hlstd{ng}\hlopt{^}\hlnum{2}
+    \hlstd{Z} \hlkwb{=} \hlkwd{LOGF}\hlstd{(}\hlkwd{cbind}\hlstd{(X[}\hlnum{1}\hlopt{:}\hlstd{n2], Y[}\hlnum{1}\hlopt{:}\hlstd{n2]), data)}
+
+    \hlcom{#max_z <- optimize(LOGF, }
+    \hlcom{#interval = c(c(limits[1], limits[2]), }
+    \hlcom{#c(limits[3], limits[4])), data, maximum = TRUE)}
+    \hlstd{max_z} \hlkwb{=} \hlkwd{max}\hlstd{(Z)}
+
+    \hlstd{Z} \hlkwb{=} \hlstd{Z} \hlopt{-} \hlstd{max_z}
+    \hlstd{Z} \hlkwb{=} \hlkwd{matrix}\hlstd{(Z,} \hlkwd{c}\hlstd{(ng, ng))}
+
+    \hlstd{min_z} \hlkwb{<-} \hlkwd{min}\hlstd{(Z)}
+
+    \hlstd{contours} \hlkwb{<-} \hlkwd{c}\hlstd{()}
+
+    \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(levels))\{}
+      \hlstd{contours} \hlkwb{<-} \hlkwd{c}\hlstd{(contours, (levels[i]}\hlopt{*}\hlstd{min_z))}
+    \hlstd{\}}
+
+    \hlkwd{contour}\hlstd{(x0, y0, Z,} \hlkwc{levels} \hlstd{= contours,} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{,}
+        \hlstd{...)}
+\hlstd{\}}
+
+\hlstd{d} \hlkwb{<-} \hlkwd{mycontour}\hlstd{(normchi2post,} \hlkwd{c}\hlstd{(}\hlnum{220}\hlstd{,} \hlnum{330}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{9000}\hlstd{),}
+               \hlstd{time,} \hlkwc{num_points} \hlstd{=} \hlnum{1000}\hlstd{,}
+               \hlkwc{levels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
+               \hlkwc{xlab}\hlstd{=}\hlstr{"mean"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"variance"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-3-1} 
 
 \end{knitrout}
   
@@ -157,24 +210,139 @@
 
 \hlcom{#Example run}
 \hlstd{results} \hlkwb{<-} \hlkwd{normpostsim}\hlstd{(time,} \hlnum{1000}\hlstd{)}
-\hlstd{d} \hlkwb{<-} \hlkwd{mycontour}\hlstd{(normchi2post,} \hlkwd{c}\hlstd{(}\hlnum{220}\hlstd{,} \hlnum{330}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{9000}\hlstd{), time,} \hlkwc{xlab}\hlstd{=}\hlstr{"mean"}\hlstd{,}
-               \hlkwc{ylab}\hlstd{=}\hlstr{"variance"}\hlstd{)}
+\hlstd{d} \hlkwb{<-} \hlkwd{mycontour}\hlstd{(normchi2post,} \hlkwd{c}\hlstd{(}\hlnum{220}\hlstd{,} \hlnum{330}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{9000}\hlstd{), time,}
+               \hlkwc{num_points} \hlstd{=} \hlnum{1000}\hlstd{, levels} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
+               \hlkwc{xlab}\hlstd{=}\hlstr{"mean"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"variance"}\hlstd{)}
 \hlkwd{points}\hlstd{(results}\hlopt{$}\hlstd{mu, results}\hlopt{$}\hlstd{sigma2)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-3-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-4-1} 
 
+\end{knitrout}
+  
+  \part
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{rdirichlet} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{m}\hlstd{,} \hlkwc{alpha}\hlstd{)\{}
+  \hlstd{theta} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwc{nrow} \hlstd{= m,} \hlkwc{ncol} \hlstd{=} \hlkwd{length}\hlstd{(alpha))}
+
+  \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(alpha))\{}
+    \hlstd{theta[,i]} \hlkwb{<-} \hlkwd{rgamma}\hlstd{(m, alpha[i],} \hlnum{1}\hlstd{)}
+  \hlstd{\}}
+
+  \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(theta))\{}
+    \hlstd{T} \hlkwb{=} \hlkwd{sum}\hlstd{(theta[i,])}
+
+    \hlstd{theta[i,]} \hlkwb{<-} \hlstd{theta[i,]}\hlopt{/}\hlstd{T}
+  \hlstd{\}}
+
+  \hlkwd{return}\hlstd{(theta)}
+\hlstd{\}}
+
+\hlstd{results} \hlkwb{<-} \hlkwd{rdirichlet}\hlstd{(}\hlnum{1000}\hlstd{,} \hlkwd{c}\hlstd{(}\hlnum{728}\hlstd{,}\hlnum{584}\hlstd{,}\hlnum{138}\hlstd{))}
+
+\hlkwd{hist}\hlstd{(results[,}\hlnum{1}\hlstd{]} \hlopt{-} \hlstd{results[,}\hlnum{2}\hlstd{],} \hlkwc{main} \hlstd{=} \hlstr{""}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-5-1} 
+
+\end{knitrout}
+  
+  \part
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{beta.select} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{quantile1}\hlstd{,} \hlkwc{quantile2}\hlstd{)\{}
+
+\hlstd{\}}
+
+\hlcom{#Example run}
+\hlkwd{beta.select}\hlstd{(}\hlkwd{list}\hlstd{(}\hlkwc{p}\hlstd{=}\hlnum{0.5}\hlstd{,} \hlkwc{x}\hlstd{=}\hlnum{0.2}\hlstd{),} \hlkwd{list}\hlstd{(}\hlkwc{p}\hlstd{=}\hlnum{0.9}\hlstd{,} \hlkwc{x}\hlstd{=}\hlnum{0.5}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+## NULL
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+  
+  \part
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{logisticpost} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{beta}\hlstd{,} \hlkwc{data}\hlstd{)\{}
+  \hlstd{post} \hlkwb{<-} \hlnum{1}
+
+  \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(data))\{}
+    \hlstd{p} \hlkwb{<-} \hlkwd{exp}\hlstd{(beta[}\hlnum{1}\hlstd{]} \hlopt{+} \hlstd{beta[}\hlnum{2}\hlstd{]}\hlopt{*}\hlstd{data[i,} \hlnum{1}\hlstd{])}
+
+    \hlstd{p} \hlkwb{<-} \hlstd{p}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlkwd{exp}\hlstd{(beta[}\hlnum{1}\hlstd{]} \hlopt{+} \hlstd{beta[}\hlnum{2}\hlstd{]}\hlopt{*}\hlstd{data[i,} \hlnum{1}\hlstd{]))}
+
+    \hlstd{y} \hlkwb{<-} \hlstd{data[i,} \hlnum{3}\hlstd{]}
+    \hlstd{n} \hlkwb{<-} \hlstd{data[i,} \hlnum{2}\hlstd{]}
+
+    \hlstd{post} \hlkwb{<-} \hlstd{post} \hlopt{*} \hlstd{(p}\hlopt{^}\hlstd{y} \hlopt{*} \hlstd{(}\hlnum{1}\hlopt{-}\hlstd{p)}\hlopt{^}\hlstd{(n}\hlopt{-}\hlstd{y))}
+  \hlstd{\}}
+
+  \hlkwd{return}\hlstd{(}\hlkwd{log}\hlstd{(post))}
+\hlstd{\}}
+
+\hlcom{#Example run}
+\hlstd{x} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{0.86}\hlstd{,} \hlopt{-}\hlnum{0.3}\hlstd{,} \hlopt{-}\hlnum{0.05}\hlstd{,} \hlnum{0.73}\hlstd{)}
+\hlstd{n} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{5}\hlstd{,} \hlnum{5}\hlstd{,} \hlnum{5}\hlstd{)}
+\hlstd{y} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{5}\hlstd{)}
+\hlstd{data} \hlkwb{<-} \hlkwd{cbind}\hlstd{(x, n, y)}
+
+\hlstd{prior} \hlkwb{<-} \hlkwd{rbind}\hlstd{(}\hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{0.7}\hlstd{,} \hlnum{4.68}\hlstd{,} \hlnum{1.12}\hlstd{),}
+               \hlkwd{c}\hlstd{(}\hlnum{0.6}\hlstd{,} \hlnum{2.10}\hlstd{,} \hlnum{0.74}\hlstd{))}
+
+\hlstd{data.new} \hlkwb{<-} \hlkwd{rbind}\hlstd{(data,prior)}
+
+\hlkwd{mycontour}\hlstd{(logisticpost,} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{3}\hlstd{,}\hlnum{3}\hlstd{,}\hlopt{-}\hlnum{1}\hlstd{,}\hlnum{9}\hlstd{), data.new,}
+          \hlkwc{num_points} \hlstd{=} \hlnum{1000}\hlstd{, levels} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
+          \hlkwc{xlab}\hlstd{=}\hlstr{"beta0"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"beta1"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-7-1} 
+
+\end{knitrout}
+  
+  \part
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{howardprior} \hlkwb{<-} \hlkwa{function}\hlstd{()\{}
+
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
 \end{knitrout}
   
 \end{parts}
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%%
 \question \textbf{Chapter 4: Multiparameter Models} Pg. 66 introduces the Dirichlet distribution.  Draw pdfs of this distribution for various parameter values using the functions in the R package. Find some examples on the internet of where the Dirichlet distribution is used in statistics.  
+%%%%%%%%%
+\begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-9-1} 
+
+\end{knitrout}
+
+\end{solution}
 %%%%%%%%%%%%%%%%%%%%%
-\question Do all CH. 4 exercises.  
+\question Do all CH. 4 exercises.
+%%%%%%%%%
+\begin{solution}
+
+\end{solution}
 %%%%%%%%%%%%%%%%%%%%%
 \question \textbf{CH4, Q8 extra:} fit model using a frequentist logistic regression model; figure out how to make the equivalent confidence interval for part (d).  (Could use bootstrap, probably BC\_a and its approximation ABC, try package \texttt{\emph{bootBCa}}; include a histogram of your BC\_a bootstrap resampled probability values and normal quantile plot of those values.  Let number of bootstrap samples be $B=9,999$.)
 \end{questions}
+%%%%%%%%%
+\begin{solution}
 
+\end{solution}
 
 \end{document}

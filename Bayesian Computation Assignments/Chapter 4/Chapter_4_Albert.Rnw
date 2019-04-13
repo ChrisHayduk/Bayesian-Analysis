@@ -44,6 +44,10 @@ suppressMessages(library(latex2exp, quietly=TRUE, warn.conflicts = FALSE,verbose
 suppressMessages(library(nnet, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
 suppressMessages(library(LearnBayes, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
 suppressMessages(library(mvtnorm, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(MCMCpack, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(scatterplot3d, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(rgl, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+
 
 options(qwraps2_markup = "latex")
 knitr::opts_chunk$set(size = 'footnotesize', concordance=TRUE)
@@ -126,7 +130,9 @@ mycontour <- function (logf, limits, data, num_points, levels, ...)
     n2 = ng^2
     Z = LOGF(cbind(X[1:n2], Y[1:n2]), data)
     
-    #max_z <- optimize(LOGF, interval = c(c(limits[1], limits[2]), c(limits[3], limits[4])), data, maximum = TRUE)
+    #max_z <- optimize(LOGF, 
+    #interval = c(c(limits[1], limits[2]), 
+    #c(limits[3], limits[4])), data, maximum = TRUE)
     max_z = max(Z)
 
     Z = Z - max_z
@@ -144,7 +150,10 @@ mycontour <- function (logf, limits, data, num_points, levels, ...)
         ...)
 }
 
-d <- mycontour(normchi2post, c(220, 330, 500, 9000), time, num_points = 1000, levels = c(0.1, 0.01, 0.001), xlab="mean", ylab="variance")
+d <- mycontour(normchi2post, c(220, 330, 500, 9000), 
+               time, num_points = 1000, 
+               levels = c(0.1, 0.01, 0.001), 
+               xlab="mean", ylab="variance")
 @
   
   \part
@@ -252,13 +261,87 @@ howardprior <- function(){
 \question \textbf{Chapter 4: Multiparameter Models} Pg. 66 introduces the Dirichlet distribution.  Draw pdfs of this distribution for various parameter values using the functions in the R package. Find some examples on the internet of where the Dirichlet distribution is used in statistics.  
 %%%%%%%%%
 \begin{solution}
+\\
+<<echo=F>>=
+par(mfrow=c(3,2))
+x <- seq(from = 0, to = 1, by = 0.0001)
+y <- 1-x
+
+density <- data.frame(x = x, 
+                      y = y, 
+                      z = rep(NA, times = length(y)))
+
+for(i in 1:length(x)){
+  density$z[i] <- ddirichlet(c(x[i],y[i]), c(1,1))
+}
+  
+
+plot1 <- scatterplot3d(x=density$x, y=density$y, 
+              z=density$z, main=TeX('$\\alpha = (1, 1)$'),
+              xlab=TeX('$\\theta_1$'), ylab=TeX('$\\theta_2$'), 
+              zlab=TeX('Density'))
+
+for(i in 1:length(x)){
+  density$z[i] <- ddirichlet(c(x[i],y[i]), c(1,2))
+}
+  
+
+plot2 <- scatterplot3d(x=density$x, y=density$y, 
+              z=density$z, main=TeX('$\\alpha = (1, 2)$'),
+              xlab=TeX('$\\theta_1$'), ylab=TeX('$\\theta_2$'), 
+              zlab=TeX('Density'))
+
+for(i in 1:length(x)){
+  density$z[i] <- ddirichlet(c(x[i],y[i]), c(2,1))
+}
+  
+
+plot3 <- scatterplot3d(x=density$x, y=density$y, 
+              z=density$z, main=TeX('$\\alpha = (2, 1)$'),
+              xlab=TeX('$\\theta_1$'), ylab=TeX('$\\theta_2$'), 
+              zlab=TeX('Density'))
+
+
+for(i in 1:length(x)){
+  density$z[i] <- ddirichlet(c(x[i],y[i]), c(2,2))
+}
+  
+
+plot4 <- scatterplot3d(x=density$x, y=density$y, 
+              z=density$z, main=TeX('$\\alpha = (2, 2)$'),
+              xlab=TeX('$\\theta_1$'), ylab=TeX('$\\theta_2$'), 
+              zlab=TeX('Density'))
+
+for(i in 1:length(x)){
+  density$z[i] <- ddirichlet(c(x[i],y[i]), c(1,3))
+}
+  
+
+plot5 <- scatterplot3d(x=density$x, y=density$y, 
+              z=density$z, main=TeX('$\\alpha = (1, 3)$'),
+              xlab=TeX('$\\theta_1$'), ylab=TeX('$\\theta_2$'), 
+              zlab=TeX('Density'))
+
+for(i in 1:length(x)){
+  density$z[i] <- ddirichlet(c(x[i],y[i]), c(3,1))
+}
+  
+
+plot5 <- scatterplot3d(x=density$x, y=density$y, 
+              z=density$z, main=TeX('$\\alpha = (3, 1)$'),
+              xlab=TeX('$\\theta_1$'), ylab=TeX('$\\theta_2$'), 
+              zlab=TeX('Density'), plot = F)
+
+@
 
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%%
 \question Do all CH. 4 exercises.
 %%%%%%%%%
 \begin{solution}
+\begin{enumerate}
 
+\end{enumerate}
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%%
 \question \textbf{CH4, Q8 extra:} fit model using a frequentist logistic regression model; figure out how to make the equivalent confidence interval for part (d).  (Could use bootstrap, probably BC\_a and its approximation ABC, try package \texttt{\emph{bootBCa}}; include a histogram of your BC\_a bootstrap resampled probability values and normal quantile plot of those values.  Let number of bootstrap samples be $B=9,999$.)

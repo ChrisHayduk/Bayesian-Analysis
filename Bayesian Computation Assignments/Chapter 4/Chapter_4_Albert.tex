@@ -324,6 +324,7 @@
 \question \textbf{Chapter 4: Multiparameter Models} Pg. 66 introduces the Dirichlet distribution.  Draw pdfs of this distribution for various parameter values using the functions in the R package. Find some examples on the internet of where the Dirichlet distribution is used in statistics.  
 %%%%%%%%%
 \begin{solution}
+\\
 \begin{knitrout}\footnotesize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
 \includegraphics[width=\maxwidth]{figure/unnamed-chunk-9-1} 
@@ -335,7 +336,61 @@
 \question Do all CH. 4 exercises.
 %%%%%%%%%
 \begin{solution}
+\begin{enumerate}
+  \item
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#a)}
+\hlstd{data} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{9.0}\hlstd{,} \hlnum{8.5}\hlstd{,} \hlnum{7.0}\hlstd{,} \hlnum{8.5}\hlstd{,} \hlnum{6.0}\hlstd{,} \hlnum{12.5}\hlstd{,} \hlnum{6.0}\hlstd{,} \hlnum{9.0}\hlstd{,} \hlnum{8.5}\hlstd{,} \hlnum{7.5}\hlstd{,}
+          \hlnum{8.0}\hlstd{,} \hlnum{6.0}\hlstd{,} \hlnum{9.0}\hlstd{,} \hlnum{8.0}\hlstd{,} \hlnum{7.0}\hlstd{,} \hlnum{10.0}\hlstd{,} \hlnum{9.0}\hlstd{,} \hlnum{7.5}\hlstd{,} \hlnum{5.0}\hlstd{,} \hlnum{6.5}\hlstd{)}
+\hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(data)}
+\hlstd{y_bar} \hlkwb{<-} \hlkwd{mean}\hlstd{(data)}
 
+\hlstd{s_2} \hlkwb{<-} \hlkwd{sum}\hlstd{((data}\hlopt{-}\hlstd{y_bar)}\hlopt{^}\hlnum{2}\hlstd{)}\hlopt{*}\hlstd{(}\hlnum{1}\hlopt{/}\hlstd{(n}\hlopt{-}\hlnum{1}\hlstd{))}
+
+\hlstd{sigma_2} \hlkwb{<-} \hlkwd{rinvchisq}\hlstd{(}\hlnum{1000}\hlstd{, n}\hlopt{-}\hlnum{1}\hlstd{, s_2)}
+
+\hlstd{mu} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(}\hlnum{1000}\hlstd{, y_bar, sigma_2}\hlopt{/}\hlstd{n)}
+
+\hlcom{#b)}
+\hlkwd{quantile}\hlstd{(mu,} \hlkwd{c}\hlstd{(}\hlnum{0.05}\hlstd{,} \hlnum{0.95}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+##       5%      95% 
+## 7.633139 8.230009
+\end{verbatim}
+\begin{alltt}
+\hlstd{sigma} \hlkwb{<-} \hlkwd{sqrt}\hlstd{(sigma_2)}
+
+\hlkwd{quantile}\hlstd{(sigma,} \hlkwd{c}\hlstd{(}\hlnum{0.05}\hlstd{,} \hlnum{0.95}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+##       5%      95% 
+## 1.334067 2.306614
+\end{verbatim}
+\begin{alltt}
+\hlcom{#c)}
+\hlstd{p_75} \hlkwb{<-} \hlstd{mu} \hlopt{+} \hlnum{0.674}\hlopt{*}\hlstd{sigma}
+
+\hlkwd{mean}\hlstd{(p_75)}
+\end{alltt}
+\begin{verbatim}
+## [1] 9.111376
+\end{verbatim}
+\begin{alltt}
+\hlkwd{sd}\hlstd{(p_75)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.2723855
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+  \item
+
+  \item
+  
+\end{enumerate}
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%%
 \question \textbf{CH4, Q8 extra:} fit model using a frequentist logistic regression model; figure out how to make the equivalent confidence interval for part (d).  (Could use bootstrap, probably BC\_a and its approximation ABC, try package \texttt{\emph{bootBCa}}; include a histogram of your BC\_a bootstrap resampled probability values and normal quantile plot of those values.  Let number of bootstrap samples be $B=9,999$.)

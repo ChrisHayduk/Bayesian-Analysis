@@ -47,6 +47,7 @@ suppressMessages(library(mvtnorm, quietly=TRUE, warn.conflicts = FALSE,verbose =
 suppressMessages(library(MCMCpack, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
 suppressMessages(library(scatterplot3d, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
 suppressMessages(library(rgl, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
+suppressMessages(library(LaplacesDemon, quietly=TRUE, warn.conflicts = FALSE,verbose = FALSE))
 
 
 options(qwraps2_markup = "latex")
@@ -340,7 +341,40 @@ plot5 <- scatterplot3d(x=density$x, y=density$y,
 %%%%%%%%%
 \begin{solution}
 \begin{enumerate}
+  \item
+<<>>=
+#a)
+data <- c(9.0, 8.5, 7.0, 8.5, 6.0, 12.5, 6.0, 9.0, 8.5, 7.5,
+          8.0, 6.0, 9.0, 8.0, 7.0, 10.0, 9.0, 7.5, 5.0, 6.5)
+n <- length(data)
+y_bar <- mean(data)
 
+s_2 <- sum((data-y_bar)^2)*(1/(n-1))
+
+sigma_2 <- rinvchisq(1000, n-1, s_2)
+
+mu <- rnorm(1000, y_bar, sigma_2/n)
+
+#b)
+quantile(mu, c(0.05, 0.95))
+
+sigma <- sqrt(sigma_2)
+
+quantile(sigma, c(0.05, 0.95))
+
+#c)
+p_75 <- mu + 0.674*sigma
+
+mean(p_75)
+
+sd(p_75)
+@
+  \item
+<<>>=
+
+@
+  \item
+  
 \end{enumerate}
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%%

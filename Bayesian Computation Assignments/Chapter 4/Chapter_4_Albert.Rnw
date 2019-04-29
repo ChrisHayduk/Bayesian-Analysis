@@ -371,9 +371,93 @@ sd(p_75)
 @
   \item
 <<>>=
+#c)
+males <- c(120, 107, 110, 116, 114, 111, 113, 117, 114, 112)
+
+females <- c(110, 111, 107, 108, 110, 105, 107, 106, 111, 111)
+
+S1 <- var(males)
+
+S2 <- var(females)
+
+n <- length(males)
+
+sigma2_males <- S1/rchisq(1000,n-1)
+sigma2_females <- S2/rchisq(1000,n-1)
+
+mu_males <- rnorm(1000, mean=mean(males), sd = sqrt(sigma2_males)/sqrt(n))
+mu_females <- rnorm(1000, mean=mean(females), sd = sqrt(sigma2_females)/sqrt(n))
+
+mu_diff <- mu_males - mu_females
+
+sum(mu_diff > 0)/length(mu_diff)
+@
+  \item
+<<>>=
+#b)
 
 @
   \item
+<<>>=
+#a)
+weights <- c(10, 11, 12, 11, 9)
+
+S <- var(weights)
+
+n <- length(weights)
+
+sigma2 <- S/rchisq(1000, n-1)
+
+mu <- rnorm(1000, mean = mean(weights), sd = sqrt(sigma2)/sqrt(n))
+
+hist(mu, freq = FALSE, breaks = 15)
+
+#b)
+
+#c)
+
+#d)
+@
+  \item
+<<>>=
+
+@
+  \item
+<<>>=
+
+@
+  \item
+<<>>=
+
+@
+  \item
+<<>>=
+#a)
+quantile1 <- list(p=0.25, x=0.15)
+quantile2 <- list(p=0.75, x=0.35)
+
+beta1 <- beta.select(quantile1, quantile2)
+
+print(beta1)
+
+quantile1 <- list(p=0.25, x=0.75)
+quantile2 <- list(p=0.75, x=0.95)
+
+beta2 <- beta.select(quantile1, quantile2)
+
+print(beta2)
+
+#b)
+data <- cbind(c(16, 18, 20, 22, 24, 26, 28), c(0, 0, 6, 12, 7, 9, 3), c(2, 7, 14, 26, 13, 14, 3))
+#prior <- c(beta1, beta2)
+#data.new <- rbind(data, prior)
+mycontour(logisticpost, c(-3, 3, -1, 9), data, xlab="beta0",
+          ylab = "beta1")
+
+#c)
+
+#d)
+@
   
 \end{enumerate}
 \end{solution}
@@ -382,6 +466,25 @@ sd(p_75)
 \end{questions}
 %%%%%%%%%
 \begin{solution}
+<<>>=
+act <- c(rep(16, times = 2), rep(18, times = 7), rep(20, times = 14), rep(22, times = 26),
+         rep(24, times = 13), rep(26, times = 14), rep(28, times = 3))
+
+success <- c(rep(0, times = 9), rep(1, times = 6), rep(0, times = 14-6),
+             rep(1, times = 12), rep(0, times = 26-12),
+             rep(1, times = 7), rep(0, times = 13-7),
+             rep(1, times = 9), rep(0, times = 14-9),
+             rep(1, times = 3))
+
+data <- data.frame(act = act, success = success)
+
+model <- glm(success ~ act, family="binomial", data = data)
+
+summary(model)
+
+new.data <- data.frame(act = c(20))
+predict(model, newdata = new.data, type="response")
+@
 
 \end{solution}
 

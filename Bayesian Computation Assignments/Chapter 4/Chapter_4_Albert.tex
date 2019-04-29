@@ -358,7 +358,7 @@
 \end{alltt}
 \begin{verbatim}
 ##       5%      95% 
-## 7.633139 8.230009
+## 7.639289 8.192113
 \end{verbatim}
 \begin{alltt}
 \hlstd{sigma} \hlkwb{<-} \hlkwd{sqrt}\hlstd{(sigma_2)}
@@ -367,7 +367,7 @@
 \end{alltt}
 \begin{verbatim}
 ##       5%      95% 
-## 1.334067 2.306614
+## 1.359014 2.303797
 \end{verbatim}
 \begin{alltt}
 \hlcom{#c)}
@@ -376,19 +376,131 @@
 \hlkwd{mean}\hlstd{(p_75)}
 \end{alltt}
 \begin{verbatim}
-## [1] 9.111376
+## [1] 9.119036
 \end{verbatim}
 \begin{alltt}
 \hlkwd{sd}\hlstd{(p_75)}
 \end{alltt}
 \begin{verbatim}
-## [1] 0.2723855
+## [1] 0.2585771
 \end{verbatim}
+\end{kframe}
+\end{knitrout}
+  \item
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#c)}
+\hlstd{males} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{120}\hlstd{,} \hlnum{107}\hlstd{,} \hlnum{110}\hlstd{,} \hlnum{116}\hlstd{,} \hlnum{114}\hlstd{,} \hlnum{111}\hlstd{,} \hlnum{113}\hlstd{,} \hlnum{117}\hlstd{,} \hlnum{114}\hlstd{,} \hlnum{112}\hlstd{)}
+
+\hlstd{females} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{110}\hlstd{,} \hlnum{111}\hlstd{,} \hlnum{107}\hlstd{,} \hlnum{108}\hlstd{,} \hlnum{110}\hlstd{,} \hlnum{105}\hlstd{,} \hlnum{107}\hlstd{,} \hlnum{106}\hlstd{,} \hlnum{111}\hlstd{,} \hlnum{111}\hlstd{)}
+
+\hlstd{S1} \hlkwb{<-} \hlkwd{var}\hlstd{(males)}
+
+\hlstd{S2} \hlkwb{<-} \hlkwd{var}\hlstd{(females)}
+
+\hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(males)}
+
+\hlstd{sigma2_males} \hlkwb{<-} \hlstd{S1}\hlopt{/}\hlkwd{rchisq}\hlstd{(}\hlnum{1000}\hlstd{,n}\hlopt{-}\hlnum{1}\hlstd{)}
+\hlstd{sigma2_females} \hlkwb{<-} \hlstd{S2}\hlopt{/}\hlkwd{rchisq}\hlstd{(}\hlnum{1000}\hlstd{,n}\hlopt{-}\hlnum{1}\hlstd{)}
+
+\hlstd{mu_males} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(}\hlnum{1000}\hlstd{,} \hlkwc{mean}\hlstd{=}\hlkwd{mean}\hlstd{(males),} \hlkwc{sd} \hlstd{=} \hlkwd{sqrt}\hlstd{(sigma2_males)}\hlopt{/}\hlkwd{sqrt}\hlstd{(n))}
+\hlstd{mu_females} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(}\hlnum{1000}\hlstd{,} \hlkwc{mean}\hlstd{=}\hlkwd{mean}\hlstd{(females),} \hlkwc{sd} \hlstd{=} \hlkwd{sqrt}\hlstd{(sigma2_females)}\hlopt{/}\hlkwd{sqrt}\hlstd{(n))}
+
+\hlstd{mu_diff} \hlkwb{<-} \hlstd{mu_males} \hlopt{-} \hlstd{mu_females}
+
+\hlkwd{sum}\hlstd{(mu_diff} \hlopt{>} \hlnum{0}\hlstd{)}\hlopt{/}\hlkwd{length}\hlstd{(mu_diff)}
+\end{alltt}
+\begin{verbatim}
+## [1] 1
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+  \item
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#b)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  \item
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#a)}
+\hlstd{weights} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{10}\hlstd{,} \hlnum{11}\hlstd{,} \hlnum{12}\hlstd{,} \hlnum{11}\hlstd{,} \hlnum{9}\hlstd{)}
+
+\hlstd{S} \hlkwb{<-} \hlkwd{var}\hlstd{(weights)}
+
+\hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(weights)}
+
+\hlstd{sigma2} \hlkwb{<-} \hlstd{S}\hlopt{/}\hlkwd{rchisq}\hlstd{(}\hlnum{1000}\hlstd{, n}\hlopt{-}\hlnum{1}\hlstd{)}
+
+\hlstd{mu} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(}\hlnum{1000}\hlstd{,} \hlkwc{mean} \hlstd{=} \hlkwd{mean}\hlstd{(weights),} \hlkwc{sd} \hlstd{=} \hlkwd{sqrt}\hlstd{(sigma2)}\hlopt{/}\hlkwd{sqrt}\hlstd{(n))}
+
+\hlkwd{hist}\hlstd{(mu,} \hlkwc{freq} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{breaks} \hlstd{=} \hlnum{15}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-13-1} 
+\begin{kframe}\begin{alltt}
+\hlcom{#b)}
+
+\hlcom{#c)}
+
+\hlcom{#d)}
+\end{alltt}
 \end{kframe}
 \end{knitrout}
   \item
 
   \item
+
+  \item
+
+  \item
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#a)}
+\hlstd{quantile1} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{p}\hlstd{=}\hlnum{0.25}\hlstd{,} \hlkwc{x}\hlstd{=}\hlnum{0.15}\hlstd{)}
+\hlstd{quantile2} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{p}\hlstd{=}\hlnum{0.75}\hlstd{,} \hlkwc{x}\hlstd{=}\hlnum{0.35}\hlstd{)}
+
+\hlstd{beta1} \hlkwb{<-} \hlkwd{beta.select}\hlstd{(quantile1, quantile2)}
+
+\hlkwd{print}\hlstd{(beta1)}
+\end{alltt}
+\begin{verbatim}
+## NULL
+\end{verbatim}
+\begin{alltt}
+\hlstd{quantile1} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{p}\hlstd{=}\hlnum{0.25}\hlstd{,} \hlkwc{x}\hlstd{=}\hlnum{0.75}\hlstd{)}
+\hlstd{quantile2} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{p}\hlstd{=}\hlnum{0.75}\hlstd{,} \hlkwc{x}\hlstd{=}\hlnum{0.95}\hlstd{)}
+
+\hlstd{beta2} \hlkwb{<-} \hlkwd{beta.select}\hlstd{(quantile1, quantile2)}
+
+\hlkwd{print}\hlstd{(beta2)}
+\end{alltt}
+\begin{verbatim}
+## NULL
+\end{verbatim}
+\begin{alltt}
+\hlcom{#b)}
+\hlstd{data} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{16}\hlstd{,} \hlnum{18}\hlstd{,} \hlnum{20}\hlstd{,} \hlnum{22}\hlstd{,} \hlnum{24}\hlstd{,} \hlnum{26}\hlstd{,} \hlnum{28}\hlstd{),} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{6}\hlstd{,} \hlnum{12}\hlstd{,} \hlnum{7}\hlstd{,} \hlnum{9}\hlstd{,} \hlnum{3}\hlstd{),} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{7}\hlstd{,} \hlnum{14}\hlstd{,} \hlnum{26}\hlstd{,} \hlnum{13}\hlstd{,} \hlnum{14}\hlstd{,} \hlnum{3}\hlstd{))}
+\hlcom{#prior <- c(beta1, beta2)}
+\hlcom{#data.new <- rbind(data, prior)}
+\hlkwd{mycontour}\hlstd{(logisticpost,} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{3}\hlstd{,} \hlnum{3}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlnum{9}\hlstd{), data,} \hlkwc{xlab}\hlstd{=}\hlstr{"beta0"}\hlstd{,}
+          \hlkwc{ylab} \hlstd{=} \hlstr{"beta1"}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mycontour(logisticpost, c(-3, 3, -1, 9), data, xlab = "{}beta0"{}, : argument "{}num\_points"{} is missing, with no default}}\begin{alltt}
+\hlcom{#c)}
+
+\hlcom{#d)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
   
 \end{enumerate}
 \end{solution}
@@ -397,6 +509,58 @@
 \end{questions}
 %%%%%%%%%
 \begin{solution}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{act} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{16}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{2}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{18}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{7}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{20}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{14}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{22}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{26}\hlstd{),}
+         \hlkwd{rep}\hlstd{(}\hlnum{24}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{13}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{26}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{14}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{28}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{3}\hlstd{))}
+
+\hlstd{success} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{9}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{6}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{14}\hlopt{-}\hlnum{6}\hlstd{),}
+             \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{12}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{26}\hlopt{-}\hlnum{12}\hlstd{),}
+             \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{7}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{13}\hlopt{-}\hlnum{7}\hlstd{),}
+             \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{9}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{14}\hlopt{-}\hlnum{9}\hlstd{),}
+             \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{3}\hlstd{))}
+
+\hlstd{data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{act} \hlstd{= act,} \hlkwc{success} \hlstd{= success)}
+
+\hlstd{model} \hlkwb{<-} \hlkwd{glm}\hlstd{(success} \hlopt{~} \hlstd{act,} \hlkwc{family}\hlstd{=}\hlstr{"binomial"}\hlstd{,} \hlkwc{data} \hlstd{= data)}
+
+\hlkwd{summary}\hlstd{(model)}
+\end{alltt}
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = success ~ act, family = "binomial", data = data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.6008  -1.0638  -0.6339   1.0363   1.5701  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(>|z|)   
+## (Intercept) -7.03444    2.23042  -3.154  0.00161 **
+## act          0.30732    0.09839   3.123  0.00179 **
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 109.201  on 78  degrees of freedom
+## Residual deviance:  97.413  on 77  degrees of freedom
+## AIC: 101.41
+## 
+## Number of Fisher Scoring iterations: 4
+\end{verbatim}
+\begin{alltt}
+\hlstd{new.data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{act} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{20}\hlstd{))}
+\hlkwd{predict}\hlstd{(model,} \hlkwc{newdata} \hlstd{= new.data,} \hlkwc{type}\hlstd{=}\hlstr{"response"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##         1 
+## 0.2915336
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 \end{solution}
 

@@ -251,9 +251,35 @@ mycontour(logisticpost, c(-3,3,-1,9), data.new,
   
   \part
 <<>>=
-howardprior <- function(){
+howardprior <- function(xy, par){
+  alpha <- par[1]
+  beta <- par[2]
+  gamma <- par[3]
+  delta <- par[4]
+  sigma <- par[5]
   
+
+  p1 <- xy[1]
+  p2 <- xy[2]
+    
+  theta1 <- log(p1/(1-p1))
+  theta2 <- log(p2/(1-p2))
+    
+  mu <- 1/sigma * (theta1 - theta2)
+    
+  value <- exp(-1/2 * mu^2) * p1^(alpha-1) * (1-p1)^(beta-1) *
+      p2^(gamma-1) * (1 - p2)^(delta-1)
+  
+  return(log(value))
 }
+
+plo <- 0.0001
+phi <- 0.9999
+sigma <- 2
+
+LearnBayes::mycontour(howardprior, c(plo, phi, plo, phi),
+                      c(1, 1, 1, 1, sigma),
+                      xlab="p1", ylab="p2")
 @
   
 \end{parts}
@@ -370,6 +396,15 @@ mean(p_75)
 sd(p_75)
 @
   \item
+  \begin{enumerate}
+    \item Because we know that the two samples are independent with distributions $N(\mu_1, \sigma_1)$ and $N(\mu_2, sigma_2)$, the posterior distribution is given by,\\
+    \begin{align*}
+      p(\theta|y) &= p(\theta)p(y|\theta) = \frac{1}{\sigma_1^2 \sigma_2^2} \frac{1}{\sqrt{2\pi\sigma_1^2} } e^{ -\frac{(x-\mu_1)^2}{2\sigma_1^2} } \frac{1}{\sqrt{2\pi\sigma_2^2} } e^{ -\frac{(x-\mu_2)^2}{2\sigma_2^2} }\\
+      &= \frac{1}{\sigma_1^2 \sigma2^2} N(\mu_1, \sigma_1) N(\mu_2, \sigma_2)
+    \end{align*}
+    
+    \item Thus, we can sample from the joint distribution by sampling from $N(\mu_1, \sigma_1)$ and $N(\mu_2, \sigma_2)$, multiplying them together, and then multiplying by the prior.
+  \end{enumerate}
 <<>>=
 #c)
 males <- c(120, 107, 110, 116, 114, 111, 113, 117, 114, 112)
@@ -385,17 +420,59 @@ n <- length(males)
 sigma2_males <- S1/rchisq(1000,n-1)
 sigma2_females <- S2/rchisq(1000,n-1)
 
-mu_males <- rnorm(1000, mean=mean(males), sd = sqrt(sigma2_males)/sqrt(n))
-mu_females <- rnorm(1000, mean=mean(females), sd = sqrt(sigma2_females)/sqrt(n))
+mu_males <- rnorm(1000, mean=mean(males), 
+                  sd = sqrt(sigma2_males)/sqrt(n))
+mu_females <- rnorm(1000, mean=mean(females), 
+                    sd = sqrt(sigma2_females)/sqrt(n))
 
 mu_diff <- mu_males - mu_females
 
-sum(mu_diff > 0)/length(mu_diff)
+hist(mu_diff)
 @
+  All of the differences between the simulated values of $\mu$ for male and female golden jackal mandible lengths are well-above 0. Thus, we can conclude that the mean length of the mandible for males is higher than the mean length for females.
+  
   \item
+  \begin{enumerate}
+    \item Since the prior is uniform, we will assign $p(\theta) = p(p_N, p_S) = 1$ for all values of $p_N and p_S$ such that $0 \leq p_N \leq 1$ and $0 \leq p_N \leq 1$.
+    \begin{align*}
+      p(p_N, p_S | y_N, y_S, n_N, n_S) &= p(p_N, p_S) p(y_N, y_S | p_N, p_S, n_N, n_S)\\
+      &= p(y_N | n_N, p_N) p(y_S | n_S, p_S)\\
+      &= \binom{n_N}{y_N} p^{y_N} (1-p)^{n_N - y_N} \binom{n_S}{y_S} p^{y_S} (1-p)^{n_S - y_S}\\
+      &= Beta(y_N + 1, n_N - y_N + 1) Beta(y_S + 1, n_N - y_N + 1)\\
+      &\quad\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha, \beta)}
+    \end{align*}
+  \end{enumerate}
 <<>>=
 #b)
+y_N <- 1601
+n_N <- 162527 + 1601
 
+p_N <- rbeta(1000, y_N + 1, n_N - y_N + 1)
+
+y_S <- 510
+n_S <- 412368 + 510
+
+p_S <- rbeta(1000, y_S + 1, n_S - y_S + 1)
+
+#c)
+relative_risk <- p_N/p_S
+
+hist(relative_risk)
+
+relative_risk <- sort(relative_risk)
+
+confidence_interval <- relative_risk[26:975]
+
+print(paste0("[", confidence_interval[1], ", ",
+             confidence_interval[length(confidence_interval)], "]"))
+
+#d)
+diff_risk <- p_N - p_S
+
+hist(diff_risk)
+
+#e)
+sum(diff_risk > 0)/length(diff_risk)
 @
   \item
 <<>>=
@@ -410,26 +487,208 @@ sigma2 <- S/rchisq(1000, n-1)
 
 mu <- rnorm(1000, mean = mean(weights), sd = sqrt(sigma2)/sqrt(n))
 
-hist(mu, freq = FALSE, breaks = 15)
+mycontour(normchi2post, c(4, 20, 0, 10), weights,
+          xlab="mean", ylab="variance")
+points(mu, sigma2)
+@
+Using the approach from Section 6.7 in \textit{Bayesian Computation with R}, we can treat the data as binned data. In that case, the likelihood function is given by,
+\begin{align*}
+L(\mu, \sigma) \propto &\Phi(8.5, \mu, \sigma)^0(\Phi(9.5, \mu, \sigma) - \Phi(8.5, \mu, \sigma))^1\\
+&X (\Phi(10.5, \mu, \sigma) - \Phi(9.5, \mu, \sigma))^1(\Phi(11.5, \mu, \sigma) - \Phi(10.5, \mu, \sigma))^2\\
+&X (\Phi(12.5, \mu, \sigma) - \Phi(11.5, \mu, \sigma))^1(1 - \Phi(12.5, \mu, \sigma))^0
+\end{align*}
+where $\Phi(; \mu, \sigma)$ is the cdf of a normal $(\mu, \sigma)$ random variable.
 
+Using the standard noniformative prior and transforming the standard deviation by $\lambda = log(\sigma)$ gives us the posterior density,
+\begin{align*}
+g(\mu, \lambda | data) \propto L(\mu, exp(\lambda))
+\end{align*}
+
+<<>>=
+#b) & c)
+d <- list(int.lo=c(0, seq(8.5,12.5,by=1)),
+          int.hi=c(seq(8.5,12.5,by=1), Inf),
+          f=c(0, 1, 1, 2, 1, 0))
+
+start <- c(ceiling(mean(weights)), ceiling(log(sd(weights))))
+
+fit <- laplace(groupeddatapost,start,d)
+
+modal.sds <- sqrt(diag(fit$var))
+
+proposal <- list(var=fit$var, scale=2)
+
+fit2 <- rwmetrop(groupeddatapost, proposal, start, 10000, d)
+
+post.means <- apply(fit2$par,2,mean)
+post.sds <- apply(fit2$par, 2 ,sd)
+
+cbind(c(fit$mode), modal.sds)
+cbind(post.means, post.sds)
+
+LearnBayes::mycontour(groupeddatapost, c(5, 15, 0.00001, 3), d,
+                      xlab="mu", ylab="sigma")
+points(fit2$par[5001:10000,1], fit2$par[5001:10000,2])
+
+#d)
+post.means
+
+c(mean(mu), sd(mu))
+@
+  Both means are quite close together. The standard deviation derived from the correct posterior distribution is smaller than that from the incorrect distribution.
+  
+  \item
+<<>>=
+#Create function to compute posterior
+grid_posterior_poisson_gamma <- function(y, theta1, theta2){
+  density <- 1
+  a <- exp(theta1)
+  b <- exp(theta2)
+  print(a)
+  print(b)
+  for(i in 1:length(y)){
+    density <- density * (gamma(y[i] + a)/(gamma(a) * factorial(y[i])) 
+                          * (b^a)/((b+1)^(y[i]+a)))
+  }  
+  
+  density <- density * 1/(a*b)
+  
+  return(density)
+}
+
+#Initialize data
+data <- c(2, 5, 0, 2, 3, 1, 3, 4, 3, 0, 3,
+          2, 1, 1, 0, 6, 0, 0, 3, 0, 1, 1,
+          5, 0, 1, 2, 0, 0, 2, 1, 1, 1, 0)
+
+#Create grid of theta1 and theta2 values
+theta1 <- seq(from = 0, to = 1, length.out = 100)
+theta2 <- seq(from = 0, to = 1, length.out = 100)
+
+grid_posterior <- c()
+indeces <- list()
+count <- 1
+
+#Populate grid posterior values
+#Keep track of indeces
+for(i in 1:length(theta1)){
+  for(j in 1:length(theta2)){
+    grid_posterior[count] <- grid_posterior_poisson_gamma(data, theta1[i], theta2[j])
+    indeces[[count]] <- c(i, j)
+    count <- count+1
+  }
+}
+
+grid_posterior <- grid_posterior/sum(grid_posterior)
+
+#Sample from list of indeces using the grid posterior
+samples <- sample(indeces, 1000, replace = TRUE, prob = grid_posterior)
+
+#Create a and b vectors
+a <- rep(0, times = length(samples))
+
+b <- rep(0, times = length(samples))
+
+#Use sampled indeces to sample from theta1 and theta2 vectors
+for(i in 1:length(samples)){
+  a[i] <- exp(theta1[samples[[i]][1]])
+  b[i] <- exp(theta2[samples[[i]][2]])
+}
+
+a <- sort(a)
+b <- sort(b)
+
+#95% confidence interval for a
+a_conf_interval <- a[26:975]
+
+hist(a_conf_interval)
+
+#95% confidence interval for b
+b_conf_interval <- b[26:975]
+
+hist(b_conf_interval)
+@
+  \item
+  \begin{enumerate}
+    \item 
+    \begin{align*}
+      p(\lambda_1, \lambda_2 | y_1, y_2) &= \Gamma(144, 2.4) Poisson(y_1 | \lambda_1) \Gamma(100, 2.5) Poisson(y_2 | \lambda_2)\\
+      &= \Gamma(144, 2.4) e^{-t\lambda_1} \frac{(t\lambda_1)^y_1}{y_1!} \Gamma(100, 2.5) e^{-t\lambda_2} \frac{(t\lambda_2)^y_2}{y_2!}\\
+      &=
+    \end{align*}
+  \end{enumerate}
+<<>>=
 #b)
+
 
 #c)
 
-#d)
 @
   \item
 <<>>=
+#a)
+gamma.sampling.post <- function(theta, y){
+  return(sum(dgamma(y, shape=theta[1], scale = theta[2], log = TRUE)))
+}
+
+data <- c(12.2, 0.9, 0.8, 5.3, 2, 1.2, 1, 0.3, 1.8, 3.1, 2.8)
+
+LearnBayes::mycontour(gamma.sampling.post, c(0.1, 6, 0.1, 40), data,
+                      xlab="Shape", ylab="Scale")
+
+s <- simcontour(gamma.sampling.post, c(0.1, 6, 0.1, 40), data, 1000)
+
+points(s)
+
+mu_vals <- sort(s$y*s$x)
+
+s_conf_interval <- mu_vals[26:975]
+
+print(paste0("[", s_conf_interval[1], ", ", 
+             s_conf_interval[length(s_conf_interval)], "]"))
+
+#b)
+gamma.sampling.post.rate <- function(theta, y){
+  return(sum(dgamma(y, shape=theta[1], rate = theta[2], log = TRUE)))
+}
+
+LearnBayes::mycontour(gamma.sampling.post.rate, c(0.001, 4, 0.001, 2), data,
+                      xlab="Shape", ylab="Rate")
+
+s <- simcontour(gamma.sampling.post.rate, c(0.001, 4, 0.001, 2), data, 1000)
+
+points(s)
+
+mu_vals <- sort(s$x*(1/s$y))
+
+s_conf_interval <- mu_vals[26:975]
+
+print(paste0("[", s_conf_interval[1], ", ", 
+             s_conf_interval[length(s_conf_interval)], "]"))
+
+#c)
+gamma.sampling.post.mean <- function(theta, y){
+  lambda <- theta[2]/theta[1]
+  return(sum(dgamma(y, shape=theta[1], scale = lambda, log = TRUE)))
+}
+
+LearnBayes::mycontour(gamma.sampling.post.mean, c(0.001, 4, 0.001, 16), data,
+                      xlab="Shape", ylab="Mean")
+
+s <- simcontour(gamma.sampling.post.mean, c(0.001, 4, 0.001, 16), data, 1000)
+
+points(s)
+
+mu_vals <- sort((s$y/s$x))
+
+s_conf_interval <- mu_vals[26:975]
+
+print(paste0("[", s_conf_interval[1], ", ", 
+             s_conf_interval[length(s_conf_interval)], "]"))
 
 @
-  \item
-<<>>=
-
-@
-  \item
-<<>>=
-
-@
+I believe the third computational method is the best for computing the 95\% interval estimate for $\mu$, as it directly includes $\mu$ in the calculations.
+  
   \item
 <<>>=
 #a)
@@ -448,7 +707,9 @@ beta2 <- beta.select(quantile1, quantile2)
 print(beta2)
 
 #b)
-data <- cbind(c(16, 18, 20, 22, 24, 26, 28), c(0, 0, 6, 12, 7, 9, 3), c(2, 7, 14, 26, 13, 14, 3))
+data <- cbind(c(16, 18, 20, 22, 24, 26, 28), 
+              c(0, 0, 6, 12, 7, 9, 3), 
+              c(2, 7, 14, 26, 13, 14, 3))
 #prior <- c(beta1, beta2)
 #data.new <- rbind(data, prior)
 mycontour(logisticpost, c(-3, 3, -1, 9), data, xlab="beta0",
@@ -467,8 +728,10 @@ mycontour(logisticpost, c(-3, 3, -1, 9), data, xlab="beta0",
 %%%%%%%%%
 \begin{solution}
 <<>>=
-act <- c(rep(16, times = 2), rep(18, times = 7), rep(20, times = 14), rep(22, times = 26),
-         rep(24, times = 13), rep(26, times = 14), rep(28, times = 3))
+act <- c(rep(16, times = 2), rep(18, times = 7), 
+         rep(20, times = 14), rep(22, times = 26),
+         rep(24, times = 13), rep(26, times = 14), 
+         rep(28, times = 3))
 
 success <- c(rep(0, times = 9), rep(1, times = 6), rep(0, times = 14-6),
              rep(1, times = 12), rep(0, times = 26-12),
@@ -481,9 +744,29 @@ data <- data.frame(act = act, success = success)
 model <- glm(success ~ act, family="binomial", data = data)
 
 summary(model)
+@
 
+<<>>=
 new.data <- data.frame(act = c(20))
 predict(model, newdata = new.data, type="response")
+
+#Using the endpoint transformation method detailed here: 
+#https://stats.stackexchange.com/questions/354098/calculating-confidence-intervals-for-a-logistic-regression
+
+beta <- c(model$coefficients[[1]], model$coefficients[[2]])
+x <- c(1, 20)
+
+standard_error <- predict(model, newdata = new.data, 
+                          type="response", se.fit=TRUE)$se.fit[[1]]
+
+response <- x%*%beta
+
+lower_interval <- exp(response - 1.645*standard_error)/
+  (1+exp(response - 1.645*standard_error))
+upper_interval <- exp(response + 1.645*standard_error)/
+  (1+exp(response + 1.645*standard_error))
+
+print(paste0("[", lower_interval, ", ", upper_interval, "]"))
 @
 
 \end{solution}

@@ -1,0 +1,349 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{lscape}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{multicol}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+\title{Bayesian Analysis - Final Project}
+
+\author{Chris Hayduk}
+\date{\today}
+
+\maketitle
+
+
+
+\section{Implementation, Details, \& Function Arguments}
+
+\t This project aims to re-implement the \texttt{mycontour()} and \texttt{simcontour()} functions from the \texttt{LearnBayes} package. This package is associated with the book \textit{Bayesian Computation with R} by Jim Albert.
+
+The \texttt{mycontour()} function produces a contour graph for a general two parameter density. The original \texttt{mycontour()} had hard-coded values for the level curves in the contour plot, a fixed size for the grid to compute posterior values, only worked with log posterior functions, and computed the max of the log posterior on a grid rather than through an optimization method. My re-implementation of the function seeks to remedy each of these issues. 
+
+Arguments:
+\begin{itemize}
+  \item \textbf{fn} - posterior density function
+  \item \textbf{limits} - vector of x and y limit values. eg. limits = c(x\_lo, x\_hi, y\_lo, y\_hi)
+  \item \textbf{data} - data used to compute the posterior
+  \item \textbf{size\_grid} - size of the grid that the posterior will be computed on
+  \item \textbf{levels} - vector of values that the contours will be drawn at. Each value in the vector represents the desired percent of the mode.
+  \item \textbf{log\_func} - TRUE if the input function is already a log posterior. FALSE by default
+  \item ... - further arguments to be passed to \texttt{contour()}
+\end{itemize}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mycontour} \hlkwb{<-} \hlkwa{function} \hlstd{(}\hlkwc{fn}\hlstd{,} \hlkwc{limits}\hlstd{,} \hlkwc{data}\hlstd{,} \hlkwc{size_grid}\hlstd{,}
+                       \hlkwc{levels}\hlstd{,} \hlkwc{log_func} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{...}\hlstd{)}
+\hlstd{\{}
+    \hlcom{#This function facilities inputting matrices of parameters}
+    \hlcom{#into the posterior density function}
+    \hlstd{LOGF} \hlkwb{=} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{data}\hlstd{) \{}
+        \hlkwa{if} \hlstd{(}\hlkwd{is.matrix}\hlstd{(theta)} \hlopt{==} \hlnum{TRUE}\hlstd{) \{}
+            \hlstd{val} \hlkwb{=} \hlkwd{matrix}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{c}\hlstd{(}\hlkwd{dim}\hlstd{(theta)[}\hlnum{1}\hlstd{],} \hlnum{1}\hlstd{))}
+
+            \hlkwa{for} \hlstd{(j} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{dim}\hlstd{(theta)[}\hlnum{1}\hlstd{])\{}
+              \hlkwa{if}\hlstd{(log_func} \hlopt{==} \hlnum{FALSE}\hlstd{)}
+                \hlstd{val[j]} \hlkwb{=} \hlkwd{log}\hlstd{(}\hlkwd{fn}\hlstd{(theta[j,], data))}
+              \hlkwa{else}
+                \hlstd{val[j]} \hlkwb{=} \hlkwd{fn}\hlstd{(theta[j,], data)}
+            \hlstd{\}}
+        \hlstd{\}}
+        \hlkwa{else}\hlstd{\{}
+          \hlkwa{if}\hlstd{(log_func} \hlopt{==} \hlnum{FALSE}\hlstd{)}
+                \hlstd{val} \hlkwb{=} \hlkwd{log}\hlstd{(}\hlkwd{fn}\hlstd{(theta, data))}
+              \hlkwa{else}
+                \hlstd{val} \hlkwb{=} \hlkwd{fn}\hlstd{(theta, data)}
+        \hlstd{\}}
+        \hlkwd{return}\hlstd{(val)}
+    \hlstd{\}}
+
+    \hlstd{ng} \hlkwb{=} \hlstd{size_grid}
+
+    \hlcom{#Create x, y grid using size specified by user}
+    \hlstd{x0} \hlkwb{=} \hlkwd{seq}\hlstd{(limits[}\hlnum{1}\hlstd{], limits[}\hlnum{2}\hlstd{],} \hlkwc{len} \hlstd{= ng)}
+    \hlstd{y0} \hlkwb{=} \hlkwd{seq}\hlstd{(limits[}\hlnum{3}\hlstd{], limits[}\hlnum{4}\hlstd{],} \hlkwc{len} \hlstd{= ng)}
+
+    \hlstd{X} \hlkwb{=} \hlkwd{outer}\hlstd{(x0,} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{, ng))}
+    \hlstd{Y} \hlkwb{=} \hlkwd{outer}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{, ng), y0)}
+
+    \hlstd{n2} \hlkwb{=} \hlstd{ng}\hlopt{^}\hlnum{2}
+
+    \hlcom{#Compute log posterior on grid}
+    \hlstd{Z} \hlkwb{=} \hlkwd{LOGF}\hlstd{(}\hlkwd{cbind}\hlstd{(X[}\hlnum{1}\hlopt{:}\hlstd{n2], Y[}\hlnum{1}\hlopt{:}\hlstd{n2]), data)}
+
+    \hlcom{#Convert Z back from log posterior}
+    \hlstd{Z} \hlkwb{<-} \hlkwd{exp}\hlstd{(Z)}
+
+    \hlcom{#Generate start values for optimization function}
+    \hlstd{x_start} \hlkwb{<-} \hlkwd{mean}\hlstd{(}\hlkwd{c}\hlstd{(limits[}\hlnum{1}\hlstd{], limits[}\hlnum{2}\hlstd{]))}
+    \hlstd{y_start} \hlkwb{<-} \hlkwd{mean}\hlstd{(}\hlkwd{c}\hlstd{(limits[}\hlnum{1}\hlstd{], limits[}\hlnum{2}\hlstd{]))}
+
+    \hlcom{#Tells the optimization function that we want to maximize}
+    \hlcom{#the log posterior}
+    \hlstd{control} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{fnscale} \hlstd{=} \hlopt{-}\hlnum{1}\hlstd{)}
+
+    \hlcom{#Find max of log posterior}
+    \hlstd{max_z} \hlkwb{<-} \hlkwd{optim}\hlstd{(}\hlkwc{par}\hlstd{=}\hlkwd{c}\hlstd{(x_start, y_start),} \hlkwc{fn}\hlstd{= LOGF,}
+                   \hlkwc{gr} \hlstd{=} \hlkwa{NULL}\hlstd{,}
+                   \hlkwc{data} \hlstd{= data,}
+                   \hlkwc{method} \hlstd{=} \hlstr{"L-BFGS-B"}\hlstd{,}
+                   \hlkwc{lower} \hlstd{=} \hlkwd{c}\hlstd{(limits[}\hlnum{1}\hlstd{], limits[}\hlnum{3}\hlstd{]),}
+                   \hlkwc{upper} \hlstd{=} \hlkwd{c}\hlstd{(limits[}\hlnum{2}\hlstd{], limits[}\hlnum{4}\hlstd{]),}
+                   \hlkwc{control} \hlstd{= control)}
+
+    \hlcom{#Convert max back from log posterior}
+    \hlstd{max_z} \hlkwb{<-} \hlkwd{exp}\hlstd{(max_z}\hlopt{$}\hlstd{value)}
+
+    \hlstd{Z} \hlkwb{=} \hlkwd{matrix}\hlstd{(Z,} \hlkwd{c}\hlstd{(ng, ng))}
+
+    \hlcom{#Create vector to store contour values}
+    \hlstd{contours} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwc{times}\hlstd{=}\hlkwd{length}\hlstd{(levels))}
+
+    \hlcom{#Get contour values (given by percent of max Z value)}
+    \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(levels))\{}
+      \hlstd{contours[i]} \hlkwb{<-} \hlstd{levels[i]}\hlopt{*}\hlstd{max_z}
+    \hlstd{\}}
+
+    \hlcom{#Create contour plot}
+    \hlkwd{contour}\hlstd{(x0, y0, Z,} \hlkwc{levels} \hlstd{= contours,} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{,}
+        \hlstd{...)}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\newpage
+The \texttt{simcontour()} function simulates a random sample for a general two-parameter density defined on a grid. The original \texttt{simcontour()} had a fixed size for the grid to compute posterior values and only worked with log posterior functions. My re-implementation of the function seeks to remedy each of these issues. 
+
+Arguments:
+\begin{itemize}
+  \item \textbf{fn} - posterior density function
+  \item \textbf{limits} - vector of x and y limit values. eg. limits = c(x\_lo, x\_hi, y\_lo, y\_hi)
+  \item \textbf{data} - data used to compute the posterior
+  \item \textbf{size\_grid} - size of the grid that the posterior will be computed on
+  \item \textbf{m} - size of the random sample you would like to generate
+  \item \textbf{log\_func} - TRUE if the input function is already a log posterior. FALSE by default
+\end{itemize}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{simcontour} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{fn}\hlstd{,} \hlkwc{limits}\hlstd{,} \hlkwc{data}\hlstd{,}
+                       \hlkwc{size_grid}\hlstd{,} \hlkwc{m}\hlstd{,} \hlkwc{log_func} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{\{}
+    \hlcom{#This function facilities inputting matrices of parameters}
+    \hlcom{#into the posterior density function}
+    \hlstd{LOGF} \hlkwb{=} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{data}\hlstd{) \{}
+        \hlkwa{if} \hlstd{(}\hlkwd{is.matrix}\hlstd{(theta)} \hlopt{==} \hlnum{TRUE}\hlstd{) \{}
+            \hlstd{val} \hlkwb{=} \hlkwd{matrix}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{c}\hlstd{(}\hlkwd{dim}\hlstd{(theta)[}\hlnum{1}\hlstd{],} \hlnum{1}\hlstd{))}
+
+            \hlkwa{for} \hlstd{(j} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{dim}\hlstd{(theta)[}\hlnum{1}\hlstd{])\{}
+              \hlkwa{if}\hlstd{(log_func} \hlopt{==} \hlnum{FALSE}\hlstd{)}
+                \hlstd{val[j]} \hlkwb{=} \hlkwd{log}\hlstd{(}\hlkwd{fn}\hlstd{(theta[j,], data))}
+              \hlkwa{else}
+                \hlstd{val[j]} \hlkwb{=} \hlkwd{fn}\hlstd{(theta[j,], data)}
+            \hlstd{\}}
+        \hlstd{\}}
+        \hlkwa{else}\hlstd{\{}
+          \hlkwa{if}\hlstd{(log_func} \hlopt{==} \hlnum{FALSE}\hlstd{)}
+                \hlstd{val} \hlkwb{=} \hlkwd{log}\hlstd{(}\hlkwd{fn}\hlstd{(theta, data))}
+              \hlkwa{else}
+                \hlstd{val} \hlkwb{=} \hlkwd{fn}\hlstd{(theta, data)}
+        \hlstd{\}}
+        \hlkwd{return}\hlstd{(val)}
+    \hlstd{\}}
+
+    \hlstd{ng} \hlkwb{=} \hlstd{size_grid}
+
+    \hlcom{#Create grid of points}
+    \hlstd{x0} \hlkwb{=} \hlkwd{seq}\hlstd{(limits[}\hlnum{1}\hlstd{], limits[}\hlnum{2}\hlstd{],} \hlkwc{len} \hlstd{= ng)}
+    \hlstd{y0} \hlkwb{=} \hlkwd{seq}\hlstd{(limits[}\hlnum{3}\hlstd{], limits[}\hlnum{4}\hlstd{],} \hlkwc{len} \hlstd{= ng)}
+
+    \hlstd{X} \hlkwb{=} \hlkwd{outer}\hlstd{(x0,} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{, ng))}
+    \hlstd{Y} \hlkwb{=} \hlkwd{outer}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{, ng), y0)}
+
+    \hlstd{n2} \hlkwb{=} \hlstd{ng}\hlopt{^}\hlnum{2}
+
+    \hlcom{#Compute log posterior on grid}
+    \hlstd{Z} \hlkwb{=} \hlkwd{LOGF}\hlstd{(}\hlkwd{cbind}\hlstd{(X[}\hlnum{1}\hlopt{:}\hlstd{n2], Y[}\hlnum{1}\hlopt{:}\hlstd{n2]), data)}
+    \hlstd{Z} \hlkwb{=} \hlkwd{matrix}\hlstd{(Z,} \hlkwd{c}\hlstd{(ng, ng))}
+
+    \hlcom{#Create matrix of x, y, and posterior values}
+    \hlstd{d} \hlkwb{=} \hlkwd{cbind}\hlstd{(X[}\hlnum{1}\hlopt{:}\hlstd{n2], Y[}\hlnum{1}\hlopt{:}\hlstd{n2], Z[}\hlnum{1}\hlopt{:}\hlstd{n2])}
+
+    \hlstd{prob} \hlkwb{=} \hlstd{d[,} \hlnum{3}\hlstd{]}
+
+    \hlcom{#Convert values back to probabilites from log-probabilities}
+    \hlstd{prob} \hlkwb{=} \hlkwd{exp}\hlstd{(prob)}
+
+    \hlstd{prob} \hlkwb{=} \hlstd{prob}\hlopt{/}\hlkwd{sum}\hlstd{(prob)}
+
+    \hlcom{#Sample row indeces based on posterior probability}
+    \hlstd{i} \hlkwb{=} \hlkwd{sample}\hlstd{(n2, m,} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{prob} \hlstd{= prob)}
+
+    \hlcom{#Return list of x, y values}
+    \hlkwd{return}\hlstd{(}\hlkwd{list}\hlstd{(}\hlkwc{x} \hlstd{= d[i,} \hlnum{1}\hlstd{],} \hlkwc{y} \hlstd{= d[i,} \hlnum{2}\hlstd{]))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\newpage
+\section{Examples}
+
+\t I will now generate some examples from the book \textit{Bayesian Computation with R}. In order to facilitate the first example, I have re-implemented the function \texttt{normchi2post()} from the \texttt{LearnBayes} pacakge. This version computes the posterior density without taking the log.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{normchi2post} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{data}\hlstd{)\{}
+  \hlstd{mean} \hlkwb{<-} \hlstd{theta[}\hlnum{1}\hlstd{]}
+  \hlstd{variance} \hlkwb{<-} \hlstd{theta[}\hlnum{2}\hlstd{]}
+
+  \hlstd{y_bar} \hlkwb{<-} \hlkwd{mean}\hlstd{(data)}
+
+  \hlstd{S} \hlkwb{<-} \hlkwd{sum}\hlstd{((data}\hlopt{-}\hlstd{y_bar)}\hlopt{^}\hlnum{2}\hlstd{)}
+  \hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(data)}
+
+  \hlstd{posterior_density} \hlkwb{<-} \hlnum{1}\hlopt{/}\hlstd{((variance}\hlopt{^}\hlstd{(n}\hlopt{/}\hlnum{2}\hlopt{+}\hlnum{1}\hlstd{)))} \hlopt{*}
+    \hlkwd{exp}\hlstd{(}\hlopt{-}\hlnum{1}\hlopt{/}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{variance)}\hlopt{*}\hlstd{(S}\hlopt{+}\hlstd{n}\hlopt{*}\hlstd{(mean}\hlopt{-}\hlstd{y_bar)}\hlopt{^}\hlnum{2}\hlstd{))}
+
+  \hlkwd{return}\hlstd{(posterior_density)}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+This example is taken from p. 63-65 in \textit{Bayesian Computation with R}. Note the ''labels``, ''xlab``, and ''ylab`` arguments in \texttt{mycontour()}. These are all extra arguments that are passed to the contour graph. ''Labels`` defines the label for each contour level, while ''xlab`` and ''ylab`` provide the labels for the x-axis and y-axis respectively. Also note that the argument ''log\_func`` has been omitted because the posterior density has not been log transformed before input.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{mycontour}\hlstd{(normchi2post,} \hlkwc{limits}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{220}\hlstd{,} \hlnum{330}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{9000}\hlstd{),}
+               \hlkwc{data} \hlstd{= time,} \hlkwc{size_grid} \hlstd{=} \hlnum{1000}\hlstd{,}
+               \hlkwc{levels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
+               \hlkwc{labels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
+               \hlkwc{xlab}\hlstd{=}\hlstr{"mean"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"variance"}\hlstd{)}
+
+\hlstd{s} \hlkwb{<-} \hlkwd{simcontour}\hlstd{(normchi2post,} \hlkwc{limits} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{220}\hlstd{,} \hlnum{330}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{9000}\hlstd{),}
+           \hlkwc{data}\hlstd{= time,} \hlnum{1000}\hlstd{,} \hlnum{1000}\hlstd{)}
+
+\hlkwd{points}\hlstd{(s)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-5-1} 
+
+\end{knitrout}
+\newpage
+This example is taken from p. 70-74 in \textit{Bayesian Computation with R}. Note that in this case, the posterior density has been log transformed before input, so the argument ''log\_func`` has been included and set to TRUE.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{x} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{0.86}\hlstd{,} \hlopt{-}\hlnum{0.3}\hlstd{,} \hlopt{-}\hlnum{0.05}\hlstd{,} \hlnum{0.73}\hlstd{)}
+\hlstd{n} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{5}\hlstd{,} \hlnum{5}\hlstd{,} \hlnum{5}\hlstd{)}
+\hlstd{y} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{5}\hlstd{)}
+
+\hlstd{data} \hlkwb{<-} \hlkwd{cbind}\hlstd{(x, n, y)}
+
+\hlstd{prior} \hlkwb{<-} \hlkwd{rbind}\hlstd{(}\hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{0.7}\hlstd{,} \hlnum{4.68}\hlstd{,} \hlnum{1.12}\hlstd{),}
+            \hlkwd{c}\hlstd{(}\hlnum{0.6}\hlstd{,} \hlnum{2.84}\hlstd{,} \hlnum{2.10}\hlstd{))}
+\hlstd{data.new} \hlkwb{<-} \hlkwd{rbind}\hlstd{(data, prior)}
+
+\hlkwd{mycontour}\hlstd{(logisticpost,} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{2}\hlstd{,} \hlnum{3}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlnum{11}\hlstd{),}
+          \hlkwc{data}\hlstd{= data.new,}
+          \hlkwc{size_grid} \hlstd{=} \hlnum{1000}\hlstd{,}
+          \hlkwc{levels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.5}\hlstd{,} \hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{),}
+          \hlkwc{log_func} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+          \hlkwc{labels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.5}\hlstd{,} \hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{),}
+          \hlkwc{xlab}\hlstd{=}\hlstr{"beta0"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"beta1"}\hlstd{)}
+
+\hlstd{s} \hlkwb{<-} \hlkwd{simcontour}\hlstd{(logisticpost,} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{2}\hlstd{,} \hlnum{3}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlnum{11}\hlstd{),}
+                \hlstd{data.new,} \hlnum{1000}\hlstd{,} \hlnum{1000}\hlstd{,} \hlnum{TRUE}\hlstd{)}
+
+\hlkwd{points}\hlstd{(s)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-6-1} 
+
+\end{knitrout}
+\newpage
+This example p.77-78 in \textit{Bayesian Computation with R}. Note the argument ''main`` in \texttt{mycontour()}, which supplies a title for the contour graph.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{sigma} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{0.5}\hlstd{,} \hlnum{0.25}\hlstd{)}
+\hlstd{plo} \hlkwb{<-} \hlnum{0.0001}
+\hlstd{phi} \hlkwb{<-} \hlnum{0.9999}
+
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{))}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(sigma))\{}
+  \hlkwd{mycontour}\hlstd{(howardprior,} \hlkwd{c}\hlstd{(plo, phi, plo, phi),}
+          \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{, sigma[i]),} \hlnum{1000}\hlstd{,}
+          \hlkwc{levels}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
+          \hlkwc{log_func} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+          \hlkwc{labels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
+          \hlkwc{main}\hlstd{=}\hlkwd{paste}\hlstd{(}\hlstr{"sigma = "}\hlstd{,} \hlkwd{as.character}\hlstd{(sigma[i])),}
+          \hlkwc{xlab} \hlstd{=} \hlstr{"p1"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"p2"}\hlstd{)}
+  \hlkwd{lines}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{),}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-7-1} 
+
+\end{knitrout}
+
+\end{document}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.12.28)  10 MAY 2019 04:10
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.12.28)  10 MAY 2019 17:41
 entering extended mode
 **./Final_Project.tex
 (Final_Project.tex
@@ -492,21 +492,33 @@ Overfull \hbox (15.0pt too wide) in paragraph at lines 345--346
 [][] 
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 349.
 [10] [11 <./figure/unnamed-chunk-7-1.pdf>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 349.
+Package color Info: Redefining color shadecolor on input line 351.
+<figure/unnamed-chunk-8-1.pdf, id=85, 505.89pt x 505.89pt>
+File: figure/unnamed-chunk-8-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-8-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-8-1.pdf  used on input line 370.
+(pdftex.def)             Requested size: 345.0pt x 345.00414pt.
+
+Overfull \hbox (15.0pt too wide) in paragraph at lines 370--371
+[][] 
+ []
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 374.
+[12] [13 <./figure/unnamed-chunk-8-1.pdf>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 374.
  (Final_Project.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 349.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 349.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 374.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 374.
 Package rerunfilecheck Info: File `Final_Project.out' has not changed.
 (rerunfilecheck)             Checksum: FB1D8AD9387A23B171B5D66215138722;128.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 349.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 374.
  ) 
 Here is how much of TeX's memory you used:
- 6321 strings out of 492970
- 93210 string characters out of 3126593
+ 6328 strings out of 492970
+ 93400 string characters out of 3126593
  197211 words of memory out of 3000000
- 10091 multiletter control sequences out of 15000+200000
+ 10095 multiletter control sequences out of 15000+200000
  10179 words of font info for 39 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  28i,6n,28p,536b,380s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -521,9 +533,9 @@ C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm
 /cmsy10.pfb><C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publi
 c/amsfonts/cm/cmti10.pfb><C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/font
 s/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on Final_Project.pdf (11 pages, 540105 bytes).
+Output written on Final_Project.pdf (13 pages, 667306 bytes).
 PDF statistics:
- 120 PDF objects out of 1000 (max. 8388607)
- 14 named destinations out of 1000 (max. 500000)
- 32 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 136 PDF objects out of 1000 (max. 8388607)
+ 16 named destinations out of 1000 (max. 500000)
+ 37 words of extra memory for PDF output out of 10000 (max. 10000000)
 

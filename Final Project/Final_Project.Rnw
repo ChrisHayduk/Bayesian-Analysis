@@ -37,7 +37,7 @@ attach(marathontimes)
 
 \section{Implementation, Details, \& Function Arguments}
 
-\quad This project aims to re-implement the \texttt{mycontour()} and \texttt{simcontour()} functions from the \texttt{LearnBayes} package. This package is associated with the book \textit{Bayesian Computation with R} by Jim Albert.
+This project aims to re-implement the \texttt{mycontour()} and \texttt{simcontour()} functions from the \texttt{LearnBayes} package. This package is associated with the book \textit{Bayesian Computation with R} by Jim Albert.
 
 The \texttt{mycontour()} function produces a contour graph for a general two parameter density. The original \texttt{mycontour()} had hard-coded values for the level curves in the contour plot, a fixed size for the grid to compute posterior values, only worked with log posterior functions, and computed the max of the log posterior on a grid rather than through an optimization method. My re-implementation of the function seeks to remedy each of these issues. 
 
@@ -202,7 +202,7 @@ simcontour <- function(fn, limits, data,
 \newpage
 \section{Examples}
 
-\quad I will now generate some examples from the book \textit{Bayesian Computation with R}. In order to facilitate the first example, I have re-implemented the function \texttt{normchi2post()} from the \texttt{LearnBayes} pacakge. This version computes the posterior density without taking the log.
+I will now generate some examples from the book \textit{Bayesian Computation with R}. In order to facilitate the first example, I have re-implemented the function \texttt{normchi2post()} from the \texttt{LearnBayes} pacakge. This version computes the posterior density without taking the log.
 <<>>=
 normchi2post <- function(theta, data){
   mean <- theta[1]
@@ -220,7 +220,7 @@ normchi2post <- function(theta, data){
 }
 @
 
-This example is taken from p. 63-65 in \textit{Bayesian Computation with R}. Note the ''labels``, ''xlab``, and ''ylab`` arguments in \texttt{mycontour()}. These are all extra arguments that are passed to the contour graph. ''Labels`` defines the label for each contour level, while ''xlab`` and ''ylab`` provide the labels for the x-axis and y-axis respectively. Also note that the argument ''log\_func`` has been omitted because the posterior density has not been log transformed before input.
+This example is taken from p. 63-65 in \textit{Bayesian Computation with R}. Note the ``labels'', ``xlab'', and ``ylab'' arguments in \texttt{mycontour()}. These are all extra arguments that are passed to the contour graph. ``Labels'' defines the label for each contour level, while ``xlab'' and ``ylab'' provide the labels for the x-axis and y-axis respectively. Also note that the argument ``log\_func'' has been omitted because the posterior density has not been log transformed before input.
 <<>>=
 mycontour(normchi2post, limits=c(220, 330, 500, 9000), 
                data = time, size_grid = 1000, 
@@ -234,7 +234,7 @@ s <- simcontour(normchi2post, limits = c(220, 330, 500, 9000),
 points(s)
 @
 \newpage
-This example is taken from p. 70-74 in \textit{Bayesian Computation with R}. Note that in this case, the posterior density has been log transformed before input, so the argument ''log\_func`` has been included and set to TRUE.
+This example is taken from p. 70-74 in \textit{Bayesian Computation with R}. Note that in this case, the posterior density has been log transformed before input, so the argument ``log\_func'' has been included and set to TRUE.
 <<>>=
 x <- c(-0.86, -0.3, -0.05, 0.73)
 n <- c(5, 5, 5, 5)
@@ -260,7 +260,7 @@ s <- simcontour(logisticpost, c(-2, 3, -1, 11),
 points(s)
 @
 \newpage
-This example p.77-78 in \textit{Bayesian Computation with R}. Note the argument ''main`` in \texttt{mycontour()}, which supplies a title for the contour graph.
+This example p.77-78 in \textit{Bayesian Computation with R}. Note the argument ``main'' in \texttt{mycontour()}, which supplies a title for the contour graph.
 <<>>=
 sigma <- c(2, 1, 0.5, 0.25)
 plo <- 0.0001

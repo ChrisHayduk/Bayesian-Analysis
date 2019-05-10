@@ -74,7 +74,7 @@
 
 \section{Implementation, Details, \& Function Arguments}
 
-\t This project aims to re-implement the \texttt{mycontour()} and \texttt{simcontour()} functions from the \texttt{LearnBayes} package. This package is associated with the book \textit{Bayesian Computation with R} by Jim Albert.
+This project aims to re-implement the \texttt{mycontour()} and \texttt{simcontour()} functions from the \texttt{LearnBayes} package. This package is associated with the book \textit{Bayesian Computation with R} by Jim Albert.
 
 The \texttt{mycontour()} function produces a contour graph for a general two parameter density. The original \texttt{mycontour()} had hard-coded values for the level curves in the contour plot, a fixed size for the grid to compute posterior values, only worked with log posterior functions, and computed the max of the log posterior on a grid rather than through an optimization method. My re-implementation of the function seeks to remedy each of these issues. 
 
@@ -247,7 +247,7 @@ Arguments:
 \newpage
 \section{Examples}
 
-\t I will now generate some examples from the book \textit{Bayesian Computation with R}. In order to facilitate the first example, I have re-implemented the function \texttt{normchi2post()} from the \texttt{LearnBayes} pacakge. This version computes the posterior density without taking the log.
+I will now generate some examples from the book \textit{Bayesian Computation with R}. In order to facilitate the first example, I have re-implemented the function \texttt{normchi2post()} from the \texttt{LearnBayes} pacakge. This version computes the posterior density without taking the log.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -269,7 +269,7 @@ Arguments:
 \end{kframe}
 \end{knitrout}
 
-This example is taken from p. 63-65 in \textit{Bayesian Computation with R}. Note the ''labels``, ''xlab``, and ''ylab`` arguments in \texttt{mycontour()}. These are all extra arguments that are passed to the contour graph. ''Labels`` defines the label for each contour level, while ''xlab`` and ''ylab`` provide the labels for the x-axis and y-axis respectively. Also note that the argument ''log\_func`` has been omitted because the posterior density has not been log transformed before input.
+This example is taken from p. 63-65 in \textit{Bayesian Computation with R}. Note the ``labels'', ``xlab'', and ``ylab'' arguments in \texttt{mycontour()}. These are all extra arguments that are passed to the contour graph. ``Labels'' defines the label for each contour level, while ``xlab'' and ``ylab'' provide the labels for the x-axis and y-axis respectively. Also note that the argument ``log\_func'' has been omitted because the posterior density has not been log transformed before input.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -289,7 +289,7 @@ This example is taken from p. 63-65 in \textit{Bayesian Computation with R}. Not
 
 \end{knitrout}
 \newpage
-This example is taken from p. 70-74 in \textit{Bayesian Computation with R}. Note that in this case, the posterior density has been log transformed before input, so the argument ''log\_func`` has been included and set to TRUE.
+This example is taken from p. 70-74 in \textit{Bayesian Computation with R}. Note that in this case, the posterior density has been log transformed before input, so the argument ``log\_func'' has been included and set to TRUE.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -321,7 +321,7 @@ This example is taken from p. 70-74 in \textit{Bayesian Computation with R}. Not
 
 \end{knitrout}
 \newpage
-This example p.77-78 in \textit{Bayesian Computation with R}. Note the argument ''main`` in \texttt{mycontour()}, which supplies a title for the contour graph.
+This example p.77-78 in \textit{Bayesian Computation with R}. Note the argument ``main'' in \texttt{mycontour()}, which supplies a title for the contour graph.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}

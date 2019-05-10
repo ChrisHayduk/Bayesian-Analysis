@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.12.28)  5 MAY 2019 23:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.12.28)  10 MAY 2019 17:14
 entering extended mode
 **./Chapter_4_Albert.tex
 (Chapter_4_Albert.tex
@@ -517,402 +517,405 @@ File: omscmtt.fd
 )
 LaTeX Font Info:    Font shape `OMS/cmtt/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 110.
-
-Overfull \hbox (30.48515pt too wide) in paragraph at lines 132--132
-[][]\OT1/cmtt/m/n/10 d[] []<-[] []LearnBayes[][]::[][]mycontour[][](normchi2pos
-t,[] []c[][]([][]220[][],[] []330[][],[] []500[][],[] []9000[][]), time,[] []xl
-ab[][]=[][]"mean"[][],[][] 
- []
-
 <figure/unnamed-chunk-2-1.pdf, id=3, 722.7pt x 722.7pt>
 File: figure/unnamed-chunk-2-1.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-2-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-2-1.pdf  used on input line 136.
+Package pdftex.def Info: figure/unnamed-chunk-2-1.pdf  used on input line 137.
 (pdftex.def)             Requested size: 405.26105pt x 405.2606pt.
-Package color Info: Redefining color shadecolor on input line 142.
-<figure/unnamed-chunk-3-1.pdf, id=4, 722.7pt x 722.7pt>
-File: figure/unnamed-chunk-3-1.pdf Graphic file (type pdf)
-<use figure/unnamed-chunk-3-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-3-1.pdf  used on input line 189.
-(pdftex.def)             Requested size: 405.26105pt x 405.2606pt.
-Package color Info: Redefining color shadecolor on input line 195.
-<figure/unnamed-chunk-4-1.pdf, id=5, 722.7pt x 722.7pt>
+Package color Info: Redefining color shadecolor on input line 146.
+<figure/unnamed-chunk-4-1.pdf, id=4, 722.7pt x 722.7pt>
 File: figure/unnamed-chunk-4-1.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-4-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-4-1.pdf  used on input line 219.
+Package pdftex.def Info: figure/unnamed-chunk-4-1.pdf  used on input line 172.
 (pdftex.def)             Requested size: 405.26105pt x 405.2606pt.
-Package color Info: Redefining color shadecolor on input line 225.
-<figure/unnamed-chunk-5-1.pdf, id=6, 722.7pt x 722.7pt>
+Package color Info: Redefining color shadecolor on input line 178.
+<figure/unnamed-chunk-5-1.pdf, id=5, 722.7pt x 722.7pt>
 File: figure/unnamed-chunk-5-1.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-5-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-5-1.pdf  used on input line 248.
+Package pdftex.def Info: figure/unnamed-chunk-5-1.pdf  used on input line 201.
 (pdftex.def)             Requested size: 405.26105pt x 405.2606pt.
-Package color Info: Redefining color shadecolor on input line 254.
-Package color Info: Redefining color shadecolor on input line 271.
-<figure/unnamed-chunk-7-1.pdf, id=7, 722.7pt x 722.7pt>
+Package color Info: Redefining color shadecolor on input line 207.
+Package color Info: Redefining color shadecolor on input line 224.
+<figure/unnamed-chunk-7-1.pdf, id=6, 722.7pt x 722.7pt>
 File: figure/unnamed-chunk-7-1.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-7-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-7-1.pdf  used on input line 306.
+Package pdftex.def Info: figure/unnamed-chunk-7-1.pdf  used on input line 263.
 (pdftex.def)             Requested size: 405.26105pt x 405.2606pt.
-Package color Info: Redefining color shadecolor on input line 312.
-<figure/unnamed-chunk-8-1.pdf, id=8, 722.7pt x 722.7pt>
-File: figure/unnamed-chunk-8-1.pdf Graphic file (type pdf)
-<use figure/unnamed-chunk-8-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-8-1.pdf  used on input line 345.
+Package color Info: Redefining color shadecolor on input line 269.
+Package color Info: Redefining color shadecolor on input line 318.
+<figure/unnamed-chunk-9-1.pdf, id=7, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-9-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-9-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-9-1.pdf  used on input line 334.
+(pdftex.def)             Requested size: 405.26105pt x 405.2606pt.
+Package color Info: Redefining color shadecolor on input line 340.
+<figure/unnamed-chunk-10-1.pdf, id=8, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-10-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-10-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-10-1.pdf  used on input line 378.
+
 (pdftex.def)             Requested size: 405.26105pt x 405.2606pt.
 
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 [1
 
 {C:/Users/Chris/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 [2]
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 [3 <./figure/unnamed-chunk-2-1.pdf>]
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 [4]
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
-[5 <./figure/unnamed-chunk-3-1.pdf>]
-Underfull \vbox (badness 10000) detected at line 350
+[5 <./figure/unnamed-chunk-4-1.pdf>]
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 [6]
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
-[7 <./figure/unnamed-chunk-4-1.pdf>]
-Underfull \vbox (badness 10000) detected at line 350
+[7 <./figure/unnamed-chunk-5-1.pdf>]
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 [8]
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
-[9 <./figure/unnamed-chunk-5-1.pdf>]
-Underfull \vbox (badness 10000) detected at line 350
+[9 <./figure/unnamed-chunk-7-1.pdf>]
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 [10]
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 5711) detected at line 383
  []
 
 
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 5711) detected at line 383
  []
 
-[11 <./figure/unnamed-chunk-7-1.pdf>]
-Underfull \vbox (badness 10000) detected at line 350
+[11 <./figure/unnamed-chunk-9-1.pdf>]
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 
-Underfull \vbox (badness 10000) detected at line 350
+Underfull \vbox (badness 10000) detected at line 383
  []
 
 [12]
-Package color Info: Redefining color shadecolor on input line 357.
-<figure/unnamed-chunk-9-1.pdf, id=107, 722.7pt x 722.7pt>
-File: figure/unnamed-chunk-9-1.pdf Graphic file (type pdf)
-<use figure/unnamed-chunk-9-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-9-1.pdf  used on input line 358.
+Package color Info: Redefining color shadecolor on input line 390.
+<figure/unnamed-chunk-11-1.pdf, id=109, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-11-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-11-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-11-1.pdf  used on input line 391.
+
 (pdftex.def)             Requested size: 430.06635pt x 430.07248pt.
 
-Underfull \vbox (badness 10000) detected at line 362
+Underfull \vbox (badness 10000) detected at line 395
  []
 
-[13 <./figure/unnamed-chunk-8-1.pdf>]
-Package color Info: Redefining color shadecolor on input line 370.
+[13 <./figure/unnamed-chunk-10-1.pdf>]
+Package color Info: Redefining color shadecolor on input line 403.
 
-Underfull \hbox (badness 10000) in paragraph at lines 419--420
+Underfull \hbox (badness 10000) in paragraph at lines 452--453
 
  []
 
 
-Overfull \hbox (3.64258pt too wide) in paragraph at lines 425--426
+Overfull \hbox (3.64258pt too wide) in paragraph at lines 458--459
 []\OT1/cmr/m/n/12 Thus, we can sam-ple from the joint dis-tri-bu-tion by sam-pl
 ing from $\OML/cmm/m/it/12 N\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 []; []\OT1/cmr/
 m/n/12 )$
  []
 
-Package color Info: Redefining color shadecolor on input line 428.
-<figure/unnamed-chunk-11-1.pdf, id=119, 722.7pt x 722.7pt>
-File: figure/unnamed-chunk-11-1.pdf Graphic file (type pdf)
-<use figure/unnamed-chunk-11-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-11-1.pdf  used on input line 454.
+Package color Info: Redefining color shadecolor on input line 461.
+<figure/unnamed-chunk-13-1.pdf, id=122, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-13-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-13-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-13-1.pdf  used on input line 487.
 
 (pdftex.def)             Requested size: 400.69165pt x 400.69522pt.
 
-Overfull \hbox (34.1723pt too wide) detected at line 468
+Overfull \hbox (34.1723pt too wide) detected at line 501
 []
  []
 
-Package color Info: Redefining color shadecolor on input line 471.
-<figure/unnamed-chunk-12-1.pdf, id=120, 722.7pt x 722.7pt>
-File: figure/unnamed-chunk-12-1.pdf Graphic file (type pdf)
-<use figure/unnamed-chunk-12-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-12-1.pdf  used on input line 490.
+Package color Info: Redefining color shadecolor on input line 504.
+<figure/unnamed-chunk-14-1.pdf, id=123, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-14-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-14-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-14-1.pdf  used on input line 523.
 
 (pdftex.def)             Requested size: 400.69165pt x 400.69522pt.
-<figure/unnamed-chunk-12-2.pdf, id=121, 722.7pt x 722.7pt>
-File: figure/unnamed-chunk-12-2.pdf Graphic file (type pdf)
-<use figure/unnamed-chunk-12-2.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-12-2.pdf  used on input line 509.
+<figure/unnamed-chunk-14-2.pdf, id=124, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-14-2.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-14-2.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-14-2.pdf  used on input line 542.
 
 (pdftex.def)             Requested size: 400.69165pt x 400.69522pt.
-Package color Info: Redefining color shadecolor on input line 521.
+Package color Info: Redefining color shadecolor on input line 554.
 
-Overfull \hbox (8.80478pt too wide) in paragraph at lines 539--539
+Overfull \hbox (8.80478pt too wide) in paragraph at lines 572--572
 []\OT1/cmtt/m/n/10 ## Error in mycontour(normchi2post, c(4, 20, 0, 10), weights
 , xlab = "mean", :
  []
 
 
-Overfull \hbox (8.80478pt too wide) in paragraph at lines 544--544
+Overfull \hbox (8.80478pt too wide) in paragraph at lines 577--577
 []\OT1/cmtt/m/n/10 ## Error in plot.xy(xy.coords(x, y), type = type, ...): plot
 .new has not been
  []
 
-Package color Info: Redefining color shadecolor on input line 560.
-<figure/unnamed-chunk-14-1.pdf, id=122, 722.7pt x 722.7pt>
-File: figure/unnamed-chunk-14-1.pdf Graphic file (type pdf)
-<use figure/unnamed-chunk-14-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-14-1.pdf  used on input line 601.
+Package color Info: Redefining color shadecolor on input line 593.
+<figure/unnamed-chunk-16-1.pdf, id=125, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-16-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-16-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-16-1.pdf  used on input line 634.
 
 (pdftex.def)             Requested size: 400.69165pt x 400.69522pt.
-Package color Info: Redefining color shadecolor on input line 621.
+Package color Info: Redefining color shadecolor on input line 654.
 
-Overfull \hbox (45.55446pt too wide) in paragraph at lines 657--657
+Overfull \hbox (45.55446pt too wide) in paragraph at lines 690--690
 []    []\OT1/cmtt/m/n/10 grid_posterior[count][] []<-[] []grid_posterior_poisso
 n_gamma[][](data, theta1[i], theta2[j])[][] 
  []
 
-<figure/unnamed-chunk-15-1.pdf, id=123, 722.7pt x 722.7pt>
-File: figure/unnamed-chunk-15-1.pdf Graphic file (type pdf)
-<use figure/unnamed-chunk-15-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-15-1.pdf  used on input line 2069
-1.
-(pdftex.def)             Requested size: 400.69165pt x 400.69522pt.
-<figure/unnamed-chunk-15-2.pdf, id=124, 722.7pt x 722.7pt>
-File: figure/unnamed-chunk-15-2.pdf Graphic file (type pdf)
-<use figure/unnamed-chunk-15-2.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-15-2.pdf  used on input line 2069
-9.
-(pdftex.def)             Requested size: 400.69165pt x 400.69522pt.
-Package color Info: Redefining color shadecolor on input line 20712.
-Package color Info: Redefining color shadecolor on input line 20723.
-<figure/unnamed-chunk-17-1.pdf, id=125, 722.7pt x 722.7pt>
+<figure/unnamed-chunk-17-1.pdf, id=126, 722.7pt x 722.7pt>
 File: figure/unnamed-chunk-17-1.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-17-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-17-1.pdf  used on input line 2074
-0.
+Package pdftex.def Info: figure/unnamed-chunk-17-1.pdf  used on input line 2072
+4.
 (pdftex.def)             Requested size: 400.69165pt x 400.69522pt.
-<figure/unnamed-chunk-17-2.pdf, id=126, 722.7pt x 722.7pt>
+<figure/unnamed-chunk-17-2.pdf, id=127, 722.7pt x 722.7pt>
 File: figure/unnamed-chunk-17-2.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-17-2.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-17-2.pdf  used on input line 2076
+Package pdftex.def Info: figure/unnamed-chunk-17-2.pdf  used on input line 2073
+2.
+(pdftex.def)             Requested size: 400.69165pt x 400.69522pt.
+Package color Info: Redefining color shadecolor on input line 20745.
+Package color Info: Redefining color shadecolor on input line 20756.
+<figure/unnamed-chunk-19-1.pdf, id=128, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-19-1.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-19-1.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-19-1.pdf  used on input line 2077
 6.
 (pdftex.def)             Requested size: 400.69165pt x 400.69522pt.
+<figure/unnamed-chunk-19-2.pdf, id=129, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-19-2.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-19-2.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-19-2.pdf  used on input line 2080
+5.
+(pdftex.def)             Requested size: 400.69165pt x 400.69522pt.
 
-Overfull \hbox (3.55482pt too wide) in paragraph at lines 20785--20785
+Overfull \hbox (3.55482pt too wide) in paragraph at lines 20824--20824
 [][]\OT1/cmtt/m/n/10 LearnBayes[][]::[][]mycontour[][](gamma.sampling.post.mean
 ,[] []c[][]([][]0.001[][],[] []4[][],[] []0.001[][],[] []16[][]), data,[][] 
  []
 
 
-Overfull \hbox (3.55482pt too wide) in paragraph at lines 20788--20788
+Overfull \hbox (3.55482pt too wide) in paragraph at lines 20827--20827
 [][]\OT1/cmtt/m/n/10 s[] []<-[] []simcontour[][](gamma.sampling.post.mean,[] []
 c[][]([][]0.001[][],[] []4[][],[] []0.001[][],[] []16[][]), data,[] []1000[][])
 [][] 
  []
 
-<figure/unnamed-chunk-17-3.pdf, id=127, 722.7pt x 722.7pt>
-File: figure/unnamed-chunk-17-3.pdf Graphic file (type pdf)
-<use figure/unnamed-chunk-17-3.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-17-3.pdf  used on input line 2079
-3.
+<figure/unnamed-chunk-19-3.pdf, id=130, 722.7pt x 722.7pt>
+File: figure/unnamed-chunk-19-3.pdf Graphic file (type pdf)
+<use figure/unnamed-chunk-19-3.pdf>
+Package pdftex.def Info: figure/unnamed-chunk-19-3.pdf  used on input line 2083
+5.
 (pdftex.def)             Requested size: 400.69165pt x 400.69522pt.
-Package color Info: Redefining color shadecolor on input line 20811.
+Package color Info: Redefining color shadecolor on input line 20853.
 
-Overfull \hbox (50.80441pt too wide) in paragraph at lines 20847--20847
+Overfull \hbox (50.80441pt too wide) in paragraph at lines 20889--20889
 []\OT1/cmtt/m/n/10 ## Error in mycontour(logisticpost, c(-3, 3, -1, 9), data, x
 lab = "beta0", : argument
  []
 
 
-Underfull \vbox (badness 3954) detected at line 20856
+Underfull \vbox (badness 3954) detected at line 20898
  []
 
-[14 <./figure/unnamed-chunk-9-1.pdf>] [15]
-Underfull \vbox (badness 10000) detected at line 20856
+[14 <./figure/unnamed-chunk-11-1.pdf>] [15]
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
 
-Underfull \vbox (badness 10000) detected at line 20856
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
 [16]
-Underfull \vbox (badness 10000) detected at line 20856
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
 
-Underfull \vbox (badness 10000) detected at line 20856
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
-[17 <./figure/unnamed-chunk-11-1.pdf>]
-Underfull \vbox (badness 10000) detected at line 20856
+[17 <./figure/unnamed-chunk-13-1.pdf>]
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
 
-Underfull \vbox (badness 10000) detected at line 20856
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
 [18]
-Underfull \vbox (badness 10000) detected at line 20856
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
 
-Underfull \vbox (badness 10000) detected at line 20856
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
-[19 <./figure/unnamed-chunk-12-1.pdf>]
-Underfull \vbox (badness 10000) detected at line 20856
- []
-
-
-Underfull \vbox (badness 10000) detected at line 20856
- []
-
-[20 <./figure/unnamed-chunk-12-2.pdf>]
-Underfull \vbox (badness 10000) detected at line 20856
+[19 <./figure/unnamed-chunk-14-1.pdf>]
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
 
-Underfull \vbox (badness 10000) detected at line 20856
+Underfull \vbox (badness 10000) detected at line 20898
+ []
+
+[20 <./figure/unnamed-chunk-14-2.pdf>]
+Underfull \vbox (badness 10000) detected at line 20898
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
 [21]
-Underfull \vbox (badness 10000) detected at line 20856
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
 
-Underfull \vbox (badness 10000) detected at line 20856
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
-[22] [23 <./figure/unnamed-chunk-14-1.pdf>]
-Underfull \vbox (badness 10000) detected at line 20856
- []
-
-
-Underfull \vbox (badness 10000) detected at line 20856
- []
-
-[24 <./figure/unnamed-chunk-15-1.pdf>] [25 <./figure/unnamed-chunk-15-2.pdf>]
-[26 <./figure/unnamed-chunk-17-1.pdf>]
-Underfull \vbox (badness 10000) detected at line 20856
+[22] [23 <./figure/unnamed-chunk-16-1.pdf>]
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
 
-Underfull \vbox (badness 10000) detected at line 20856
+Underfull \vbox (badness 10000) detected at line 20898
+ []
+
+[24 <./figure/unnamed-chunk-17-1.pdf>] [25 <./figure/unnamed-chunk-17-2.pdf>]
+Underfull \vbox (badness 1112) detected at line 20898
+ []
+
+
+Underfull \vbox (badness 1112) detected at line 20898
+ []
+
+[26 <./figure/unnamed-chunk-19-1.pdf>]
+Underfull \vbox (badness 10000) detected at line 20898
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
 [27]
-Underfull \vbox (badness 10000) detected at line 20856
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
 
-Underfull \vbox (badness 10000) detected at line 20856
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
-[28 <./figure/unnamed-chunk-17-2.pdf>]
-Underfull \vbox (badness 10000) detected at line 20856
+[28 <./figure/unnamed-chunk-19-2.pdf>]
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
 
-Underfull \vbox (badness 10000) detected at line 20856
+Underfull \vbox (badness 10000) detected at line 20898
  []
 
-[29] [30 <./figure/unnamed-chunk-17-3.pdf>]
-Package color Info: Redefining color shadecolor on input line 20863.
-Package color Info: Redefining color shadecolor on input line 20910.
+[29] [30 <./figure/unnamed-chunk-19-3.pdf>]
+Package color Info: Redefining color shadecolor on input line 20905.
+Package color Info: Redefining color shadecolor on input line 20952.
 
-Overfull \hbox (117.77615pt too wide) in paragraph at lines 20921--20921
+Overfull \hbox (117.77615pt too wide) in paragraph at lines 20963--20963
 [][]\OT1/cmtt/m/it/10 #https://stats.stackexchange.com/questions/354098/calcula
 ting-confidence-intervals-for-a-logistic-regression[][] 
  []
 
 [31]
-Underfull \vbox (badness 10000) detected at line 20944
+Underfull \vbox (badness 10000) detected at line 20986
  []
 
 
-Underfull \vbox (badness 10000) detected at line 20944
+Underfull \vbox (badness 10000) detected at line 20986
  []
 
 [32] [33]
-This exam contains 4 questions with 7 parts, 0 subparts, and 0 subsubparts.
+This exam contains 4 questions with 8 parts, 0 subparts, and 0 subsubparts.
 This exam has a total of 0 points.
 This exam has a total of 0 bonus points.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 20946.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 20946.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 20988.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 20988.
 (Chapter_4_Albert.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 20946.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 20988.
 
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 20946
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 20988
 .
 Package rerunfilecheck Info: File `Chapter_4_Albert.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 20946.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 20988.
  ) 
 Here is how much of TeX's memory you used:
- 7540 strings out of 492970
- 111733 string characters out of 3126593
- 2431555 words of memory out of 3000000
- 11244 multiletter control sequences out of 15000+200000
+ 7547 strings out of 492970
+ 111828 string characters out of 3126593
+ 2431590 words of memory out of 3000000
+ 11249 multiletter control sequences out of 15000+200000
  12857 words of font info for 51 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  37i,10n,27p,489b,589s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -935,9 +938,9 @@ pfb><C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfon
 ts/cm/cmti12.pfb><C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/
 public/amsfonts/cm/cmtt10.pfb><C:/Users/Chris/AppData/Local/Programs/MiKTeX 2.9
 /fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on Chapter_4_Albert.pdf (33 pages, 3234803 bytes).
+Output written on Chapter_4_Albert.pdf (33 pages, 3312292 bytes).
 PDF statistics:
- 354 PDF objects out of 1000 (max. 8388607)
- 64 named destinations out of 1000 (max. 500000)
+ 357 PDF objects out of 1000 (max. 8388607)
+ 66 named destinations out of 1000 (max. 500000)
  81 words of extra memory for PDF output out of 10000 (max. 10000000)
 

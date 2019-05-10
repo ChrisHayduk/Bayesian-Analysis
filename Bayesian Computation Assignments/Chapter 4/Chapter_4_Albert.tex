@@ -96,7 +96,7 @@
 %%%%%%%%%
 \part \texttt{logisticpost()} on pg. 72
 %%%%%%%%%
-%\part \texttt{simcontour()} on pg. 73
+\part \texttt{simcontour()} on pg. 73
 %%%%%%%%%
 \part \texttt{howardprior()} on pg. 77
 \end{parts}
@@ -129,7 +129,8 @@
 \hlkwd{data}\hlstd{(}\hlstr{"marathontimes"}\hlstd{)}
 \hlkwd{attach}\hlstd{(marathontimes)}
 
-\hlstd{d} \hlkwb{<-} \hlstd{LearnBayes}\hlopt{::}\hlkwd{mycontour}\hlstd{(normchi2post,} \hlkwd{c}\hlstd{(}\hlnum{220}\hlstd{,} \hlnum{330}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{9000}\hlstd{), time,} \hlkwc{xlab}\hlstd{=}\hlstr{"mean"}\hlstd{,}
+\hlstd{d} \hlkwb{<-} \hlstd{LearnBayes}\hlopt{::}\hlkwd{mycontour}\hlstd{(normchi2post,} \hlkwd{c}\hlstd{(}\hlnum{220}\hlstd{,} \hlnum{330}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{9000}\hlstd{),}
+                           \hlstd{time,} \hlkwc{xlab}\hlstd{=}\hlstr{"mean"}\hlstd{,}
                \hlkwc{ylab}\hlstd{=}\hlstr{"variance"}\hlstd{)}
 \end{alltt}
 \end{kframe}
@@ -137,59 +138,9 @@
 
 \end{knitrout}
   
-  \part
-\begin{knitrout}\footnotesize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{mycontour} \hlkwb{<-} \hlkwa{function} \hlstd{(}\hlkwc{logf}\hlstd{,} \hlkwc{limits}\hlstd{,} \hlkwc{data}\hlstd{,} \hlkwc{num_points}\hlstd{,} \hlkwc{levels}\hlstd{,} \hlkwc{...}\hlstd{)}
-\hlstd{\{}
-    \hlstd{LOGF} \hlkwb{=} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{data}\hlstd{) \{}
-        \hlkwa{if} \hlstd{(}\hlkwd{is.matrix}\hlstd{(theta)} \hlopt{==} \hlnum{TRUE}\hlstd{) \{}
-            \hlstd{val} \hlkwb{=} \hlkwd{matrix}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{c}\hlstd{(}\hlkwd{dim}\hlstd{(theta)[}\hlnum{1}\hlstd{],} \hlnum{1}\hlstd{))}
-            \hlkwa{for} \hlstd{(j} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{dim}\hlstd{(theta)[}\hlnum{1}\hlstd{]) val[j]} \hlkwb{=} \hlkwd{logf}\hlstd{(theta[j,}
-                \hlstd{], data)}
-        \hlstd{\}}
-        \hlkwa{else} \hlstd{val} \hlkwb{=} \hlkwd{logf}\hlstd{(theta, data)}
-        \hlkwd{return}\hlstd{(val)}
-    \hlstd{\}}
-    \hlstd{ng} \hlkwb{=} \hlstd{num_points}
-    \hlstd{x0} \hlkwb{=} \hlkwd{seq}\hlstd{(limits[}\hlnum{1}\hlstd{], limits[}\hlnum{2}\hlstd{],} \hlkwc{len} \hlstd{= ng)}
-    \hlstd{y0} \hlkwb{=} \hlkwd{seq}\hlstd{(limits[}\hlnum{3}\hlstd{], limits[}\hlnum{4}\hlstd{],} \hlkwc{len} \hlstd{= ng)}
-    \hlstd{X} \hlkwb{=} \hlkwd{outer}\hlstd{(x0,} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{, ng))}
-    \hlstd{Y} \hlkwb{=} \hlkwd{outer}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{, ng), y0)}
-    \hlstd{n2} \hlkwb{=} \hlstd{ng}\hlopt{^}\hlnum{2}
-    \hlstd{Z} \hlkwb{=} \hlkwd{LOGF}\hlstd{(}\hlkwd{cbind}\hlstd{(X[}\hlnum{1}\hlopt{:}\hlstd{n2], Y[}\hlnum{1}\hlopt{:}\hlstd{n2]), data)}
+  \part Needed to hide the \texttt{mycontour()} implementation due to the length of the code. It was causing LaTeX issues when compiling the document. 
 
-    \hlcom{#max_z <- optimize(LOGF, }
-    \hlcom{#interval = c(c(limits[1], limits[2]), }
-    \hlcom{#c(limits[3], limits[4])), data, maximum = TRUE)}
-    \hlstd{max_z} \hlkwb{=} \hlkwd{max}\hlstd{(Z)}
 
-    \hlstd{Z} \hlkwb{=} \hlstd{Z} \hlopt{-} \hlstd{max_z}
-    \hlstd{Z} \hlkwb{=} \hlkwd{matrix}\hlstd{(Z,} \hlkwd{c}\hlstd{(ng, ng))}
-
-    \hlstd{min_z} \hlkwb{<-} \hlkwd{min}\hlstd{(Z)}
-
-    \hlstd{contours} \hlkwb{<-} \hlkwd{c}\hlstd{()}
-
-    \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(levels))\{}
-      \hlstd{contours} \hlkwb{<-} \hlkwd{c}\hlstd{(contours, (levels[i]}\hlopt{*}\hlstd{min_z))}
-    \hlstd{\}}
-
-    \hlkwd{contour}\hlstd{(x0, y0, Z,} \hlkwc{levels} \hlstd{= contours,} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{,}
-        \hlstd{...)}
-\hlstd{\}}
-
-\hlstd{d} \hlkwb{<-} \hlkwd{mycontour}\hlstd{(normchi2post,} \hlkwd{c}\hlstd{(}\hlnum{220}\hlstd{,} \hlnum{330}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{9000}\hlstd{),}
-               \hlstd{time,} \hlkwc{num_points} \hlstd{=} \hlnum{1000}\hlstd{,}
-               \hlkwc{levels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
-               \hlkwc{xlab}\hlstd{=}\hlstr{"mean"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"variance"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-3-1} 
-
-\end{knitrout}
-  
   \part
 \begin{knitrout}\footnotesize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -210,8 +161,10 @@
 
 \hlcom{#Example run}
 \hlstd{results} \hlkwb{<-} \hlkwd{normpostsim}\hlstd{(time,} \hlnum{1000}\hlstd{)}
-\hlstd{d} \hlkwb{<-} \hlkwd{mycontour}\hlstd{(normchi2post,} \hlkwd{c}\hlstd{(}\hlnum{220}\hlstd{,} \hlnum{330}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{9000}\hlstd{), time,}
-               \hlkwc{num_points} \hlstd{=} \hlnum{1000}\hlstd{, levels} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
+\hlkwd{mycontour}\hlstd{(normchi2post,} \hlkwd{c}\hlstd{(}\hlnum{220}\hlstd{,} \hlnum{330}\hlstd{,} \hlnum{500}\hlstd{,} \hlnum{9000}\hlstd{), time,}
+               \hlkwc{size_grid} \hlstd{=} \hlnum{1000}\hlstd{, levels} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
+               \hlkwc{log_func} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+               \hlkwc{labels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
                \hlkwc{xlab}\hlstd{=}\hlstr{"mean"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"variance"}\hlstd{)}
 \hlkwd{points}\hlstd{(results}\hlopt{$}\hlstd{mu, results}\hlopt{$}\hlstd{sigma2)}
 \end{alltt}
@@ -291,19 +244,94 @@
 \hlstd{x} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{0.86}\hlstd{,} \hlopt{-}\hlnum{0.3}\hlstd{,} \hlopt{-}\hlnum{0.05}\hlstd{,} \hlnum{0.73}\hlstd{)}
 \hlstd{n} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{5}\hlstd{,} \hlnum{5}\hlstd{,} \hlnum{5}\hlstd{)}
 \hlstd{y} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{5}\hlstd{)}
+
 \hlstd{data} \hlkwb{<-} \hlkwd{cbind}\hlstd{(x, n, y)}
 
 \hlstd{prior} \hlkwb{<-} \hlkwd{rbind}\hlstd{(}\hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{0.7}\hlstd{,} \hlnum{4.68}\hlstd{,} \hlnum{1.12}\hlstd{),}
-               \hlkwd{c}\hlstd{(}\hlnum{0.6}\hlstd{,} \hlnum{2.10}\hlstd{,} \hlnum{0.74}\hlstd{))}
+            \hlkwd{c}\hlstd{(}\hlnum{0.6}\hlstd{,} \hlnum{2.84}\hlstd{,} \hlnum{2.10}\hlstd{))}
+\hlstd{data.new} \hlkwb{<-} \hlkwd{rbind}\hlstd{(data, prior)}
 
-\hlstd{data.new} \hlkwb{<-} \hlkwd{rbind}\hlstd{(data,prior)}
-
-\hlkwd{mycontour}\hlstd{(logisticpost,} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{3}\hlstd{,}\hlnum{3}\hlstd{,}\hlopt{-}\hlnum{1}\hlstd{,}\hlnum{9}\hlstd{), data.new,}
-          \hlkwc{num_points} \hlstd{=} \hlnum{1000}\hlstd{, levels} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
+\hlkwd{mycontour}\hlstd{(logisticpost,} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{2}\hlstd{,} \hlnum{3}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlnum{11}\hlstd{),}
+          \hlkwc{data}\hlstd{= data.new,}
+          \hlkwc{size_grid} \hlstd{=} \hlnum{1000}\hlstd{,}
+          \hlkwc{levels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.5}\hlstd{,} \hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{),}
+          \hlkwc{log_func} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+          \hlkwc{labels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.5}\hlstd{,} \hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{),}
           \hlkwc{xlab}\hlstd{=}\hlstr{"beta0"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"beta1"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/unnamed-chunk-7-1} 
+
+\end{knitrout}
+  
+  \part
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{simcontour} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{fn}\hlstd{,} \hlkwc{limits}\hlstd{,} \hlkwc{data}\hlstd{,}
+                       \hlkwc{size_grid}\hlstd{,} \hlkwc{m}\hlstd{,} \hlkwc{log_func} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{\{}
+    \hlstd{LOGF} \hlkwb{=} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{data}\hlstd{) \{}
+        \hlkwa{if} \hlstd{(}\hlkwd{is.matrix}\hlstd{(theta)} \hlopt{==} \hlnum{TRUE}\hlstd{) \{}
+            \hlstd{val} \hlkwb{=} \hlkwd{matrix}\hlstd{(}\hlnum{0}\hlstd{,} \hlkwd{c}\hlstd{(}\hlkwd{dim}\hlstd{(theta)[}\hlnum{1}\hlstd{],} \hlnum{1}\hlstd{))}
+
+            \hlkwa{for} \hlstd{(j} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{dim}\hlstd{(theta)[}\hlnum{1}\hlstd{])\{}
+              \hlkwa{if}\hlstd{(log_func} \hlopt{==} \hlnum{FALSE}\hlstd{)}
+                \hlstd{val[j]} \hlkwb{=} \hlkwd{log}\hlstd{(}\hlkwd{fn}\hlstd{(theta[j,], data))}
+              \hlkwa{else}
+                \hlstd{val[j]} \hlkwb{=} \hlkwd{fn}\hlstd{(theta[j,], data)}
+            \hlstd{\}}
+        \hlstd{\}}
+        \hlkwa{else}\hlstd{\{}
+          \hlkwa{if}\hlstd{(log_func} \hlopt{==} \hlnum{FALSE}\hlstd{)}
+                \hlstd{val} \hlkwb{=} \hlkwd{log}\hlstd{(}\hlkwd{fn}\hlstd{(theta, data))}
+              \hlkwa{else}
+                \hlstd{val} \hlkwb{=} \hlkwd{fn}\hlstd{(theta, data)}
+        \hlstd{\}}
+        \hlkwd{return}\hlstd{(val)}
+    \hlstd{\}}
+
+    \hlstd{ng} \hlkwb{=} \hlstd{size_grid}
+    \hlstd{x0} \hlkwb{=} \hlkwd{seq}\hlstd{(limits[}\hlnum{1}\hlstd{], limits[}\hlnum{2}\hlstd{],} \hlkwc{len} \hlstd{= ng)}
+    \hlstd{y0} \hlkwb{=} \hlkwd{seq}\hlstd{(limits[}\hlnum{3}\hlstd{], limits[}\hlnum{4}\hlstd{],} \hlkwc{len} \hlstd{= ng)}
+    \hlstd{X} \hlkwb{=} \hlkwd{outer}\hlstd{(x0,} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{, ng))}
+    \hlstd{Y} \hlkwb{=} \hlkwd{outer}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{, ng), y0)}
+    \hlstd{n2} \hlkwb{=} \hlstd{ng}\hlopt{^}\hlnum{2}
+
+    \hlstd{Z} \hlkwb{=} \hlkwd{LOGF}\hlstd{(}\hlkwd{cbind}\hlstd{(X[}\hlnum{1}\hlopt{:}\hlstd{n2], Y[}\hlnum{1}\hlopt{:}\hlstd{n2]), data)}
+    \hlstd{Z} \hlkwb{=} \hlkwd{matrix}\hlstd{(Z,} \hlkwd{c}\hlstd{(ng, ng))}
+
+    \hlstd{d} \hlkwb{=} \hlkwd{cbind}\hlstd{(X[}\hlnum{1}\hlopt{:}\hlstd{n2], Y[}\hlnum{1}\hlopt{:}\hlstd{n2], Z[}\hlnum{1}\hlopt{:}\hlstd{n2])}
+    \hlstd{prob} \hlkwb{=} \hlstd{d[,} \hlnum{3}\hlstd{]}
+    \hlstd{prob} \hlkwb{=} \hlkwd{exp}\hlstd{(prob)}
+    \hlstd{prob} \hlkwb{=} \hlstd{prob}\hlopt{/}\hlkwd{sum}\hlstd{(prob)}
+
+    \hlstd{i} \hlkwb{=} \hlkwd{sample}\hlstd{(n2, m,} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{prob} \hlstd{= prob)}
+
+    \hlkwd{return}\hlstd{(}\hlkwd{list}\hlstd{(}\hlkwc{x} \hlstd{= d[i,} \hlnum{1}\hlstd{],} \hlkwc{y} \hlstd{= d[i,} \hlnum{2}\hlstd{]))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{mycontour}\hlstd{(logisticpost,} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{2}\hlstd{,} \hlnum{3}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlnum{11}\hlstd{),}
+          \hlkwc{data}\hlstd{= data.new,}
+          \hlkwc{size_grid} \hlstd{=} \hlnum{1000}\hlstd{,}
+          \hlkwc{levels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.5}\hlstd{,} \hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{),}
+          \hlkwc{log_func} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+          \hlkwc{labels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.5}\hlstd{,} \hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{),}
+          \hlkwc{xlab}\hlstd{=}\hlstr{"beta0"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"beta1"}\hlstd{)}
+
+\hlstd{s} \hlkwb{<-} \hlkwd{simcontour}\hlstd{(logisticpost,} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{2}\hlstd{,} \hlnum{3}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlnum{11}\hlstd{),}
+                \hlstd{data.new,} \hlnum{1000}\hlstd{,} \hlnum{1000}\hlstd{,} \hlnum{TRUE}\hlstd{)}
+
+\hlkwd{points}\hlstd{(s)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-9-1} 
 
 \end{knitrout}
   
@@ -337,12 +365,17 @@
 \hlstd{phi} \hlkwb{<-} \hlnum{0.9999}
 \hlstd{sigma} \hlkwb{<-} \hlnum{2}
 
-\hlstd{LearnBayes}\hlopt{::}\hlkwd{mycontour}\hlstd{(howardprior,} \hlkwd{c}\hlstd{(plo, phi, plo, phi),}
-                      \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{, sigma),}
-                      \hlkwc{xlab}\hlstd{=}\hlstr{"p1"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"p2"}\hlstd{)}
+\hlkwd{mycontour}\hlstd{(howardprior,} \hlkwd{c}\hlstd{(plo, phi, plo, phi),}
+          \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{, sigma),} \hlnum{1000}\hlstd{,}
+          \hlkwc{levels}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
+          \hlkwc{log_func} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+          \hlkwc{labels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{0.01}\hlstd{,} \hlnum{0.001}\hlstd{),}
+          \hlkwc{main}\hlstd{=}\hlkwd{paste}\hlstd{(}\hlstr{"sigma = "}\hlstd{,} \hlkwd{as.character}\hlstd{(sigma)),}
+          \hlkwc{xlab} \hlstd{=} \hlstr{"p1"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"p2"}\hlstd{)}
+\hlkwd{lines}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{),}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-8-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-10-1} 
 
 \end{knitrout}
   
@@ -355,7 +388,7 @@
 \\
 \begin{knitrout}\footnotesize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-9-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-11-1} 
 
 \end{knitrout}
 
@@ -386,7 +419,7 @@
 \end{alltt}
 \begin{verbatim}
 ##       5%      95% 
-## 7.656552 8.208190
+## 7.652164 8.228933
 \end{verbatim}
 \begin{alltt}
 \hlstd{sigma} \hlkwb{<-} \hlkwd{sqrt}\hlstd{(sigma_2)}
@@ -395,7 +428,7 @@
 \end{alltt}
 \begin{verbatim}
 ##       5%      95% 
-## 1.345687 2.362013
+## 1.344385 2.341904
 \end{verbatim}
 \begin{alltt}
 \hlcom{#c)}
@@ -404,13 +437,13 @@
 \hlkwd{mean}\hlstd{(p_75)}
 \end{alltt}
 \begin{verbatim}
-## [1] 9.114842
+## [1] 9.129789
 \end{verbatim}
 \begin{alltt}
 \hlkwd{sd}\hlstd{(p_75)}
 \end{alltt}
 \begin{verbatim}
-## [1] 0.2729958
+## [1] 0.2714589
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -451,7 +484,7 @@
 \hlkwd{hist}\hlstd{(mu_diff)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-11-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-13-1} 
 
 \end{knitrout}
   All of the differences between the simulated values of $\mu$ for male and female golden jackal mandible lengths are well-above 0. Thus, we can conclude that the mean length of the mandible for males is higher than the mean length for females.
@@ -487,7 +520,7 @@
 \hlkwd{hist}\hlstd{(relative_risk)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-12-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-14-1} 
 \begin{kframe}\begin{alltt}
 \hlstd{relative_risk} \hlkwb{<-} \hlkwd{sort}\hlstd{(relative_risk)}
 
@@ -497,7 +530,7 @@
              \hlstd{confidence_interval[}\hlkwd{length}\hlstd{(confidence_interval)],} \hlstr{"]"}\hlstd{))}
 \end{alltt}
 \begin{verbatim}
-## [1] "[7.17978244104596, 8.71719168359565]"
+## [1] "[7.13534546960749, 8.73023703107285]"
 \end{verbatim}
 \begin{alltt}
 \hlcom{#d)}
@@ -506,7 +539,7 @@
 \hlkwd{hist}\hlstd{(diff_risk)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-12-2} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-14-2} 
 \begin{kframe}\begin{alltt}
 \hlcom{#e)}
 \hlkwd{sum}\hlstd{(diff_risk} \hlopt{>} \hlnum{0}\hlstd{)}\hlopt{/}\hlkwd{length}\hlstd{(diff_risk)}
@@ -536,7 +569,7 @@
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mycontour(normchi2post, c(4, 20, 0, 10), weights, xlab = "{}mean"{}, : argument "{}num\_points"{} is missing, with no default}}\begin{alltt}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mycontour(normchi2post, c(4, 20, 0, 10), weights, xlab = "{}mean"{}, : argument "{}size\_grid"{} is missing, with no default}}\begin{alltt}
 \hlkwd{points}\hlstd{(mu, sigma2)}
 \end{alltt}
 
@@ -589,8 +622,8 @@ g(\mu, \lambda | data) \propto L(\mu, exp(\lambda))
 \end{alltt}
 \begin{verbatim}
 ##      post.means  post.sds
-## [1,]  10.589980 0.7686375
-## [2,]   0.223033 0.4297978
+## [1,] 10.6420378 0.7637662
+## [2,]  0.2328623 0.4289336
 \end{verbatim}
 \begin{alltt}
 \hlstd{LearnBayes}\hlopt{::}\hlkwd{mycontour}\hlstd{(groupeddatapost,} \hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{15}\hlstd{,} \hlnum{0.00001}\hlstd{,} \hlnum{3}\hlstd{), d,}
@@ -598,19 +631,19 @@ g(\mu, \lambda | data) \propto L(\mu, exp(\lambda))
 \hlkwd{points}\hlstd{(fit2}\hlopt{$}\hlstd{par[}\hlnum{5001}\hlopt{:}\hlnum{10000}\hlstd{,}\hlnum{1}\hlstd{], fit2}\hlopt{$}\hlstd{par[}\hlnum{5001}\hlopt{:}\hlnum{10000}\hlstd{,}\hlnum{2}\hlstd{])}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-14-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-16-1} 
 \begin{kframe}\begin{alltt}
 \hlcom{#d)}
 \hlstd{post.means}
 \end{alltt}
 \begin{verbatim}
-## [1] 10.589980  0.223033
+## [1] 10.6420378  0.2328623
 \end{verbatim}
 \begin{alltt}
 \hlkwd{c}\hlstd{(}\hlkwd{mean}\hlstd{(mu),} \hlkwd{sd}\hlstd{(mu))}
 \end{alltt}
 \begin{verbatim}
-## [1] 10.5783709  0.3308087
+## [1] 10.6090530  0.4018979
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -20688,7 +20721,7 @@ g(\mu, \lambda | data) \propto L(\mu, exp(\lambda))
 \hlkwd{hist}\hlstd{(a_conf_interval)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-15-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-17-1} 
 \begin{kframe}\begin{alltt}
 \hlcom{#95% confidence interval for b}
 \hlstd{b_conf_interval} \hlkwb{<-} \hlstd{b[}\hlnum{26}\hlopt{:}\hlnum{975}\hlstd{]}
@@ -20696,7 +20729,7 @@ g(\mu, \lambda | data) \propto L(\mu, exp(\lambda))
 \hlkwd{hist}\hlstd{(b_conf_interval)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-15-2} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-17-2} 
 
 \end{knitrout}
   \item
@@ -20733,11 +20766,14 @@ g(\mu, \lambda | data) \propto L(\mu, exp(\lambda))
                       \hlkwc{xlab}\hlstd{=}\hlstr{"Shape"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"Scale"}\hlstd{)}
 
 \hlstd{s} \hlkwb{<-} \hlkwd{simcontour}\hlstd{(gamma.sampling.post,} \hlkwd{c}\hlstd{(}\hlnum{0.1}\hlstd{,} \hlnum{6}\hlstd{,} \hlnum{0.1}\hlstd{,} \hlnum{40}\hlstd{), data,} \hlnum{1000}\hlstd{)}
+\end{alltt}
 
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in sample.int(x, size, replace, prob): NA in probability vector}}\begin{alltt}
 \hlkwd{points}\hlstd{(s)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-17-1} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-19-1} 
 \begin{kframe}\begin{alltt}
 \hlstd{mu_vals} \hlkwb{<-} \hlkwd{sort}\hlstd{(s}\hlopt{$}\hlstd{y}\hlopt{*}\hlstd{s}\hlopt{$}\hlstd{x)}
 
@@ -20747,7 +20783,7 @@ g(\mu, \lambda | data) \propto L(\mu, exp(\lambda))
              \hlstd{s_conf_interval[}\hlkwd{length}\hlstd{(s_conf_interval)],} \hlstr{"]"}\hlstd{))}
 \end{alltt}
 \begin{verbatim}
-## [1] "[1.63730981460932, 7.45057131842684]"
+## [1] "[-2.51881911941972, 8.5900915930946]"
 \end{verbatim}
 \begin{alltt}
 \hlcom{#b)}
@@ -20759,11 +20795,14 @@ g(\mu, \lambda | data) \propto L(\mu, exp(\lambda))
                       \hlkwc{xlab}\hlstd{=}\hlstr{"Shape"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"Rate"}\hlstd{)}
 
 \hlstd{s} \hlkwb{<-} \hlkwd{simcontour}\hlstd{(gamma.sampling.post.rate,} \hlkwd{c}\hlstd{(}\hlnum{0.001}\hlstd{,} \hlnum{4}\hlstd{,} \hlnum{0.001}\hlstd{,} \hlnum{2}\hlstd{), data,} \hlnum{1000}\hlstd{)}
+\end{alltt}
 
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in sample.int(x, size, replace, prob): NA in probability vector}}\begin{alltt}
 \hlkwd{points}\hlstd{(s)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-17-2} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-19-2} 
 \begin{kframe}\begin{alltt}
 \hlstd{mu_vals} \hlkwb{<-} \hlkwd{sort}\hlstd{(s}\hlopt{$}\hlstd{x}\hlopt{*}\hlstd{(}\hlnum{1}\hlopt{/}\hlstd{s}\hlopt{$}\hlstd{y))}
 
@@ -20773,7 +20812,7 @@ g(\mu, \lambda | data) \propto L(\mu, exp(\lambda))
              \hlstd{s_conf_interval[}\hlkwd{length}\hlstd{(s_conf_interval)],} \hlstr{"]"}\hlstd{))}
 \end{alltt}
 \begin{verbatim}
-## [1] "[1.68449668869494, 4.90638405899625]"
+## [1] "[-0.249830278343517, 0.350148367952522]"
 \end{verbatim}
 \begin{alltt}
 \hlcom{#c)}
@@ -20786,11 +20825,14 @@ g(\mu, \lambda | data) \propto L(\mu, exp(\lambda))
                       \hlkwc{xlab}\hlstd{=}\hlstr{"Shape"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"Mean"}\hlstd{)}
 
 \hlstd{s} \hlkwb{<-} \hlkwd{simcontour}\hlstd{(gamma.sampling.post.mean,} \hlkwd{c}\hlstd{(}\hlnum{0.001}\hlstd{,} \hlnum{4}\hlstd{,} \hlnum{0.001}\hlstd{,} \hlnum{16}\hlstd{), data,} \hlnum{1000}\hlstd{)}
+\end{alltt}
 
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in sample.int(x, size, replace, prob): NA in probability vector}}\begin{alltt}
 \hlkwd{points}\hlstd{(s)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-17-3} 
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-19-3} 
 \begin{kframe}\begin{alltt}
 \hlstd{mu_vals} \hlkwb{<-} \hlkwd{sort}\hlstd{((s}\hlopt{$}\hlstd{y}\hlopt{/}\hlstd{s}\hlopt{$}\hlstd{x))}
 
@@ -20800,7 +20842,7 @@ g(\mu, \lambda | data) \propto L(\mu, exp(\lambda))
              \hlstd{s_conf_interval[}\hlkwd{length}\hlstd{(s_conf_interval)],} \hlstr{"]"}\hlstd{))}
 \end{alltt}
 \begin{verbatim}
-## [1] "[1.16045778245987, 10.5216384295974]"
+## [1] "[-111.710526315789, 94.0961538461536]"
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -20844,7 +20886,7 @@ I believe the third computational method is the best for computing the 95\% inte
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mycontour(logisticpost, c(-3, 3, -1, 9), data, xlab = "{}beta0"{}, : argument "{}num\_points"{} is missing, with no default}}\begin{alltt}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mycontour(logisticpost, c(-3, 3, -1, 9), data, xlab = "{}beta0"{}, : argument "{}size\_grid"{} is missing, with no default}}\begin{alltt}
 \hlcom{#c)}
 
 \hlcom{#d)}
